@@ -1,0 +1,34 @@
+import { FacturaDetalle } from '../../facturas/entities/factura-detalle.entity';
+import { MovimientoInventario } from '../../inventario/entities/movimiento-inventario.entity';
+export declare class Producto {
+    id: number;
+    num_movimiento: string;
+    fecha_movimiento: Date;
+    codigo: string;
+    grupo_comercial: string;
+    referencia: string;
+    sku: string;
+    nombre: string;
+    descripcion: string;
+    coleccion: string;
+    categoria: string;
+    talla: string;
+    color: string;
+    desc_color: string;
+    cod_barras: string;
+    precio_costo: number;
+    precio: number;
+    unidad: string;
+    stock: number;
+    tipo_impuesto: string;
+    punto_reorden: number;
+    stock_seguridad: number;
+    tiempo_entrega_dias: number;
+    costo_promedio: number;
+    activo: boolean;
+    detallesFactura: FacturaDetalle[];
+    movimientos: MovimientoInventario[];
+    created_at: Date;
+    updated_at: Date;
+    deleted_at: Date;
+}

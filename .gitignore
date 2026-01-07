@@ -18,7 +18,7 @@ PROYECTO-CLOUD-ID.txt
 URL-BACKEND-CLOUD-RUN.txt
 
 # Build outputs
-backend-nestjs/dist/
+# backend-nestjs/dist/
 client/dist/
 
 # Uploads y archivos temporales

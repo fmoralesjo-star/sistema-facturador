@@ -1,0 +1,52 @@
+import { OnApplicationBootstrap } from '@nestjs/common';
+import { Repository, QueryRunner } from 'typeorm';
+import { AsientoContable } from './entities/asiento-contable.entity';
+import { PartidaContable } from './entities/partida-contable.entity';
+import { CuentaContable } from './entities/cuenta-contable.entity';
+import { PlantillaAsiento } from './entities/plantilla-asiento.entity';
+import { Factura } from '../facturas/entities/factura.entity';
+import { Compra } from '../compras/entities/compra.entity';
+import { CreateAsientoDto } from './dto/create-asiento.dto';
+import { PlantillasService } from './services/plantillas.service';
+export declare class ContabilidadService implements OnApplicationBootstrap {
+    private asientoRepository;
+    private partidaRepository;
+    private cuentaRepository;
+    private facturaRepository;
+    private compraRepository;
+    private plantillaRepository;
+    private plantillasService;
+    constructor(asientoRepository: Repository<AsientoContable>, partidaRepository: Repository<PartidaContable>, cuentaRepository: Repository<CuentaContable>, facturaRepository: Repository<Factura>, compraRepository: Repository<Compra>, plantillaRepository: Repository<PlantillaAsiento>, plantillasService: PlantillasService);
+    private validarPeriodoAbierto;
+    private validarPartidaDoble;
+    generarAsientoCierre(anio: number, usuarioId: number): Promise<AsientoContable>;
+    crearAsientoNomina(datosNomina: {
+        periodo: string;
+        totalIngresos: number;
+        totalIessPersonal: number;
+        totalAportePatronal: number;
+        totalPagar: number;
+    }): Promise<AsientoContable>;
+    createAsiento(createDto: CreateAsientoDto): Promise<AsientoContable>;
+    crearAsientosFactura(factura: Factura, queryRunner: QueryRunner): Promise<AsientoContable>;
+    crearAsientoTransferencia(datos: any): Promise<AsientoContable>;
+    crearAsientoCompra(compra: any, queryRunner?: QueryRunner): Promise<AsientoContable>;
+    crearAsientoAjusteInventario(datos: {
+        producto: any;
+        cantidad: number;
+        tipo: 'ENTRADA' | 'SALIDA' | 'AJUSTE';
+        motivo: string;
+        valorUnitario: number;
+        queryRunner?: QueryRunner;
+    }): Promise<AsientoContable>;
+    crearAsientoNotaCredito(datos: any): Promise<AsientoContable>;
+    anularAsientoFactura(factura: Factura, queryRunner?: QueryRunner): Promise<AsientoContable>;
+    generarDatosEjemplo(): Promise<any>;
+    private crearAsientoAperturaDemo;
+    onApplicationBootstrap(): Promise<void>;
+    private assicurePlantillasBasicas;
+    findAllAsientos(): Promise<AsientoContable[]>;
+    findOneAsiento(id: number): Promise<AsientoContable>;
+    obtenerBalanceGeneral(): Promise<any>;
+    obtenerResumen(fechaInicio?: string, fechaFin?: string): Promise<any>;
+}
