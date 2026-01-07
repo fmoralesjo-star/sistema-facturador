@@ -1,0 +1,270 @@
+.cartera-container {
+    min-height: 100vh;
+    background-color: #f8fafc;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.btn-home-cartera {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 2rem;
+    transition: all 0.2s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-home-cartera:hover {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.cartera-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.cartera-header h1 {
+    font-size: 2rem;
+    color: #1e293b;
+    margin: 0;
+}
+
+.cartera-total-badge {
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    border-right: 4px solid #4f46e5;
+}
+
+.cartera-total-badge span {
+    font-size: 0.875rem;
+    color: #64748b;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.cartera-total-badge strong {
+    font-size: 1.5rem;
+    color: #1e293b;
+}
+
+.cartera-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 1px;
+}
+
+.tab-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #64748b;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    color: #4f46e5;
+    border-bottom-color: #4f46e5;
+}
+
+.tab-btn:hover:not(.active) {
+    color: #475569;
+    border-bottom-color: #cbd5e1;
+}
+
+.cartera-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    min-height: 400px;
+}
+
+.loading-state,
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: #64748b;
+    text-align: center;
+}
+
+.empty-state h3 {
+    margin: 1rem 0 0.5rem 0;
+    color: #1e293b;
+}
+
+.cartera-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.cartera-table th {
+    text-align: left;
+    padding: 1rem;
+    border-bottom: 2px solid #e2e8f0;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+}
+
+.cartera-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+}
+
+.amount-cell {
+    font-family: 'Consolas', monospace;
+    font-weight: 600;
+    color: #1e293b !important;
+}
+
+.btn-pay {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.btn-pay:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+.btn-pay:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge.pendiente {
+    background: #fff7ed;
+    color: #ea580c;
+    border: 1px solid #ffedd5;
+}
+
+.status-badge.autorizado {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #dbeafe;
+}
+
+/* Aging Report Styles */
+.aging-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.aging-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #cbd5e1;
+    transition: transform 0.2s;
+}
+
+.aging-card:hover {
+    transform: translateY(-5px);
+}
+
+.aging-card h3 {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.aging-card .aging-amount {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1e293b;
+    font-family: 'Consolas', monospace;
+}
+
+.aging-card .aging-count {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    margin-top: 0.5rem;
+}
+
+/* Specific Bucket Colors */
+.aging-card.corriente {
+    border-color: #10b981;
+    /* Green */
+    background: linear-gradient(to right, #ecfdf5, #ffffff);
+}
+
+.aging-card.vencido-30 {
+    border-color: #f59e0b;
+    /* Amber */
+    background: linear-gradient(to right, #fffbeb, #ffffff);
+}
+
+.aging-card.vencido-60 {
+    border-color: #f97316;
+    /* Orange */
+    background: linear-gradient(to right, #fff7ed, #ffffff);
+}
+
+.aging-card.vencido-90 {
+    border-color: #ef4444;
+    /* Red */
+    background: linear-gradient(to right, #fef2f2, #ffffff);
+}
+
+.aging-card.corriente .aging-amount {
+    color: #047857;
+}
+
+.aging-card.vencido-30 .aging-amount {
+    color: #b45309;
+}
+
+.aging-card.vencido-60 .aging-amount {
+    color: #c2410c;
+}
+
+.aging-card.vencido-90 .aging-amount {
+    color: #b91c1c;
+}

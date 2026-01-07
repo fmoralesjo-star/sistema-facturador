@@ -1,0 +1,39 @@
+node_modules/
+client/node_modules/
+server/database.sqlite
+.DS_Store
+*.log
+.env
+dist/
+build/
+
+# Credenciales y archivos sensibles
+*firebase-adminsdk*.json
+*.p12
+*.key
+*.pem
+
+# Archivos de configuración local
+PROYECTO-CLOUD-ID.txt
+URL-BACKEND-CLOUD-RUN.txt
+
+# Build outputs
+backend-nestjs/dist/
+client/dist/
+
+# Uploads y archivos temporales
+uploads/
+*.sqlite
+*.db
+
+
+
+
+
+
+
+
+
+
+
+

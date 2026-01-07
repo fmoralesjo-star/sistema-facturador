@@ -1,0 +1,59 @@
+﻿[dotenv@17.2.3] injecting env (9) from .env -- tip: ­ƒöÉ encrypt with Dotenvx: https://dotenvx.com
+­ƒùä´©Å DatabaseModule: PostgreSQL activado - TypeORM habilitado
+­ƒùä´©Å AppModule: PostgreSQL activado - DatabaseModule habilitado
+[32m[Nest] 6436  - [39m31/12/2025, 9:05:11 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 6436  - [39m31/12/2025, 9:05:11 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDatabaseModule dependencies initialized[39m[38;5;3m +16ms[39m
+[32m[Nest] 6436  - [39m31/12/2025, 9:05:11 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+node : [31m[Nest] 6436  - [39m31/12/2025, 9:05:11 [31m  ERROR[39m 
+[38;5;3m[ExceptionHandler] [39m[31mNest can't resolve dependencies of the 
+AdministracionTIService (UsuarioRepository, RolRepository, Autorizacion2FARepository, 
+?). Please make sure that the argument "UsuariosService" at index [3] is available in 
+the AdministracionTIModule context.
+En línea: 1 Carácter: 1
++ node dist/main.js 2>&1 | Out-File -FilePath error_usuario.txt -Encodi ...
++ ~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([31m[Nest] 643...Module context.:String) 
+    [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+Potential solutions:
+- Is AdministracionTIModule a valid NestJS module?
+- If "UsuariosService" is a provider, is it part of the current AdministracionTIModule?
+- If "UsuariosService" is exported from a separate @Module, is that module imported 
+within AdministracionTIModule?
+  @Module({
+    imports: [ /* the Module containing "UsuariosService" */ ]
+  })
+[39m
+Error: Nest can't resolve dependencies of the AdministracionTIService 
+(UsuarioRepository, RolRepository, Autorizacion2FARepository, ?). Please make sure 
+that the argument "UsuariosService" at index [3] is available in the 
+AdministracionTIModule context.
+
+Potential solutions:
+- Is AdministracionTIModule a valid NestJS module?
+- If "UsuariosService" is a provider, is it part of the current AdministracionTIModule?
+- If "UsuariosService" is exported from a separate @Module, is that module imported 
+within AdministracionTIModule?
+  @Module({
+    imports: [ /* the Module containing "UsuariosService" */ ]
+  })
+
+    at Injector.lookupComponentInParentModules (C:\Users\pc\SISTEMA 
+FACTURADOR\backend-nestjs\node_modules\@nestjs\core\injector\injector.js:262:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async Injector.resolveComponentInstance (C:\Users\pc\SISTEMA 
+FACTURADOR\backend-nestjs\node_modules\@nestjs\core\injector\injector.js:215:33)
+    at async resolveParam (C:\Users\pc\SISTEMA 
+FACTURADOR\backend-nestjs\node_modules\@nestjs\core\injector\injector.js:129:38)
+    at async Promise.all (index 3)
+    at async Injector.resolveConstructorParams (C:\Users\pc\SISTEMA 
+FACTURADOR\backend-nestjs\node_modules\@nestjs\core\injector\injector.js:144:27)
+    at async Injector.loadInstance (C:\Users\pc\SISTEMA 
+FACTURADOR\backend-nestjs\node_modules\@nestjs\core\injector\injector.js:70:13)
+    at async Injector.loadProvider (C:\Users\pc\SISTEMA 
+FACTURADOR\backend-nestjs\node_modules\@nestjs\core\injector\injector.js:98:9)
+    at async C:\Users\pc\SISTEMA 
+FACTURADOR\backend-nestjs\node_modules\@nestjs\core\injector\instance-loader.js:56:13
+    at async Promise.all (index 3)

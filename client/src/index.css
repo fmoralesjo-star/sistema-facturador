@@ -1,0 +1,242 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  /* Tamaño de fuente base para desktop/standalone - forzar 16px */
+  font-size: 16px !important;
+  /* Asegurar escalado correcto en aplicaciones standalone */
+  -webkit-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Permitir scroll en móvil */
+@media (max-width: 768px) {
+
+  html,
+  body {
+    overflow: auto !important;
+    height: auto;
+    min-height: 100vh;
+  }
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  /* Tamaño de fuente base para desktop/standalone - forzar 16px */
+  font-size: 16px !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f5f5f5;
+  /* Mejorar compatibilidad con diferentes dispositivos */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  /* Prevenir zoom en iOS al hacer doble tap y mantener tamaño correcto */
+  -webkit-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Permitir scroll en móvil */
+@media (max-width: 768px) {
+  #root {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+}
+
+/* Mejoras generales para móvil */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+
+  body {
+    font-size: 14px;
+  }
+
+  /* Mejorar scroll en móvil */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Asegurar que los inputs no hagan zoom en iOS */
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="date"],
+  input[type="password"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* Tablas scrollables horizontalmente */
+  .table,
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+
+  .table table,
+  table {
+    min-width: 600px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 13px;
+  }
+
+  body {
+    font-size: 13px;
+  }
+}
+
+/* Estilos específicos para modo standalone (PWA instalada) */
+@media (display-mode: standalone) {
+  html {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+
+  body {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+
+  /* Asegurar que los elementos rem usen el tamaño base correcto */
+  * {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+}
+
+/* Asegurar tamaño correcto en modo fullscreen también */
+@media (display-mode: fullscreen) {
+  html {
+    font-size: 16px !important;
+  }
+
+  body {
+    font-size: 16px !important;
+  }
+}
+
+/* Detectar modo standalone usando clase (fallback para navegadores sin soporte para media query) */
+html.standalone {
+  font-size: 16px !important;
+}
+
+html.standalone body {
+  font-size: 16px !important;
+}
+
+/* Corrección específica para Chrome - prevenir escalado incorrecto */
+@supports (-webkit-appearance: none) {
+  html {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100% !important;
+  }
+
+  body {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100% !important;
+  }
+}
+
+/* Regla específica para clase Chrome */
+html.chrome-browser {
+  font-size: 16px !important;
+  -webkit-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+}
+
+html.chrome-browser body {
+  font-size: 16px !important;
+  -webkit-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+}
+
+/* Forzar tamaño de fuente consistente en todas las pantallas desktop */
+@media screen and (min-width: 769px) {
+  html {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+
+  body {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+}
+
+/* OCULTAR COMPLETAMENTE el footer-banner con el texto del régimen - REGLA ULTRA AGRESIVA */
+/* OCULTAR COMPLETAMENTE el footer-banner con el texto del régimen - REGLA ULTRA AGRESIVA CORREGIDA */
+/* Selectores VALIDOS */
+.footer-banner,
+[class*="footer-banner"],
+[class*="footer"][class*="banner"],
+[class*="rimpe-banner"],
+[class*="rimpe"],
+[id*="rimpe"],
+div.footer-banner,
+footer.footer-banner,
+/* Cuidado con estos selectores genéricos, pero si se requiere agresividad extrema: */
+div[class*="footer-banner"],
+footer[class*="footer-banner"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+  width: 0 !important;
+  max-height: 0 !important;
+  max-width: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  color: transparent !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  z-index: -9999 !important;
+  clip-path: inset(100%) !important;
+  transform: scale(0) !important;
+}

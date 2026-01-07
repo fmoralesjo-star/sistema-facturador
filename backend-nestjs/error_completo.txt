@@ -1,0 +1,85 @@
+﻿[dotenv@17.2.3] injecting env (9) from .env -- tip: ÔÜÖ´©Å  write to custom object with { processEnv: myObject }
+­ƒùä´©Å DatabaseModule: PostgreSQL activado - TypeORM habilitado
+­ƒùä´©Å AppModule: PostgreSQL activado - DatabaseModule habilitado
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDatabaseModule dependencies initialized[39m[38;5;3m +17ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[33m[Nest] 11732  - [39m31/12/2025, 9:02:55 [33m   WARN[39m [38;5;3m[FirmaElectronicaService] [39m[33mVAULT_KEY no configurada. Usando clave temporal (NO SEGURO EN PRODUCCI├ôN)[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFirebaseModule dependencies initialized[39m[38;5;3m +27ms[39m
+[90m[4mquery:[24m[39m [94mSELECT[0m [95mversion[0m[37m([0m[37m)[0m
+[90m[4mquery:[24m[39m [94mSELECT[0m [37m*[0m [94mFROM[0m [95mcurrent_schema[0m[37m([0m[37m)[0m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +61ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBancosModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProductosModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mClientesModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 11732  - [39m31/12/2025, 9:02:55 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +0ms[39m
+node : [31m[Nest] 11732  - [39m31/12/2025, 9:02:55 [31m  ERROR[39m 
+[38;5;3m[ExceptionHandler] [39m[31mNest can't resolve dependencies of the 
+RestrictFinancialInfoGuard (?, UsuarioRepository). Please make sure that the argument 
+AdministracionTIService at index [0] is available in the ContabilidadModule context.
+En línea: 1 Carácter: 1
++ node dist/main.js 2>&1 | Out-File -FilePath error_completo.txt -Encod ...
++ ~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([31m[Nest] 117...Module context.:String) 
+    [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+Potential solutions:
+- Is ContabilidadModule a valid NestJS module?
+- If AdministracionTIService is a provider, is it part of the current 
+ContabilidadModule?
+- If AdministracionTIService is exported from a separate @Module, is that module 
+imported within ContabilidadModule?
+  @Module({
+    imports: [ /* the Module containing AdministracionTIService */ ]
+  })
+[39m
+Error: Nest can't resolve dependencies of the RestrictFinancialInfoGuard (?, 
+UsuarioRepository). Please make sure that the argument AdministracionTIService at 
+index [0] is available in the ContabilidadModule context.
+
+Potential solutions:
+- Is ContabilidadModule a valid NestJS module?
+- If AdministracionTIService is a provider, is it part of the current 
+ContabilidadModule?
+- If AdministracionTIService is exported from a separate @Module, is that module 
+imported within ContabilidadModule?
+  @Module({
+    imports: [ /* the Module containing AdministracionTIService */ ]
+  })
+
+    at Injector.lookupComponentInParentModules (C:\Users\pc\SISTEMA 
+FACTURADOR\backend-nestjs\node_modules\@nestjs\core\injector\injector.js:262:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async Injector.resolveComponentInstance (C:\Users\pc\SISTEMA 
+FACTURADOR\backend-nestjs\node_modules\@nestjs\core\injector\injector.js:215:33)
+    at async resolveParam (C:\Users\pc\SISTEMA 
+FACTURADOR\backend-nestjs\node_modules\@nestjs\core\injector\injector.js:129:38)
+    at async Promise.all (index 0)
+    at async Injector.resolveConstructorParams (C:\Users\pc\SISTEMA 
+FACTURADOR\backend-nestjs\node_modules\@nestjs\core\injector\injector.js:144:27)
+    at async Injector.loadInstance (C:\Users\pc\SISTEMA 
+FACTURADOR\backend-nestjs\node_modules\@nestjs\core\injector\injector.js:70:13)
+    at async Injector.loadInjectable (C:\Users\pc\SISTEMA 
+FACTURADOR\backend-nestjs\node_modules\@nestjs\core\injector\injector.js:94:9)
+    at async C:\Users\pc\SISTEMA 
+FACTURADOR\backend-nestjs\node_modules\@nestjs\core\injector\instance-loader.js:80:13
+    at async Promise.all (index 0)

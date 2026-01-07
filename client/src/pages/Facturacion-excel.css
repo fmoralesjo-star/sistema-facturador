@@ -1,0 +1,248 @@
+/* Estilos para formulario tipo Excel */
+.excel-mode {
+  width: 100%;
+}
+
+.excel-container {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.excel-header {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.excel-sheet {
+  overflow-x: auto;
+}
+
+.excel-grid {
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;
+}
+
+.excel-row {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  min-height: 40px;
+}
+
+.excel-row:hover {
+  background: #f9fafb;
+}
+
+.excel-section-header .excel-cell {
+  background: #e0ffe0;
+  font-weight: 600;
+  color: #374151;
+  font-size: 13px;
+}
+
+.excel-cell {
+  padding: 8px 10px;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  font-size: 13px;
+}
+
+.excel-cell:last-child {
+  border-right: none;
+}
+
+.excel-cell.editable {
+  padding: 0;
+  position: relative;
+}
+
+.excel-cell.readonly {
+  background: #f9fafb;
+  color: #374151;
+}
+
+.excel-cell.header-cell {
+  background: #e0ffe0;
+  font-weight: 600;
+  color: #374151;
+}
+
+.excel-cell.action-cell {
+  justify-content: center;
+  padding: 4px;
+}
+
+.input-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.excel-input,
+.excel-select {
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+}
+
+.excel-input:focus,
+.excel-select:focus {
+  background: #eff6ff;
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+.excel-product-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+}
+
+.excel-product-row {
+  background: white;
+}
+
+.excel-product-row:hover {
+  background: #f9fafb;
+}
+
+.excel-delete-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.excel-delete-btn:hover {
+  background: #dc2626;
+}
+
+.excel-section-totals .excel-cell {
+  background: #f3f4f6;
+  font-weight: 600;
+}
+
+.excel-total-row .excel-cell {
+  background: #dbeafe;
+  font-weight: 700;
+  color: #1e40af;
+  font-size: 15px;
+}
+
+.excel-autocomplete {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.excel-autocomplete-item {
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.excel-autocomplete-item:hover {
+  background: #f3f4f6;
+}
+
+.excel-autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.excel-actions {
+  padding: 16px 20px;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.excel-btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.excel-btn-primary {
+  background: #10b981;
+  color: white;
+}
+
+.excel-btn-primary:hover:not(:disabled) {
+  background: #059669;
+}
+
+.excel-btn-primary:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.excel-btn-secondary {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.excel-btn-secondary:hover {
+  background: #d1d5db;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

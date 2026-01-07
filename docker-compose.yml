@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # Base de Datos PostgreSQL (Única Persistencia)
+  db:
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:-facturador}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-password}
+      POSTGRES_DB: ${DATABASE_NAME:-facturador_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER:-facturador} -d ${DATABASE_NAME:-facturador_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Aplicación Unificada (Backend + Frontend + Worker)
+  app:
+    build:
+      context: . 
+      dockerfile: backend-nestjs/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3000:3000" # Puerto Único para todo
+    environment:
+      # Base de Datos
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_USER: ${DATABASE_USER:-facturador}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-password}
+      DATABASE_NAME: ${DATABASE_NAME:-facturador_db}
+      
+      # App Config
+      PORT: 3000
+      NODE_ENV: production
+      SRI_AMBIENTE: pruebas
+      
+      # Storage (Ya configurado para usar Postgres en el código si no hay Vars de Cloud)
+      # USE_FIRESTORE: false (default)
+      
+    volumes:
+      # Mounts opcionales para logs o certificados si se quieren inyectar
+      - ./backend-nestjs/certs:/app/backend/certs
+      - ./backend-nestjs/logs:/app/backend/logs
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge

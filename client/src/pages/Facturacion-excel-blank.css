@@ -1,0 +1,219 @@
+/* Hoja de Excel en blanco para diseñar */
+.excel-sheet-container {
+  width: 100%;
+  height: calc(100vh - 100px);
+  background: #ffffff;
+  padding: 10px;
+  overflow: auto;
+}
+
+.excel-form {
+  width: 100%;
+  height: 100%;
+}
+
+.excel-worksheet {
+  width: 100%;
+  min-height: 100%;
+  background: #ffffff;
+  border: 1px solid #d0d7e5;
+  display: grid;
+  grid-template-columns: 40px repeat(26, minmax(80px, 1fr));
+  grid-template-rows: 20px repeat(50, 25px);
+  gap: 0;
+  position: relative;
+}
+
+/* Estilos para celdas de Excel */
+.excel-cell {
+  border: 1px solid #d0d7e5;
+  background: #ffffff;
+  padding: 2px 4px;
+  font-size: 11px;
+  font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  min-height: 0;
+  overflow: hidden;
+  cursor: cell;
+}
+
+/* Estilos para celdas de encabezado */
+.excel-cell-header {
+  background-color: #4472c4 !important;
+  color: #ffffff !important;
+  font-weight: bold;
+  text-align: center;
+}
+
+.excel-cell-header input {
+  background: transparent !important;
+  color: #ffffff !important;
+  font-weight: bold;
+  text-align: center;
+  cursor: default;
+}
+
+/* Estilos para celdas de solo lectura (calculadas) */
+.excel-cell-readonly {
+  background-color: #f2f2f2 !important;
+  cursor: not-allowed;
+}
+
+.excel-cell-readonly input {
+  background: transparent !important;
+  cursor: not-allowed;
+}
+
+.excel-cell:focus {
+  outline: 2px solid #0066cc;
+  outline-offset: -2px;
+  z-index: 10;
+}
+
+.excel-cell input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  font-size: 11px;
+  font-family: inherit;
+  padding: 0;
+  margin: 0;
+  outline: none;
+}
+
+/* Columnas con letras (A, B, C...) */
+.excel-col-header {
+  background: #f2f2f2;
+  border: 1px solid #d0d7e5;
+  text-align: center;
+  font-weight: 600;
+  font-size: 10px;
+  color: #666;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  height: 20px;
+  user-select: none;
+}
+
+/* Filas con números (1, 2, 3...) */
+.excel-row-header {
+  background: #f2f2f2;
+  border: 1px solid #d0d7e5;
+  text-align: center;
+  font-weight: 600;
+  font-size: 10px;
+  color: #666;
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  width: 40px;
+  min-width: 40px;
+  user-select: none;
+}
+
+/* Celda de esquina (intersección fila/columna) */
+.excel-corner {
+  background: #e6e6e6;
+  border: 1px solid #d0d7e5;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 6;
+  width: 40px;
+  height: 20px;
+}
+
+/* Redimensionadores */
+.excel-resizer {
+  position: absolute;
+  background: transparent;
+  z-index: 10;
+  cursor: col-resize;
+}
+
+.excel-col-resizer {
+  right: -3px;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+}
+
+.excel-col-resizer:hover {
+  background: rgba(0, 102, 204, 0.3);
+}
+
+.excel-row-resizer {
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 6px;
+  cursor: row-resize;
+}
+
+.excel-row-resizer:hover {
+  background: rgba(0, 102, 204, 0.3);
+}
+
+.excel-col-header:hover .excel-col-resizer,
+.excel-row-header:hover .excel-row-resizer {
+  background: rgba(0, 102, 204, 0.2);
+}
+
+/* Scrollbars estilo Excel */
+.excel-sheet-container::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+.excel-sheet-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.excel-sheet-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border: 1px solid #f1f1f1;
+}
+
+.excel-sheet-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Estilos para sección contable */
+.excel-cell-separator {
+  background: linear-gradient(90deg, #4472c4 0%, #4472c4 100%) !important;
+  color: #ffffff !important;
+  font-weight: bold !important;
+  text-align: center !important;
+  border: 2px solid #2d5aa0 !important;
+}
+
+.excel-cell-separator input {
+  background: transparent !important;
+  color: #ffffff !important;
+  font-weight: bold !important;
+  text-align: center !important;
+  cursor: default !important;
+}
+
+/* Estilos para campos contables editables */
+.excel-cell-contable {
+  background-color: #fff9e6 !important;
+  border-left: 3px solid #f59e0b !important;
+}
+
+.excel-cell-contable:focus {
+  background-color: #fffbf0 !important;
+  outline: 2px solid #f59e0b !important;
+}
+
+/* Estilos para labels de contabilidad */
+.excel-cell-label-contable {
+  background-color: #e8f4f8 !important;
+  font-weight: 600 !important;
+  color: #1e40af !important;
+}
+

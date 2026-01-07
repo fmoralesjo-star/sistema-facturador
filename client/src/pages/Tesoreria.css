@@ -1,0 +1,85 @@
+.tesoreria {
+    padding: 2rem;
+    background-color: #f8fafc;
+    min-height: 100vh;
+}
+
+.tesoreria-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.tesoreria-tabs {
+    display: flex;
+    gap: 10px;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 20px;
+}
+
+.tesoreria-tab {
+    padding: 10px 20px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-weight: 600;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.tesoreria-tab.active {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.tesoreria-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    margin-bottom: 20px;
+}
+
+.cheque-status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.cheque-status.emitido {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.cheque-status.cobrado {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.cheque-status.anulado {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.cheque-status.protestado {
+    background: #ffedd5;
+    color: #9a3412;
+}
+
+.conciliacion-uploader {
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.conciliacion-uploader:hover {
+    border-color: #3b82f6;
+}

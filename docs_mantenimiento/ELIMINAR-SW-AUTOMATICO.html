@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliminar Service Worker - Automático</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: white;
+            color: #333;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-top: 0;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+            width: 100%;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #bee5eb;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗑️ Eliminar Service Worker</h1>
+        
+        <div class="info">
+            <strong>¿Qué hace esto?</strong>
+            <p>Elimina todos los Service Workers registrados para tu aplicación. Esto hará que el navegador deje de usar versiones cacheadas y cargue siempre la versión más reciente.</p>
+        </div>
+
+        <button onclick="eliminarTodo()">🚀 ELIMINAR TODO (Recomendado)</button>
+        <button onclick="soloServiceWorkers()">🗑️ Solo Service Workers</button>
+        <button onclick="soloCache()">💾 Solo Cache</button>
+
+        <div id="resultado"></div>
+
+        <div class="step">
+            <strong>📋 Pasos después de eliminar:</strong>
+            <ol>
+                <li>Cierra esta pestaña</li>
+                <li>Cierra el navegador completamente</li>
+                <li>Abre el navegador en <strong>modo incógnito</strong> (Ctrl + Shift + N)</li>
+                <li>Ve a: <code>http://localhost:5173/facturacion</code></li>
+                <li>Los cambios deberían verse ahora</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        async function eliminarTodo() {
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = '<div class="info">Eliminando Service Workers y cache...</div>';
+
+            let mensajes = [];
+            let todoExitoso = true;
+
+            try {
+                // 1. Desregistrar Service Workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    if (registrations.length > 0) {
+                        for (let registration of registrations) {
+                            const unregistered = await registration.unregister();
+                            if (unregistered) {
+                                mensajes.push(`✅ Service Worker desregistrado: ${registration.scope}`);
+                            } else {
+                                mensajes.push(`⚠️ No se pudo desregistrar: ${registration.scope}`);
+                                todoExitoso = false;
+                            }
+                        }
+                    } else {
+                        mensajes.push('ℹ️ No hay Service Workers registrados');
+                    }
+                } else {
+                    mensajes.push('ℹ️ Este navegador no soporta Service Workers');
+                }
+
+                // 2. Limpiar cache
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    if (cacheNames.length > 0) {
+                        for (let cacheName of cacheNames) {
+                            await caches.delete(cacheName);
+                            mensajes.push(`✅ Cache eliminado: ${cacheName}`);
+                        }
+                    } else {
+                        mensajes.push('ℹ️ No hay caches para eliminar');
+                    }
+                } else {
+                    mensajes.push('ℹ️ Este navegador no soporta Cache API');
+                }
+
+                // 3. Limpiar localStorage y sessionStorage (opcional pero recomendado)
+                try {
+                    const localStorageKeys = Object.keys(localStorage);
+                    if (localStorageKeys.length > 0) {
+                        // Solo limpiar keys relacionadas con cache/SW
+                        localStorageKeys.forEach(key => {
+                            if (key.includes('cache') || key.includes('sw') || key.includes('service')) {
+                                localStorage.removeItem(key);
+                                mensajes.push(`✅ localStorage limpiado: ${key}`);
+                            }
+                        });
+                    }
+                } catch (e) {
+                    mensajes.push(`⚠️ Error al limpiar localStorage: ${e.message}`);
+                }
+
+                // Mostrar resultados
+                const claseResultado = todoExitoso ? 'success' : 'error';
+                resultado.innerHTML = `
+                    <div class="${claseResultado}">
+                        <strong>${todoExitoso ? '✅ ¡Éxito!' : '⚠️ Completado con advertencias'}</strong>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            ${mensajes.map(msg => `<li>${msg}</li>`).join('')}
+                        </ul>
+                        <p><strong>¡Importante!</strong> Cierra el navegador completamente y ábrelo en modo incógnito para ver los cambios.</p>
+                    </div>
+                `;
+
+            } catch (error) {
+                resultado.innerHTML = `
+                    <div class="error">
+                        <strong>❌ Error:</strong> ${error.message}
+                    </div>
+                `;
+                console.error('Error:', error);
+            }
+        }
+
+        async function soloServiceWorkers() {
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = '<div class="info">Desregistrando Service Workers...</div>';
+
+            try {
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    if (registrations.length > 0) {
+                        for (let registration of registrations) {
+                            await registration.unregister();
+                        }
+                        resultado.innerHTML = `<div class="success">✅ ${registrations.length} Service Worker(s) desregistrado(s)</div>`;
+                    } else {
+                        resultado.innerHTML = '<div class="info">ℹ️ No hay Service Workers registrados</div>';
+                    }
+                } else {
+                    resultado.innerHTML = '<div class="info">ℹ️ Este navegador no soporta Service Workers</div>';
+                }
+            } catch (error) {
+                resultado.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function soloCache() {
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = '<div class="info">Limpiando cache...</div>';
+
+            try {
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    if (cacheNames.length > 0) {
+                        for (let cacheName of cacheNames) {
+                            await caches.delete(cacheName);
+                        }
+                        resultado.innerHTML = `<div class="success">✅ ${cacheNames.length} cache(s) eliminado(s)</div>`;
+                    } else {
+                        resultado.innerHTML = '<div class="info">ℹ️ No hay caches para eliminar</div>';
+                    }
+                } else {
+                    resultado.innerHTML = '<div class="info">ℹ️ Este navegador no soporta Cache API</div>';
+                }
+            } catch (error) {
+                resultado.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        // Mostrar información al cargar
+        window.addEventListener('load', async () => {
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                if (registrations.length > 0) {
+                    console.log('Service Workers encontrados:', registrations.length);
+                    registrations.forEach(reg => {
+                        console.log('- Scope:', reg.scope);
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+

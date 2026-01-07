@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forzar Actualización</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #667eea;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Forzar Actualización del Sistema</h1>
+        <div class="info">
+            <p>Este script actualizará el Service Worker y recargará la aplicación con los cambios más recientes.</p>
+        </div>
+        
+        <button onclick="forzarActualizacion()">Actualizar Ahora</button>
+        <button onclick="limpiarCache()">Limpiar Cache y Actualizar</button>
+        
+        <div id="resultado" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        async function forzarActualizacion() {
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = '<p>Actualizando...</p>';
+            
+            try {
+                if ('serviceWorker' in navigator) {
+                    // Obtener todos los registros de Service Workers
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    
+                    // Desregistrar todos los Service Workers
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        console.log('Service Worker desregistrado');
+                    }
+                    
+                    // Limpiar cache
+                    if ('caches' in window) {
+                        const cacheNames = await caches.keys();
+                        for (let cacheName of cacheNames) {
+                            await caches.delete(cacheName);
+                            console.log('Cache eliminado:', cacheName);
+                        }
+                    }
+                    
+                    resultado.innerHTML = '<p style="color: green;">✅ Cache limpiado. Redirigiendo...</p>';
+                    
+                    // Esperar un momento y luego redirigir
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1000);
+                } else {
+                    resultado.innerHTML = '<p style="color: orange;">Service Worker no disponible. Recargando página...</p>';
+                    window.location.reload(true);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultado.innerHTML = '<p style="color: red;">Error: ' + error.message + '</p>';
+            }
+        }
+        
+        async function limpiarCache() {
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = '<p>Limpiando cache...</p>';
+            
+            try {
+                // Limpiar todos los caches
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    for (let cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                        console.log('Cache eliminado:', cacheName);
+                    }
+                }
+                
+                // Desregistrar Service Workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                    }
+                }
+                
+                resultado.innerHTML = '<p style="color: green;">✅ Cache limpiado completamente. Redirigiendo...</p>';
+                
+                setTimeout(() => {
+                    window.location.href = '/?t=' + Date.now();
+                }, 1000);
+            } catch (error) {
+                console.error('Error:', error);
+                resultado.innerHTML = '<p style="color: red;">Error: ' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

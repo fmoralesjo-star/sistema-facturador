@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forzar Cloud Run - Sistema Facturador</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #667eea;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        .success {
+            color: #10b981;
+            font-weight: bold;
+        }
+        .error {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        pre {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Forzar Conexión a Cloud Run</h1>
+        <p>Esta herramienta ayuda a limpiar el cache y forzar que el frontend use Cloud Run en lugar de localhost.</p>
+        
+        <h2>Paso 1: Limpiar Service Workers</h2>
+        <button onclick="limpiarServiceWorkers()">Limpiar Service Workers</button>
+        <div id="sw-result"></div>
+
+        <h2>Paso 2: Limpiar Cache</h2>
+        <button onclick="limpiarCache()">Limpiar Cache</button>
+        <div id="cache-result"></div>
+
+        <h2>Paso 3: Verificar URL de API</h2>
+        <button onclick="verificarURL()">Verificar URL</button>
+        <div id="url-result"></div>
+
+        <h2>Paso 4: Recargar Aplicación</h2>
+        <button onclick="recargarApp()">Recargar Aplicación</button>
+    </div>
+
+    <script>
+        async function limpiarServiceWorkers() {
+            const resultDiv = document.getElementById('sw-result');
+            resultDiv.innerHTML = '<p>Limpiando Service Workers...</p>';
+            
+            try {
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                    }
+                    resultDiv.innerHTML = `<p class="success">✅ ${registrations.length} Service Worker(s) eliminado(s)</p>`;
+                } else {
+                    resultDiv.innerHTML = '<p>Service Workers no están disponibles en este navegador</p>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+
+        async function limpiarCache() {
+            const resultDiv = document.getElementById('cache-result');
+            resultDiv.innerHTML = '<p>Limpiando cache...</p>';
+            
+            try {
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    for (let cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                    }
+                    resultDiv.innerHTML = `<p class="success">✅ ${cacheNames.length} cache(s) eliminado(s)</p>`;
+                } else {
+                    resultDiv.innerHTML = '<p>Cache API no está disponible en este navegador</p>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+
+        function verificarURL() {
+            const resultDiv = document.getElementById('url-result');
+            const hostname = window.location.hostname;
+            const origin = window.location.origin;
+            const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+            
+            const cloudRunURL = 'https://sistema-facturador-backend-384727658140.us-central1.run.app/api';
+            
+            let html = '<pre>';
+            html += `Hostname: ${hostname}\n`;
+            html += `Origin: ${origin}\n`;
+            html += `Es localhost: ${isLocalhost}\n`;
+            html += `\nURL esperada en producción:\n${cloudRunURL}\n`;
+            html += `\nSi NO es localhost, debería usar Cloud Run automáticamente.`;
+            html += '</pre>';
+            
+            if (!isLocalhost) {
+                html += '<p class="success">✅ Estás en producción, debería usar Cloud Run</p>';
+            } else {
+                html += '<p class="error">⚠️ Estás en localhost, usará localhost:3001</p>';
+            }
+            
+            resultDiv.innerHTML = html;
+        }
+
+        function recargarApp() {
+            // Limpiar todo y recargar
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    registrations.forEach(reg => reg.unregister());
+                    if ('caches' in window) {
+                        caches.keys().then(names => {
+                            names.forEach(name => caches.delete(name));
+                            window.location.href = '/';
+                        });
+                    } else {
+                        window.location.href = '/';
+                    }
+                });
+            } else {
+                window.location.href = '/';
+            }
+        }
+    </script>
+</body>
+</html>
+
+

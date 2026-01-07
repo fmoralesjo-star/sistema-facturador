@@ -1,0 +1,447 @@
+.balance-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.balance-card {
+  padding: 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.balance-card h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.balance-amount {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.balance-card.ingresos {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.balance-card.egresos {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.balance-card.utilidad {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.balance-card.activos {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.balance-card.pasivos {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.balance-card.patrimonio {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+}
+
+.filtros {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.positivo {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.negativo {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.badge-venta {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.badge-costo {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.badge-activo {
+  background: #e9d5ff;
+  color: #6b21a8;
+}
+
+.badge-pasivo {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
+@media (max-width: 768px) {
+  .balance-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cuenta-row:hover {
+  background-color: #f1f5f9 !important;
+}
+
+/* Workspace Unificado */
+.contabilidad-workspace {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 20px;
+  height: calc(100vh - 120px);
+  margin-top: 20px;
+}
+
+.sidebar-contable {
+  background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  padding: 20px 10px;
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-item {
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  border: none;
+  background: transparent;
+  color: #495057;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-item:hover {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  transform: translateX(4px);
+}
+
+.sidebar-item.active {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: #dee2e6;
+  margin: 10px 0;
+}
+
+.main-workspace {
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Quick Stats Siempre Visibles */
+.quick-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stat-card-mini {
+  padding: 15px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-left: 4px solid;
+  transition: all 0.2s;
+}
+
+.stat-card-mini:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card-mini.ingresos {
+  border-left-color: #10b981;
+}
+
+.stat-card-mini.gastos {
+  border-left-color: #ef4444;
+}
+
+.stat-card-mini.utilidad {
+  border-left-color: #3b82f6;
+}
+
+.stat-card-mini.activo {
+  border-left-color: #8b5cf6;
+}
+
+.stat-card-mini h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.stat-card-mini .amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1f2937;
+}
+
+/* Secciones Expandibles */
+.seccion-expandible {
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.seccion-expandible.collapsed {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.seccion-header {
+  padding: 16px 20px;
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.seccion-header:hover {
+  background: linear-gradient(90deg, #059669 0%, #047857 100%);
+}
+
+.seccion-header:active {
+  transform: scale(0.99);
+}
+
+.seccion-toggle {
+  font-size: 1.2rem;
+  font-weight: bold;
+  opacity: 0.9;
+  transition: all 0.2s;
+}
+
+.seccion-content {
+  padding: 20px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    padding: 0 20px;
+  }
+
+  to {
+    opacity: 1;
+    max-height: 2000px;
+    padding: 20px;
+  }
+}
+
+/* Quick Actions Flotantes */
+.quick-actions {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 100;
+}
+
+.quick-action-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-action-btn:hover {
+  transform: scale(1.1) rotate(10deg);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+}
+
+.quick-action-btn:active {
+  transform: scale(0.95);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .contabilidad-workspace {
+    grid-template-columns: 180px 1fr;
+  }
+
+  .sidebar-item {
+    font-size: 0.85rem;
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contabilidad-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-contable {
+    position: relative;
+    top: 0;
+    margin-bottom: 20px;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+
+  .sidebar-item {
+    white-space: nowrap;
+  }
+
+  .quick-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-actions {
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .quick-action-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+}
+/* Contenedor de reportes vertical */
+.reportes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 100%;
+}
+
+/* Estilos para cards de reportes invididuales */
+.reporte-card {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Header de cada reporte (título y filtros) */
+.reporte-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap; 
+  gap: 15px;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 15px;
+}
+
+.reporte-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #1f2937;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reporte-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Inputs y Selects responsive */
+.reporte-controls input[type='date'],
+.reporte-controls select {
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.reporte-controls label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+@media (max-width: 768px) {
+  .reporte-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .reporte-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

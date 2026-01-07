@@ -1,0 +1,322 @@
+.reportes {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.reportes-header {
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 20px;
+}
+
+.reportes-header h1 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.reportes-tabs {
+  display: flex;
+  gap: 10px;
+}
+
+.reportes-tabs button {
+  padding: 10px 20px;
+  border: 2px solid #667eea;
+  background: white;
+  color: #667eea;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.reportes-tabs button:hover {
+  background: #f0f0f0;
+}
+
+.reportes-tabs button.active {
+  background: #667eea;
+  color: white;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #7f8c8d;
+}
+
+.reporte-section {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filtros {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 5px;
+}
+
+.filtros label {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.filtros input,
+.filtros select {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background-color: #ffffff;
+}
+
+.filtros select:focus {
+  outline: none;
+  border: 2px solid #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+  font-size: 1em;
+}
+
+.filtros select {
+  min-width: 300px;
+}
+
+.btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: #667eea;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #5568d3;
+}
+
+/* Balance General */
+.balance-general {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.seccion-contable {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.seccion-contable.activos {
+  border-left: 4px solid #8b5cf6;
+}
+
+.seccion-contable.pasivos {
+  border-left: 4px solid #f59e0b;
+}
+
+.seccion-contable.patrimonio {
+  border-left: 4px solid #06b6d4;
+}
+
+.seccion-contable.ingresos {
+  border-left: 4px solid #10b981;
+}
+
+.seccion-contable.costos {
+  border-left: 4px solid #ef4444;
+}
+
+.seccion-contable.gastos {
+  border-left: 4px solid #f59e0b;
+}
+
+.seccion-contable h3 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ddd;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.table th {
+  background: #e9ecef;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #ddd;
+}
+
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.total-row {
+  background: #e9ecef !important;
+  font-weight: 600;
+  border-top: 2px solid #ddd;
+}
+
+.total-row td {
+  padding: 15px 12px;
+}
+
+.ecuacion-contable {
+  grid-column: 1 / -1;
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.ecuacion-contable.balanceado {
+  background: #d1fae5;
+  border: 2px solid #10b981;
+}
+
+.ecuacion-contable.desbalanceado {
+  background: #fee2e2;
+  border: 2px solid #ef4444;
+}
+
+.ecuacion-contable .ok {
+  color: #059669;
+  font-weight: 600;
+  font-size: 1.1em;
+}
+
+.ecuacion-contable .error {
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 1.1em;
+}
+
+.ecuacion-contable p {
+  margin: 10px 0;
+  font-size: 1.1em;
+}
+
+/* Estado P&G */
+.perdidas-ganancias {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.periodo {
+  text-align: center;
+  font-size: 1.1em;
+  color: #7f8c8d;
+  margin-bottom: 20px;
+}
+
+.resumen-pl {
+  margin-top: 20px;
+  border-top: 3px solid #2c3e50;
+  padding-top: 20px;
+}
+
+.resumen-pl .table {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.resumen-pl .table td {
+  padding: 15px;
+  font-size: 1.1em;
+}
+
+.positivo {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.negativo {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+/* Libro Mayor */
+.libro-mayor {
+  margin-top: 20px;
+}
+
+.info-cuenta {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.info-cuenta p {
+  margin: 5px 0;
+  color: #2c3e50;
+}
+
+.libro-mayor .table {
+  font-size: 0.95em;
+}
+
+.saldo-inicial {
+  background: #e9ecef;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .balance-general {
+    grid-template-columns: 1fr;
+  }
+
+  .filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filtros input,
+  .filtros select {
+    width: 100%;
+  }
+
+  .info-cuenta {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+
+
+
+

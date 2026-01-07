@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crear Iconos PWA</title>
+</head>
+<body>
+    <h1>Generador de Iconos PWA</h1>
+    <canvas id="canvas192" width="192" height="192" style="border: 1px solid #ccc; margin: 10px;"></canvas>
+    <canvas id="canvas512" width="512" height="512" style="border: 1px solid #ccc; margin: 10px;"></canvas>
+    <br>
+    <button onclick="descargarIconos()">Descargar Iconos</button>
+    
+    <script>
+        function crearIcono(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            
+            // Fondo con gradiente
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Texto/Icono
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size * 0.4}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('📊', size / 2, size / 2);
+        }
+        
+        function descargarIconos() {
+            // Crear icono 192x192
+            crearIcono(document.getElementById('canvas192'), 192);
+            const link192 = document.createElement('a');
+            link192.download = 'icon-192.png';
+            link192.href = document.getElementById('canvas192').toDataURL('image/png');
+            link192.click();
+            
+            // Crear icono 512x512
+            crearIcono(document.getElementById('canvas512'), 512);
+            const link512 = document.createElement('a');
+            link512.download = 'icon-512.png';
+            link512.href = document.getElementById('canvas512').toDataURL('image/png');
+            link512.click();
+        }
+        
+        // Crear iconos al cargar
+        window.onload = function() {
+            crearIcono(document.getElementById('canvas192'), 192);
+            crearIcono(document.getElementById('canvas512'), 512);
+        };
+    </script>
+</body>
+</html>
+
+

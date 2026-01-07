@@ -1,0 +1,131 @@
+.notificaciones-container {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 400px;
+  pointer-events: none;
+}
+
+.notificacion {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  pointer-events: all;
+  animation: slideIn 0.3s ease-out;
+  border-left: 4px solid;
+  transition: all 0.2s;
+}
+
+.notificacion:hover {
+  transform: translateX(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.notificacion-success {
+  border-left-color: #10b981;
+}
+
+.notificacion-warning {
+  border-left-color: #f59e0b;
+}
+
+.notificacion-error {
+  border-left-color: #ef4444;
+}
+
+.notificacion-info {
+  border-left-color: #3b82f6;
+}
+
+.notificacion-icono {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.notificacion-contenido {
+  flex: 1;
+  min-width: 0;
+}
+
+.notificacion-titulo {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.notificacion-mensaje {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.notificacion-modulo {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.notificacion-cerrar {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.notificacion-cerrar:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #64748b;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .notificaciones-container {
+    right: 10px;
+    top: 60px;
+    max-width: calc(100% - 20px);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+

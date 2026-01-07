@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Limpiar Cache PWA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        .info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Limpiar Cache de la PWA</h1>
+    <div class="info">
+        <p>Si la aplicación se queda en blanco, puede ser por un cache corrupto.</p>
+        <p>Usa estos botones para limpiar el cache y reiniciar la aplicación.</p>
+    </div>
+    
+    <button onclick="clearCache()">Limpiar Cache</button>
+    <button onclick="unregisterSW()">Desregistrar Service Worker</button>
+    <button onclick="clearAll()">Limpiar Todo</button>
+    
+    <div id="result" style="margin-top: 20px;"></div>
+
+    <script>
+        async function clearCache() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<p>Limpiando cache...</p>';
+            
+            try {
+                const cacheNames = await caches.keys();
+                await Promise.all(
+                    cacheNames.map(cacheName => caches.delete(cacheName))
+                );
+                result.innerHTML = '<p style="color: green;">✅ Cache limpiado correctamente</p>';
+            } catch (error) {
+                result.innerHTML = '<p style="color: red;">❌ Error: ' + error.message + '</p>';
+            }
+        }
+
+        async function unregisterSW() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<p>Desregistrando Service Worker...</p>';
+            
+            try {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                await Promise.all(
+                    registrations.map(registration => registration.unregister())
+                );
+                result.innerHTML = '<p style="color: green;">✅ Service Worker desregistrado</p>';
+            } catch (error) {
+                result.innerHTML = '<p style="color: red;">❌ Error: ' + error.message + '</p>';
+            }
+        }
+
+        async function clearAll() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<p>Limpiando todo...</p>';
+            
+            try {
+                // Limpiar cache
+                const cacheNames = await caches.keys();
+                await Promise.all(
+                    cacheNames.map(cacheName => caches.delete(cacheName))
+                );
+                
+                // Desregistrar SW
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                await Promise.all(
+                    registrations.map(registration => registration.unregister())
+                );
+                
+                result.innerHTML = '<p style="color: green;">✅ Todo limpiado. Recarga la página.</p>';
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            } catch (error) {
+                result.innerHTML = '<p style="color: red;">❌ Error: ' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

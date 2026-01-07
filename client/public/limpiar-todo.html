@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiar Todo y Actualizar</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            color: #1976d2;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .resultado {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Limpiar Todo</h1>
+        <div class="info">
+            <p><strong>Esta herramienta limpiará:</strong></p>
+            <ul style="text-align: left; margin-top: 10px; padding-left: 20px;">
+                <li>Todo el cache del navegador</li>
+                <li>Service Workers antiguos</li>
+                <li>Datos almacenados localmente</li>
+            </ul>
+            <p style="margin-top: 15px;"><strong>Luego recargará la aplicación con los cambios más recientes.</strong></p>
+        </div>
+        
+        <button onclick="limpiarTodo()">🧹 Limpiar Todo y Actualizar</button>
+        
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        async function limpiarTodo() {
+            const resultado = document.getElementById('resultado');
+            resultado.className = 'resultado';
+            resultado.innerHTML = '<p>Limpiando...</p>';
+            
+            try {
+                // 1. Desregistrar todos los Service Workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        console.log('✅ Service Worker desregistrado');
+                    }
+                }
+                
+                // 2. Limpiar todos los caches
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    for (let cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                        console.log('✅ Cache eliminado:', cacheName);
+                    }
+                }
+                
+                // 3. Limpiar localStorage
+                try {
+                    localStorage.clear();
+                    console.log('✅ localStorage limpiado');
+                } catch(e) {
+                    console.log('⚠️ No se pudo limpiar localStorage');
+                }
+                
+                // 4. Limpiar sessionStorage
+                try {
+                    sessionStorage.clear();
+                    console.log('✅ sessionStorage limpiado');
+                } catch(e) {
+                    console.log('⚠️ No se pudo limpiar sessionStorage');
+                }
+                
+                resultado.className = 'resultado success';
+                resultado.innerHTML = '<p>✅ Todo limpiado correctamente. Redirigiendo...</p>';
+                
+                // 5. Redirigir a la página principal con timestamp
+                setTimeout(() => {
+                    window.location.href = '/?nocache=' + Date.now();
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultado.className = 'resultado error';
+                resultado.innerHTML = '<p>❌ Error: ' + error.message + '</p><p>Recargando de todas formas...</p>';
+                setTimeout(() => {
+                    window.location.href = '/?nocache=' + Date.now();
+                }, 2000);
+            }
+        }
+        
+        // Auto-ejecutar después de 2 segundos si no hay interacción
+        setTimeout(() => {
+            const resultado = document.getElementById('resultado');
+            if (!resultado.innerHTML.includes('Limpiando') && !resultado.innerHTML.includes('✅')) {
+                resultado.innerHTML = '<p style="color: #666;">Haz clic en el botón para limpiar y actualizar</p>';
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

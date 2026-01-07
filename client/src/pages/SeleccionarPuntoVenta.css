@@ -1,0 +1,297 @@
+.seleccionar-punto-venta {
+  width: 100% !important;
+  min-width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  background-color: #e5e7eb !important;
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: stretch !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  flex: 1 1 100% !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+}
+
+.punto-venta-container {
+  background: #e5e7eb !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 40px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Estilos para el botón volver atrás */
+.btn-volver-atras {
+  padding: 12px 24px !important;
+  background-color: #ef4444 !important;
+  color: white !important;
+  border: 2px solid #dc2626 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4) !important;
+  transition: all 0.3s ease !important;
+  min-height: 44px !important;
+  min-width: 120px !important;
+  font-family: inherit !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+.btn-volver-atras:hover {
+  background-color: #dc2626 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.6) !important;
+}
+
+.punto-venta-header {
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.punto-venta-header h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin: 0;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.punto-venta-header p {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+}
+
+.puntos-venta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  flex: 1;
+  align-content: start;
+}
+
+.punto-venta-card {
+  background: #ffffff;
+  border: 2px solid #d1d5db;
+  border-radius: 15px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.punto-venta-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+  transform: translateY(-5px);
+}
+
+.punto-venta-card.seleccionado {
+  border-color: #10b981;
+  background: #ffffff;
+  border-width: 3px;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.punto-venta-icono {
+  margin-bottom: 20px;
+}
+
+.punto-venta-info {
+  flex: 1;
+  width: 100%;
+}
+
+.punto-venta-info h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.punto-venta-detalles {
+  text-align: left;
+  margin-bottom: 15px;
+}
+
+.punto-venta-detalles p {
+  margin: 8px 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.punto-venta-detalles strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.punto-venta-estado {
+  margin-top: 15px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.badge.activo {
+  background: #10b981;
+  color: #ffffff;
+  border: 1px solid #059669;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.badge.inactivo {
+  background: #ef4444;
+  color: #ffffff;
+  border: 1px solid #dc2626;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.punto-venta-flecha {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 1.5rem;
+  color: #3b82f6;
+  font-weight: bold;
+}
+
+.punto-venta-card.seleccionado .punto-venta-flecha {
+  color: #10b981;
+}
+
+@media (max-width: 768px) {
+  .seleccionar-punto-venta {
+    padding: 0;
+  }
+
+  .btn-volver-atras {
+    position: absolute !important;
+    top: 10px !important;
+    left: 10px !important;
+    padding: 10px 18px !important;
+    font-size: 14px !important;
+    z-index: 10 !important;
+    min-height: 44px !important;
+  }
+
+  .punto-venta-header {
+    margin-top: 0 !important;
+    padding-top: 60px; /* Espacio para el botón */
+  }
+
+  .punto-venta-container {
+    padding: 20px 15px;
+  }
+
+  .puntos-venta-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .punto-venta-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .punto-venta-header p {
+    font-size: 1rem;
+  }
+
+  .punto-venta-card {
+    padding: 20px;
+  }
+
+  .punto-venta-info h3 {
+    font-size: 1.3rem;
+  }
+
+  .punto-venta-detalles p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .seleccionar-punto-venta {
+    padding: 0;
+  }
+
+  .punto-venta-container {
+    padding: 15px 10px;
+  }
+
+  .punto-venta-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .punto-venta-header p {
+    font-size: 0.9rem;
+  }
+
+  .punto-venta-card {
+    padding: 15px;
+  }
+
+  .punto-venta-info h3 {
+    font-size: 1.1rem;
+  }
+
+  .punto-venta-icono {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 15px;
+  }
+
+  .icono-emoji {
+    font-size: 2rem;
+  }
+}
+
+/* FORZAR ESTILOS FULLSCREEN - Actualizado para ocupar toda la pantalla */
+.seleccionar-punto-venta {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.punto-venta-container {
+  background: #e5e7eb !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  margin: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+}
+

@@ -1,0 +1,331 @@
+.sri-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sri-header {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.sri-header h1 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 2em;
+}
+
+.sri-header p {
+  color: #7f8c8d;
+  font-size: 1.1em;
+}
+
+.alert {
+  padding: 15px 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.alert-error {
+  background-color: #fee;
+  border-left: 4px solid #e74c3c;
+  color: #c0392b;
+}
+
+.alert-success {
+  background-color: #efe;
+  border-left: 4px solid #27ae60;
+  color: #229954;
+}
+
+.alert-warning {
+  background-color: #fff9e6;
+  border-left: 4px solid #f39c12;
+  color: #d68910;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #7f8c8d;
+}
+
+/* Información del certificado */
+.certificado-info {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.certificado-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #ecf0f1;
+}
+
+.certificado-header h2 {
+  color: #2c3e50;
+  margin: 0;
+}
+
+.certificado-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.detail-row {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #7f8c8d;
+  font-size: 0.9em;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  color: #2c3e50;
+  font-size: 1.1em;
+  word-break: break-word;
+}
+
+.detail-value.status.vigente {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.detail-value.status.vencido {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.dias-restantes {
+  font-size: 0.9em;
+  font-weight: normal;
+  margin-left: 5px;
+}
+
+/* Formulario de carga */
+.certificado-upload {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.certificado-upload h2 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.certificado-upload > p {
+  color: #7f8c8d;
+  margin-bottom: 25px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.form-group input[type="file"],
+.form-group input[type="text"],
+.form-group input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 1em;
+  transition: all 0.3s;
+  background-color: #ffffff;
+}
+
+.form-group input:focus {
+  outline: none;
+  border: 2px solid #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.file-name {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #d5f4e6;
+  color: #27ae60;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.form-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #2980b9;
+}
+
+.btn-secondary {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #7f8c8d;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Configuración de ambiente */
+.ambiente-config {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ambiente-config h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.ambiente-selector {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 15px;
+}
+
+.ambiente-selector label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.1em;
+}
+
+.ambiente-selector input[type="radio"] {
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.ambiente-info {
+  color: #7f8c8d;
+  font-style: italic;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  border-left: 4px solid #3498db;
+}
+
+/* Información adicional */
+.sri-info {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sri-info h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.sri-info ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sri-info li {
+  padding: 10px 0;
+  padding-left: 25px;
+  position: relative;
+  color: #555;
+}
+
+.sri-info li:before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #3498db;
+  font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sri-container {
+    padding: 15px;
+  }
+
+  .certificado-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .certificado-details {
+    grid-template-columns: 1fr;
+  }
+
+  .ambiente-selector {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+
+
+
+
+
+

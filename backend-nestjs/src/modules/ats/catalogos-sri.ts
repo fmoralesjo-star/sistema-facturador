@@ -1,0 +1,45 @@
+// Catálogos oficiales del SRI de Ecuador
+
+export const TIPO_COMPROBANTE = {
+    FACTURA: '01',
+    NOTA_CREDITO: '04',
+    NOTA_DEBITO: '05',
+    GUIA_REMISION: '06',
+    COMPROBANTE_RETENCION: '07',
+    FACTURA_CONSUMIDOR_FINAL: '18'
+};
+
+export const CODIGO_SUSTENTO = {
+    CREDITO_TRIBUTARIO_IVA: '01',
+    COSTO_GASTO_IVA: '02',
+    ACTIVO_FIJO: '03',
+    IMPORTACION_BIENES: '04',
+    IMPORTACION_SERVICIOS: '05'
+};
+
+export const FORMA_PAGO = {
+    SIN_UTILIZACION_SISTEMA_FINANCIERO: '01',
+    COMPENSACION_DEUDAS: '15',
+    TARJETA_DEBITO: '16',
+    DINERO_ELECTRONICO: '17',
+    TARJETA_PREPAGO: '18',
+    TARJETA_CREDITO: '19',
+    OTROS_CON_SISTEMA_FINANCIERO: '20',
+    ENDOSO_TITULOS: '21'
+};
+
+export const TIPO_IDENTIFICACION = {
+    RUC: '04',
+    CEDULA: '05',
+    PASAPORTE: '06',
+    CONSUMIDOR_FINAL: '07',
+    IDENTIFICACION_EXTERIOR: '08'
+};
+
+export const TARIFA_IVA = {
+    IVA_0: '0',
+    IVA_12: '2',
+    IVA_15: '3',
+    NO_OBJETO_IVA: '6',
+    EXENTO_IVA: '7'
+};

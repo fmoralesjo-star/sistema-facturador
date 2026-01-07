@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desregistrar Service Worker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #667eea;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Desregistrar Service Worker</h1>
+        
+        <div class="info">
+            <strong>¿Para qué sirve esto?</strong>
+            <p>El Service Worker puede estar cacheando versiones antiguas de tu aplicación. Usa este script para eliminarlo y forzar que se cargue la versión más reciente.</p>
+        </div>
+
+        <button onclick="desregistrarSW()">Desregistrar Service Worker</button>
+        <button onclick="limpiarCache()">Limpiar Cache del Navegador</button>
+        <button onclick="hacerTodo()">Hacer Todo (Recomendado)</button>
+
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        async function desregistrarSW() {
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = '<p>Desregistrando Service Workers...</p>';
+
+            try {
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    
+                    if (registrations.length === 0) {
+                        resultado.innerHTML = '<p class="success">✓ No hay Service Workers registrados</p>';
+                        return;
+                    }
+
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                        console.log('Service Worker desregistrado:', registration.scope);
+                    }
+
+                    resultado.innerHTML = `<p class="success">✓ ${registrations.length} Service Worker(s) desregistrado(s) correctamente</p>
+                                          <p>Ahora recarga la página (F5) para aplicar los cambios.</p>`;
+                } else {
+                    resultado.innerHTML = '<p class="error">Este navegador no soporta Service Workers</p>';
+                }
+            } catch (error) {
+                resultado.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+                console.error('Error al desregistrar Service Worker:', error);
+            }
+        }
+
+        async function limpiarCache() {
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = '<p>Limpiando cache...</p>';
+
+            try {
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    
+                    if (cacheNames.length === 0) {
+                        resultado.innerHTML = '<p class="success">✓ No hay caches para limpiar</p>';
+                        return;
+                    }
+
+                    for (let cacheName of cacheNames) {
+                        await caches.delete(cacheName);
+                        console.log('Cache eliminado:', cacheName);
+                    }
+
+                    resultado.innerHTML = `<p class="success">✓ ${cacheNames.length} cache(s) eliminado(s)</p>
+                                          <p>Cache limpiado correctamente. Recarga la página (F5).</p>`;
+                } else {
+                    resultado.innerHTML = '<p class="error">Este navegador no soporta Cache API</p>';
+                }
+            } catch (error) {
+                resultado.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+                console.error('Error al limpiar cache:', error);
+            }
+        }
+
+        async function hacerTodo() {
+            await desregistrarSW();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await limpiarCache();
+            
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML += '<p><strong>¡Listo! Ahora:</strong></p><ol><li>Recarga esta página (F5)</li><li>Ve a tu aplicación</li><li>Recarga también la aplicación (Ctrl + Shift + R)</li></ol>';
+        }
+
+        // Mostrar información al cargar
+        window.addEventListener('load', async () => {
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                if (registrations.length > 0) {
+                    console.log('Service Workers encontrados:', registrations.length);
+                    registrations.forEach(reg => {
+                        console.log('- Scope:', reg.scope);
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+

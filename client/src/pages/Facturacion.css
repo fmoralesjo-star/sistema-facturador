@@ -1,0 +1,978 @@
+﻿:root {
+  --azul-electrico: #00d2ff;
+  --azul-oscuro: #005f73;
+  --fondo-gris: #f0f4f8;
+  --blanco: #ffffff;
+  --borde-radio: 12px;
+}
+
+body {
+  background-color: var(--blanco);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+}
+
+.factura-container {
+  background-color: var(--blanco) !important;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important;
+}
+
+/* Encabezado con Datos del Emisor, Datos de la Factura y Datos del Cliente */
+.header-datos {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.datos-cliente,
+.datos-factura,
+.datos-emisor {
+  transition: all 0.3s ease;
+}
+
+.datos-cliente.iluminado {
+  background: #fff !important;
+  border: 2px solid var(--azul-electrico) !important;
+  box-shadow: 0 0 20px rgba(0, 210, 255, 0.5) !important;
+  transform: scale(1.02);
+  z-index: 100;
+  position: relative;
+}
+
+
+.datos-emisor,
+.datos-factura,
+.datos-cliente {
+  background: var(--blanco);
+  border: 1px solid #d0dae2;
+  border-radius: 8px;
+  padding: 8px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.datos-cliente.modo-registro {
+  border: 2px solid #ffc107;
+  background: #fffbf0;
+}
+
+.registrar-cliente-flotante {
+  position: absolute;
+  right: -60px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--azul-electrico);
+  color: white;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 210, 255, 0.4);
+  z-index: 1000;
+  transition: all 0.3s ease;
+  animation: pulse-registrar 2s infinite;
+}
+
+.registrar-cliente-flotante:hover {
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 210, 255, 0.6);
+}
+
+.registrar-cliente-flotante svg {
+  width: 24px;
+  height: 24px;
+}
+
+.mensaje-registrar {
+  position: absolute;
+  right: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.registrar-cliente-flotante:hover .mensaje-registrar {
+  opacity: 1;
+}
+
+@keyframes pulse-registrar {
+
+  0%,
+  100% {
+    box-shadow: 0 4px 12px rgba(0, 210, 255, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 4px 20px rgba(0, 210, 255, 0.7);
+  }
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}
+
+.titulo-datos {
+  margin: -8px -8px 8px -8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  padding: 6px 8px;
+  width: calc(100% + 16px);
+  display: block;
+  background-color: var(--azul-electrico);
+  border-radius: 8px 8px 0 0;
+  box-sizing: border-box;
+}
+
+.datos-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+}
+
+.dato-item {
+  display: flex;
+  align-items: flex-start;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.dato-item label {
+  font-weight: 600;
+  color: var(--azul-oscuro);
+  margin-right: 6px;
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.dato-item span {
+  color: #333;
+  word-break: break-word;
+  flex: 1;
+}
+
+.dato-input {
+  flex: 1;
+  padding: 4px 6px;
+  font-size: 14px;
+  border: 1px solid #d0dae2;
+  border-radius: 4px;
+  background: var(--blanco);
+  color: #333;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.dato-input:focus {
+  outline: none;
+  border-color: var(--azul-electrico);
+  box-shadow: 0 0 0 2px rgba(0, 210, 255, 0.1);
+}
+
+.dato-input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+/* Encabezado anterior (oculto) */
+.header {
+  display: none;
+}
+
+.titulo-seccion {
+  display: none;
+}
+
+.qr-placeholder {
+  display: none;
+}
+
+/* Cuerpo de la Factura */
+.grid-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr 220px;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: visible;
+  align-items: start;
+  grid-auto-rows: min-content;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.panel {
+  background: var(--blanco);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #d0dae2;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  display: flex;
+  flex-direction: column;
+  min-height: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.panel-totales {
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: auto !important;
+}
+
+/* Estilo de Inputs */
+.input-group {
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  color: var(--azul-oscuro);
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.input-group select,
+.input-group input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #c2cfe0;
+  border-radius: 4px;
+  background-color: #f9fbfe;
+  color: #33475b;
+  box-sizing: border-box;
+  pointer-events: auto !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  cursor: text !important;
+  font-size: 14px;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  outline: 2px solid var(--azul-electrico) !important;
+  outline-offset: 2px !important;
+  border-color: var(--azul-electrico) !important;
+  background-color: #ffffff !important;
+}
+
+/* Tabla de Productos */
+.panel table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 4px;
+  font-size: 14px;
+  flex: 1;
+  display: block;
+  overflow: hidden;
+}
+
+.panel table:not(.excel-grid) thead {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.panel table:not(.excel-grid) tbody {
+  display: block;
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.panel table th {
+  background-color: var(--azul-oscuro);
+  color: white;
+  padding: 8px 10px;
+  font-size: 13px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.panel table th:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.panel table th:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.panel table td {
+  background: #fdfdfd;
+  padding: 4px;
+  font-size: 14px;
+  border-bottom: 1px solid #eef2f6;
+  display: table-cell;
+  position: relative;
+}
+
+/* Grid simple sin Excel */
+.grid-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: calc(100vh - 350px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  min-height: 0;
+}
+
+.grid-header {
+  display: grid;
+  grid-template-columns: 120px 120px 1fr 70px 90px 80px 100px 40px;
+  width: 100%;
+  background-color: #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.grid-header-cell {
+  padding: 6px 8px;
+  font-weight: 600;
+  text-align: center;
+  font-size: 13px;
+  border-right: 1px solid #ddd;
+  user-select: none;
+}
+
+.grid-header-cell:last-child {
+  border-right: none;
+}
+
+.grid-body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.grid-row {
+  display: grid;
+  grid-template-columns: 120px 120px 1fr 70px 90px 80px 100px 40px;
+  width: 100%;
+  border-bottom: 1px solid #ddd;
+}
+
+.grid-cell {
+  padding: 6px 8px;
+  font-size: 14px;
+  border-right: 1px solid #ddd;
+  min-height: 24px;
+  cursor: text;
+  outline: none;
+}
+
+.grid-cell:last-child {
+  border-right: none;
+}
+
+.grid-cell:focus {
+  background: #e3f2fd;
+}
+
+.grid-cell-readonly {
+  background: #f5f5f5;
+  text-align: right;
+  font-weight: 500;
+  cursor: default;
+}
+
+.grid-cell-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+}
+
+.grid-delete-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px 4px;
+  color: #dc3545;
+  opacity: 1;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.grid-delete-btn:hover {
+  opacity: 1;
+  transform: scale(1.2);
+  color: #c82333;
+}
+
+.excel-delete-btn {
+  padding: 2px 4px;
+  cursor: pointer;
+  background: transparent;
+  color: #999;
+  border: none;
+  border-radius: 3px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 24px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.excel-delete-btn:hover {
+  opacity: 1;
+  background: #ffebee;
+}
+
+.panel table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* Panel Lateral de Totales */
+.panel-totales {
+  background: #ffffff !important;
+  border: 1px solid #d0dae2 !important;
+  border-radius: 20px !important;
+  padding: 24px !important;
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.05),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  margin-top: 20px !important;
+}
+
+.panel-totales:hover {
+  transform: translateY(-5px) scale(1.02) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+  background: #ffffff !important;
+}
+
+.panel-totales label {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #64748b !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.15em !important;
+  margin-bottom: 12px !important;
+  text-align: center !important;
+  display: block !important;
+  font-family: 'Outfit', sans-serif !important;
+}
+
+.panel-totales>* {
+  flex-shrink: 0 !important;
+  overflow: visible !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+}
+
+.monto-total {
+  font-size: 48px !important;
+  color: #4f46e5 !important;
+  font-weight: 800 !important;
+  margin: 10px 0 25px 0 !important;
+  text-align: center !important;
+  font-family: 'Outfit', sans-serif !important;
+  letter-spacing: -0.04em !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-shadow: 0 4px 12px rgba(79, 70, 229, 0.15) !important;
+}
+
+.desglose-impuestos {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 16px;
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.linea-impuesto {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  font-size: 14px !important;
+  color: #475569 !important;
+  font-weight: 600 !important;
+  padding: 8px 0 !important;
+}
+
+.linea-impuesto span:first-child {
+  color: #475569 !important;
+  /* MÃ¡s oscuro para legibilidad */
+  text-transform: uppercase !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  /* Extra Negrilla */
+  letter-spacing: 0.05em !important;
+  font-family: 'Outfit', sans-serif !important;
+}
+
+.linea-impuesto span:last-child {
+  color: #1e293b !important;
+  font-weight: 800 !important;
+  font-size: 16px !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.linea-impuesto.total-a-pagar {
+  margin-top: 10px !important;
+  padding: 12px !important;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3) !important;
+}
+
+.linea-impuesto.total-a-pagar span:first-child {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  font-family: 'Outfit', sans-serif !important;
+  letter-spacing: 0.05em !important;
+}
+
+.linea-impuesto.total-a-pagar span:last-child {
+  color: white !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  font-family: 'Outfit', sans-serif !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* Estilos mejorados para el footer de totales */
+.totales-container {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 16px !important;
+  padding: 24px !important;
+  margin-top: 24px !important;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.05),
+    0 4px 6px -2px rgba(0, 0, 0, 0.02),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 100 !important;
+}
+
+.totales-container.es-nota-credito {
+  background: rgba(254, 226, 226, 0.8) !important;
+  border: 1px solid rgba(220, 38, 38, 0.3) !important;
+  box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.1) !important;
+}
+
+.totales-container.es-nota-credito .fila-total span:last-child {
+  color: #b91c1c !important;
+}
+
+.totales-container.es-nota-credito .fila-total.total-final {
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+  box-shadow: 0 8px 20px -4px rgba(220, 38, 38, 0.4) !important;
+}
+
+.fila-total {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 10px 14px !important;
+  margin-bottom: 10px !important;
+  background: rgba(248, 250, 252, 0.5) !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  font-size: 14px !important;
+}
+
+.fila-total:hover {
+  background: white !important;
+  border-color: var(--azul-electrico) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+.fila-total span:first-child {
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 11px;
+}
+
+.fila-total span:last-child {
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 15px;
+  min-width: 100px;
+  text-align: right;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.fila-total.total-final {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 20px 24px !important;
+  margin-top: 16px !important;
+  margin-bottom: 0 !important;
+  box-shadow: 0 8px 20px -4px rgba(79, 70, 229, 0.4) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.fila-total.total-final::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(rgba(255, 255, 255, 0.1), transparent);
+  pointer-events: none;
+}
+
+.fila-total.total-final span:first-child {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  letter-spacing: 0.1em !important;
+}
+
+.fila-total.total-final span:last-child {
+  color: white !important;
+  font-weight: 800 !important;
+  font-size: 28px !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* Footer Legal - OCULTO COMPLETAMENTE */
+.footer-banner,
+[class*="footer-banner"],
+[class*="footer"][class*="banner"],
+div.footer-banner,
+footer.footer-banner {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+  width: 0 !important;
+  max-height: 0 !important;
+  max-width: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  color: transparent !important;
+}
+
+
+
+/* Mantener estilos para modales y funcionalidades existentes */
+.factura-content {
+  flex: 1;
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+  padding: 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0;
+  max-height: 100vh;
+  height: 100vh;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  background-color: var(--fondo-gris) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Asegurar que el grid-layout sea visible */
+.grid-layout {
+  display: grid !important;
+  grid-template-columns: 220px 1fr 220px !important;
+  gap: 10px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  align-items: start !important;
+  grid-auto-rows: min-content !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Asegurar que los paneles sean visibles */
+.panel {
+  display: flex !important;
+  flex-direction: column !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: auto !important;
+}
+
+/* Asegurar que los inputs dentro de los paneles sean editables */
+.panel input,
+.panel select,
+.panel textarea {
+  pointer-events: auto !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  cursor: text !important;
+}
+
+/* Asegurar que el header sea visible */
+.header {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Ocultar barras de desplazamiento */
+.factura-container,
+.factura-content {
+  scrollbar-width: none !important;
+  /* Firefox */
+  -ms-overflow-style: none !important;
+  /* IE y Edge */
+  overflow: hidden !important;
+}
+
+/* El grid layout puede tener overflow visible para que el panel de totales no se corte */
+.grid-layout {
+  scrollbar-width: none !important;
+  /* Firefox */
+  -ms-overflow-style: none !important;
+  /* IE y Edge */
+  overflow: visible !important;
+}
+
+/* Los paneles pueden tener overflow visible */
+.panel {
+  scrollbar-width: none !important;
+  /* Firefox */
+  -ms-overflow-style: none !important;
+  /* IE y Edge */
+  overflow: visible !important;
+}
+
+/* El panel de totales debe tener overflow visible siempre */
+.panel-totales {
+  overflow: visible !important;
+  overflow-y: visible !important;
+  overflow-x: visible !important;
+}
+
+.factura-container::-webkit-scrollbar,
+.factura-content::-webkit-scrollbar,
+.grid-layout::-webkit-scrollbar,
+.panel::-webkit-scrollbar {
+  display: none !important;
+  /* Chrome, Safari, Opera */
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* Solo la tabla de productos puede tener scroll interno si es necesario */
+.panel table tbody {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.panel table tbody::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .grid-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .factura-container {
+    width: 100%;
+    padding: 15px;
+  }
+}
+
+/* Clases de utilidad para forzar tamaÃ±os de fuente */
+.input-text {
+  font-size: 14px !important;
+}
+
+.label {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+.celda-editable {
+  font-size: 14px !important;
+}
+
+.panel table td {
+  font-size: 14px !important;
+}
+
+.panel table th {
+  font-size: 13px !important;
+}
+
+.dato-input {
+  font-size: 14px !important;
+}
+
+.grid-cell {
+  font-size: 14px !important;
+}
+
+.grid-header-cell {
+  font-size: 13px !important;
+}
+
+.agregar-fila-btn {
+  position: relative !important;
+  z-index: 20 !important;
+}
+
+/* Ocultar botones de incremento/decremento en inputs number */
+input[type="number"].no-spinner::-webkit-inner-spin-button,
+input[type="number"].no-spinner::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+input[type="number"].no-spinner {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Footer Visible para botones de acción */
+.footer-visible {
+  display: block !important;
+  visibility: visible !important;
+  width: 100%;
+  position: relative;
+  z-index: 100;
+  margin-top: 10px;
+}
+
+.footer-content-wrapper {
+  display: flex !important;
+  visibility: visible !important;
+  width: 100%;
+}
+
+/* Indicadores de redimensionamiento */
+.column-resizer {
+  background-color: #2563eb !important;
+  opacity: 0.3 !important;
+  transition: all 0.2s;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.column-resizer:hover {
+  background-color: #2563eb !important;
+  width: 10px !important;
+  opacity: 1 !important;
+  cursor: col-resize;
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.8) !important;
+}

@@ -1,0 +1,135 @@
+# ============================================
+# Render.com - Infrastructure as Code
+# Sistema Facturador - Deployment Configuration
+# ============================================
+
+services:
+  # ============================================
+  # PostgreSQL Database
+  # ============================================
+  - type: pgsql
+    name: facturador-db
+    plan: starter # Plan gratuito (95 MB, 90 días de inactividad)
+    databaseName: facturador_db
+    user: facturador
+    # La contraseña se genera automáticamente
+    # Render provee DATABASE_URL automáticamente
+
+  # ============================================
+  # Backend API (NestJS)
+  # ============================================
+  - type: web
+    name: backend-facturador
+    runtime: node
+    plan: starter # Plan gratuito (512 MB RAM, suspende tras 15 min inactividad)
+    rootDir: backend-nestjs
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /health
+    envVars:
+      # Database (automáticamente provisto por Render)
+      - key: DATABASE_URL
+        fromDatabase:
+          name: facturador-db
+          property: connectionString
+      
+      # Application
+      - key: NODE_ENV
+        value: production
+      
+      - key: PORT
+        value: 3001
+      
+      # Security (IMPORTANTE: Cambiar en producción)
+      - key: JWT_SECRET
+        generateValue: true # Render generará un valor aleatorio seguro
+      
+      # CORS - Agregar el dominio del frontend cuando se despliegue
+      - key: ALLOWED_ORIGINS
+        sync: false # Se configurará manualmente desde Render Dashboard
+      
+      # SRI Configuration
+      - key: SRI_AMBIENTE
+        value: PRUEBAS # Cambiar a PRODUCCION cuando esté listo
+      
+      - key: SRI_TIMEOUT
+        value: 30000
+      
+      # File Upload Path
+      - key: UPLOAD_PATH
+        value: ./uploads
+      
+      # Email (Opcional - Configurar manualmente si se necesita)
+      # - key: SMTP_HOST
+      #   sync: false
+      # - key: SMTP_PORT
+      #   sync: false
+      # - key: SMTP_USER
+      #   sync: false
+      # - key: SMTP_PASS
+      #   sync: false
+
+  # ============================================
+  # Frontend (React + Vite)
+  # ============================================
+  - type: web
+    name: sistema-facturador
+    runtime: static
+    plan: starter # Plan gratuito
+    rootDir: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=0, must-revalidate
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      # API Backend URL (se debe configurar manualmente con la URL del backend)
+      - key: VITE_API_URL
+        sync: false # Configurar manualmente: https://backend-facturador.onrender.com/api
+
+# ============================================
+# NOTAS IMPORTANTES:
+# ============================================
+# 
+# 1. PRIMERA VEZ - Orden de Despliegue:
+#    - La base de datos se desplegará primero automáticamente
+#    - El backend se desplegará y conectará a la base de datos
+#    - El frontend se desplegará último
+# 
+# 2. CONFIGURACIÓN MANUAL DESPUÉS DEL DESPLIEGUE:
+#    a) Backend - Variable ALLOWED_ORIGINS:
+#       - Ir al Dashboard de Render → backend-facturador → Environment
+#       - Agregar: https://sistema-facturador.onrender.com
+#    
+#    b) Frontend - Variable VITE_API_URL:
+#       - Ir al Dashboard de Render → sistema-facturador → Environment
+#       - Agregar: https://backend-facturador.onrender.com/api
+#    
+#    c) Redesplegar ambos servicios después de configurar las variables
+# 
+# 3. BASE DE DATOS INICIAL:
+#    - La base de datos estará vacía al inicio
+#    - TypeORM creará las tablas automáticamente si synchronize=true
+#    - RECOMENDADO: Usar migraciones en producción (synchronize=false)
+#
+# 4. CERTIFICADOS SRI:
+#    - Los certificados .p12 deben subirse desde la interfaz web
+#    - NO incluir certificados en el repositorio
+#
+# 5. PLANES GRATUITOS:
+#    - Base de datos: 95 MB storage, se elimina después de 90 días de inactividad
+#    - Backend: 512 MB RAM, se suspende después de 15 min de inactividad
+#    - Frontend: 100 GB bandwidth/mes
+#
+# 6. PARA MIGRAR A PLANES DE PAGO:
+#    - Cambiar 'plan: starter' por 'plan: standard' o superior
+#    - Ver precios en: https://render.com/pricing
+# ============================================

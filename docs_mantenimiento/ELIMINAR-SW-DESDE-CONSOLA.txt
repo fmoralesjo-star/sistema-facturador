@@ -1,0 +1,44 @@
+INSTRUCCIONES PARA ELIMINAR SERVICE WORKER DESDE LA CONSOLA
+============================================================
+
+Si el archivo HTML no funciona, puedes hacerlo directamente desde la consola:
+
+PASOS:
+
+1. Abre tu aplicacion: http://localhost:5173/facturacion
+
+2. Presiona F12 (abrir DevTools)
+
+3. Ve a la pestaña "Console" (Consola)
+
+4. Copia y pega este codigo:
+
+   navigator.serviceWorker.getRegistrations().then(function(registrations) {
+     for(let registration of registrations) {
+       registration.unregister().then(function(success) {
+         if (success) {
+           console.log('✅ Service Worker desregistrado:', registration.scope);
+         }
+       });
+     }
+   });
+
+5. Presiona Enter
+
+6. Luego copia y pega esto para limpiar el cache:
+
+   caches.keys().then(function(cacheNames) {
+     return Promise.all(
+       cacheNames.map(function(cacheName) {
+         console.log('✅ Cache eliminado:', cacheName);
+         return caches.delete(cacheName);
+       })
+     );
+   });
+
+7. Presiona Enter
+
+8. Recarga la pagina: Ctrl + Shift + R
+
+¡Listo! Los cambios deberian verse ahora.
+
