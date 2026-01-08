@@ -494,7 +494,10 @@ export class ContabilidadService implements OnApplicationBootstrap {
   }
 
   async onApplicationBootstrap() {
-    this.assicurePlantillasBasicas().catch(err => console.error('Error seeding templates:', err));
+    // Retrasar la inicialización para permitir que la BD esté lista
+    setTimeout(() => {
+      this.assicurePlantillasBasicas().catch(err => console.error('Error seeding templates:', err));
+    }, 5000);
   }
 
   private async assicurePlantillasBasicas() {

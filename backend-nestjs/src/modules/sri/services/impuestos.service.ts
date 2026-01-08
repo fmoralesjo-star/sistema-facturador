@@ -95,11 +95,15 @@ export class ImpuestosService {
     }
 
     async onModuleInit() {
-        try {
-            await this.inicializarMatriz();
-        } catch (error) {
-            console.warn('⚠️ No se pudo inicializar la matriz de impuestos (probablemente la tabla no existe aún). Se reintentará en el próximo arranque.');
-        }
+        // Ejecutar en segundo plano con retraso para no bloquear el arranque
+        // y permitir que TypeORM termine de sincronizar tablas
+        setTimeout(async () => {
+            try {
+                await this.inicializarMatriz();
+            } catch (error) {
+                console.warn('⚠️ No se pudo inicializar la matriz de impuestos. Se intentará de nuevo en el siguiente reinicio.', error.message);
+            }
+        }, 5000);
     }
 
     private async inicializarMatriz() {
