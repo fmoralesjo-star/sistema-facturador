@@ -170,7 +170,7 @@ if (useFirestore) {
               QueueJob,
               StoredFile,
             ],
-            synchronize: false,
+            synchronize: true, // FORZADO TEMPORALMENTE para debug
             logging: true,
             ssl: false,
           };
