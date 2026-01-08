@@ -105,8 +105,8 @@ if (useFirestore) {
                 QueueJob,
                 StoredFile,
               ],
-              synchronize: process.env.DB_SYNC === 'true', // Solo activar para inicializar DB
-              logging: isProduction ? ['error', 'warn'] : true,
+              synchronize: true, // FORZADO: Asegurar creación de tablas en Render
+              logging: true,
               ssl: { rejectUnauthorized: false }, // Requerido por Render
               extra: {
                 max: 20, // Aumentar pool size
