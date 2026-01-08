@@ -105,7 +105,7 @@ if (useFirestore) {
                 QueueJob,
                 StoredFile,
               ],
-              synchronize: false, // Nunca usar true en producción
+              synchronize: process.env.DB_SYNC === 'true', // Solo activar para inicializar DB
               logging: isProduction ? ['error', 'warn'] : true,
               ssl: isProduction ? { rejectUnauthorized: false } : false,
               extra: {
