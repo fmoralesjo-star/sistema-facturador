@@ -95,7 +95,11 @@ export class ImpuestosService {
     }
 
     async onModuleInit() {
-        await this.inicializarMatriz();
+        try {
+            await this.inicializarMatriz();
+        } catch (error) {
+            console.warn('⚠️ No se pudo inicializar la matriz de impuestos (probablemente la tabla no existe aún). Se reintentará en el próximo arranque.');
+        }
     }
 
     private async inicializarMatriz() {
