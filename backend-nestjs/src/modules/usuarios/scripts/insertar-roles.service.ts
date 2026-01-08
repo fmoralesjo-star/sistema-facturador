@@ -8,34 +8,10 @@ export class InsertarRolesService implements OnModuleInit {
   constructor(
     @InjectRepository(Rol)
     private rolRepository: Repository<Rol>,
-  ) {}
+  ) { }
 
   async onModuleInit() {
-    // Esperar a que la conexión a la base de datos esté lista
-    // Intentar varias veces con retraso incremental
-    let intentos = 0;
-    const maxIntentos = 10;
-    
-    const intentarInsertar = async () => {
-      try {
-        // Verificar que la tabla existe intentando contar
-        await this.rolRepository.count();
-        // Si llegamos aquí, la tabla existe
-        await this.insertarRolesPredefinidos();
-      } catch (error) {
-        intentos++;
-        if (intentos < maxIntentos) {
-          console.log(`⏳ Esperando base de datos... (intento ${intentos}/${maxIntentos})`);
-          setTimeout(intentarInsertar, 1000 * intentos); // Delay incremental
-        } else {
-          console.error('❌ No se pudo conectar a la base de datos después de varios intentos');
-          console.error('   Los roles se crearán cuando la base de datos esté disponible');
-        }
-      }
-    };
-
-    // Iniciar después de un pequeño delay inicial
-    setTimeout(intentarInsertar, 1000);
+    console.log('⚠️ Creación de roles OMITIDA');
   }
 
   async insertarRolesPredefinidos() {

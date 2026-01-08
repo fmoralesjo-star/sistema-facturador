@@ -24,7 +24,7 @@ export class SriProcessor {
   ) {
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  // @Cron(CronExpression.EVERY_5_SECONDS)
   async handleCron() {
     if (this.isProcessing) return;
     this.isProcessing = true;

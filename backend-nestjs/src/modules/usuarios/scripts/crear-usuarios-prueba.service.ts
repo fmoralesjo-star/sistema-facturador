@@ -14,43 +14,10 @@ export class CrearUsuariosPruebaService implements OnModuleInit {
     private rolRepository: Repository<Rol>,
     @InjectRepository(UsuarioPermiso)
     private permisoRepository: Repository<UsuarioPermiso>,
-  ) {}
+  ) { }
 
   async onModuleInit() {
-    // Esperar a que los roles estén creados
-    // Intentar varias veces con retraso incremental
-    let intentos = 0;
-    const maxIntentos = 15;
-    
-    const intentarCrear = async () => {
-      try {
-        // Verificar que hay roles en la base de datos
-        const rolesCount = await this.rolRepository.count();
-        if (rolesCount > 0) {
-          // Los roles están listos, crear usuarios
-          await this.crearUsuariosPrueba();
-        } else {
-          // Aún no hay roles, esperar más
-          intentos++;
-          if (intentos < maxIntentos) {
-            setTimeout(intentarCrear, 2000);
-          } else {
-            console.warn('⚠️  No se encontraron roles después de varios intentos');
-            console.warn('   Los usuarios de prueba se crearán cuando los roles estén disponibles');
-          }
-        }
-      } catch (error) {
-        intentos++;
-        if (intentos < maxIntentos) {
-          setTimeout(intentarCrear, 2000);
-        } else {
-          console.error('❌ Error al crear usuarios de prueba:', error.message);
-        }
-      }
-    };
-
-    // Iniciar después de un delay inicial más largo
-    setTimeout(intentarCrear, 5000);
+    console.log('⚠️ Creación de usuarios de prueba OMITIDA');
   }
 
   async crearUsuariosPrueba() {
