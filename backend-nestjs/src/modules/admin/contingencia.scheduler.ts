@@ -11,9 +11,9 @@ export class ContingenciaScheduler {
     /**
      * Job que se ejecuta cada 5 minutos para procesar la cola de documentos pendientes
      */
-    @Cron('*/5 * * * *', {
-        name: 'procesar-cola-contingencia',
-    })
+    // @Cron('*/5 * * * *', {
+    //    name: 'procesar-cola-contingencia',
+    // })
     async procesarColaAutomaticamente() {
         this.logger.log('⏰ Ejecutando job de procesamiento de cola de contingencia...');
 
