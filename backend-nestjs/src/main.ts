@@ -12,6 +12,7 @@ import * as fs from 'fs';
 import { join } from 'path';
 
 // Main entry point - touched to force restart 2
+console.log("🚀 STARTUP: DEPLOY_VERSION: 2026-01-08-FIX-DB-SYNC-V3-FORCED");
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 

@@ -94,7 +94,7 @@ export class ImpuestosService {
         return this.buscarYCalcular(codigoSugerido, iva, TipoRetencion.IVA);
     }
 
-    async onModuleInit() {
+    async onModuleInit_DISABLED() {
         // Deshabilitado temporalmente para asegurar despliegue
         console.log('⚠️ Inicialización de matriz de impuestos OMITIDA');
     }

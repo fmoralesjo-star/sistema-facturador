@@ -105,7 +105,7 @@ if (useFirestore) {
                 QueueJob,
                 StoredFile,
               ],
-              synchronize: false, // DESACTIVADO para diagnosticar si la conexión funciona
+              synchronize: true, // FORZADO: Asegurar creación de tablas en Render (v3)
               logging: true,
               ssl: { rejectUnauthorized: false }, // Requerido por Render
               extra: {
