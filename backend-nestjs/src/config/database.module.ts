@@ -107,10 +107,11 @@ if (useFirestore) {
               ],
               synchronize: process.env.DB_SYNC === 'true', // Solo activar para inicializar DB
               logging: isProduction ? ['error', 'warn'] : true,
-              ssl: isProduction ? { rejectUnauthorized: false } : false,
+              ssl: { rejectUnauthorized: false }, // Requerido por Render
               extra: {
-                max: 10, // Connection pool size
+                max: 20, // Aumentar pool size
                 connectionTimeoutMillis: 10000,
+                keepAlive: true,
               },
             };
           }
