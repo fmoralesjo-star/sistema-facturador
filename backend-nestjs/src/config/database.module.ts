@@ -31,7 +31,7 @@ import { DocumentoPendienteSRI } from '../modules/admin/entities/documento-pendi
 import { Configuracion } from '../modules/admin/entities/configuracion.entity';
 import { PlantillaAsiento } from '../modules/contabilidad/entities/plantilla-asiento.entity';
 import { PlantillaDetalle } from '../modules/contabilidad/entities/plantilla-detalle.entity';
-import { SriRetencion } from '../modules/sri/entities/sri-retencion.entity';
+import { SriRetencionV3 } from '../modules/sri/entities/sri-retencion.entity';
 import { MovimientoBancarioExtracto } from '../modules/conciliaciones/entities/movimiento-bancario-extracto.entity';
 import { Banco } from '../modules/bancos/entities/banco.entity';
 import { ConciliacionBancaria } from '../modules/conciliaciones/entities/conciliacion-bancaria.entity';
@@ -94,7 +94,7 @@ if (useFirestore) {
                 BackupLog,
                 DocumentoPendienteSRI,
                 Configuracion,
-                SriRetencion,
+                SriRetencionV3,
                 MovimientoBancarioExtracto,
                 Banco,
                 ConciliacionBancaria,
@@ -159,7 +159,7 @@ if (useFirestore) {
               BackupLog,
               DocumentoPendienteSRI,
               Configuracion,
-              SriRetencion,
+              SriRetencionV3,
               MovimientoBancarioExtracto,
               Banco,
               ConciliacionBancaria,

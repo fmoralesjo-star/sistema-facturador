@@ -21,8 +21,8 @@ import { CircuitBreakerService } from './services/circuit-breaker.service';
 import { Configuracion } from '../admin/entities/configuracion.entity';
 
 import { NotaCredito } from '../notas-credito/entities/nota-credito.entity';
-import { SriRetencion } from './entities/sri-retencion.entity';
-import { ImpuestosService } from './services/impuestos.service';
+import { SriRetencionV3 } from './entities/sri-retencion.entity';
+import { TaxEngineService } from './services/impuestos.service';
 import { ContabilidadModule } from '../contabilidad/contabilidad.module';
 
 
@@ -39,7 +39,7 @@ import { ContabilidadModule } from '../contabilidad/contabilidad.module';
       RetencionSRI,
       SustentoTributario,
       NotaCredito,
-      SriRetencion,
+      SriRetencionV3,
       Configuracion // Necessary for CircuitBreaker
     ]),
     EmpresaModule,
@@ -55,11 +55,11 @@ import { ContabilidadModule } from '../contabilidad/contabilidad.module';
     XadesBesService,
     SriWsService,
     RideService,
-    ImpuestosService,
+    TaxEngineService,
     XsdValidationService,
     CircuitBreakerService,
   ],
-  exports: [SriService, FirmaElectronicaService, XmlGeneratorService, RideService, ImpuestosService, XsdValidationService, CircuitBreakerService],
+  exports: [SriService, FirmaElectronicaService, XmlGeneratorService, RideService, TaxEngineService, XsdValidationService, CircuitBreakerService],
 })
 export class SriModule { }
 

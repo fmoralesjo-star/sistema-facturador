@@ -1,14 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SriRetencion, TipoRetencion } from '../entities/sri-retencion.entity';
+import { SriRetencionV3, TipoRetencion } from '../entities/sri-retencion.entity';
 import { Proveedor } from '../../compras/entities/proveedor.entity';
 
 @Injectable()
 export class TaxEngineService {
     constructor(
-        @InjectRepository(SriRetencion)
-        private retencionesRepository: Repository<SriRetencion>,
+        @InjectRepository(SriRetencionV3)
+        private retencionesRepository: Repository<SriRetencionV3>,
     ) { }
 
     /**
