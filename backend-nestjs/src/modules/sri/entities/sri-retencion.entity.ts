@@ -13,7 +13,7 @@ export enum TipoRetencion {
 }
 
 @Entity('sri_retenciones_v3')
-export class SriRetencion {
+export class SriRetencionV3 {
     @PrimaryGeneratedColumn()
     id: number;
 

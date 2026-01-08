@@ -5,7 +5,7 @@ import { SriRetencion, TipoRetencion } from '../entities/sri-retencion.entity';
 import { Proveedor } from '../../compras/entities/proveedor.entity';
 
 @Injectable()
-export class ImpuestosService {
+export class TaxEngineService {
     constructor(
         @InjectRepository(SriRetencion)
         private retencionesRepository: Repository<SriRetencion>,
@@ -94,38 +94,9 @@ export class ImpuestosService {
         return this.buscarYCalcular(codigoSugerido, iva, TipoRetencion.IVA);
     }
 
-    async onModuleInit_DISABLED() {
-        // Deshabilitado temporalmente para asegurar despliegue
-        console.log('⚠️ Inicialización de matriz de impuestos OMITIDA');
-    }
 
-    private async inicializarMatriz() {
-        const count = await this.retencionesRepository.count();
-        if (count > 0) return;
 
-        const retenciones = [
-            // RENTA
-            { codigo: '312', descripcion: 'Transferencia de bienes muebles de naturaleza corporal', porcentaje: 1.75, tipo: TipoRetencion.RENTA },
-            { codigo: '303', descripcion: 'Honorarios profesionales y demás pagos por servicios (PN)', porcentaje: 10.00, tipo: TipoRetencion.RENTA },
-            { codigo: '3440', descripcion: 'Otras compras de bienes y servicios no sujetas a retención', porcentaje: 2.75, tipo: TipoRetencion.RENTA }, // 2.75% Otros Servicios
-            { codigo: '343', descripcion: '1% Rimpe Emprendedor (Bienes y Servicios)', porcentaje: 1.00, tipo: TipoRetencion.RENTA },
-            { codigo: '332', descripcion: '0% Rimpe Negocio Popular (Notas de Venta)', porcentaje: 0.00, tipo: TipoRetencion.RENTA },
-            { codigo: '311', descripcion: 'Servicios de transporte privado de pasajeros o carga', porcentaje: 1.00, tipo: TipoRetencion.RENTA },
-            { codigo: '312A', descripcion: 'Sector Construcción', porcentaje: 1.75, tipo: TipoRetencion.RENTA },
 
-            // IVA
-            { codigo: '9', descripcion: 'Retención IVA 30% (Bienes)', porcentaje: 30.00, tipo: TipoRetencion.IVA },
-            { codigo: '10', descripcion: 'Retención IVA 70% (Servicios)', porcentaje: 70.00, tipo: TipoRetencion.IVA },
-            { codigo: '111', descripcion: 'Retención IVA 100% (Arriendos/Honorarios)', porcentaje: 100.00, tipo: TipoRetencion.IVA },
-            { codigo: '1', descripcion: 'Retención IVA 10% (Entre Contribuyentes Especiales)', porcentaje: 10.00, tipo: TipoRetencion.IVA },
-            { codigo: '0', descripcion: 'Sin Retención', porcentaje: 0.00, tipo: TipoRetencion.RENTA },
-        ];
-
-        for (const r of retenciones) {
-            await this.retencionesRepository.save(this.retencionesRepository.create(r));
-        }
-        console.log('✅ Matriz de Retenciones SRI 2026 Inicializada');
-    }
 
     private async buscarYCalcular(codigo: string, baseImponible: number, tipo: TipoRetencion = TipoRetencion.RENTA) {
         const retencion = await this.retencionesRepository.findOne({ where: { codigo, tipo } });
