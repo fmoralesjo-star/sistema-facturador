@@ -26,8 +26,8 @@ export class SriRetencion {
     @Column({ type: 'decimal', precision: 5, scale: 2 })
     porcentaje: number; // Ej: 1.75
 
-    @Column({ type: 'enum', enum: TipoRetencion, default: TipoRetencion.RENTA })
-    tipo: TipoRetencion;
+    @Column({ type: 'varchar', length: 20, default: 'RENTA' })
+    tipo: string; // Changed from ENUM to varchar for safer deployment
 
     @Column({ type: 'date', nullable: true })
     fecha_vigencia_inicio: Date; // Para manejar cambios de normativa en el tiempo
