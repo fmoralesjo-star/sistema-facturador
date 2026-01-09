@@ -39,17 +39,10 @@ export class ContabilidadService implements OnApplicationBootstrap {
 
   /**
    * Valida que la fecha del asiento esté en un periodo contable abierto
-   * NOTA: Validación temporalmente deshabilitada (requiere Empresa repository)
+   * TODO: Implementar validación contra Empresa.fecha_cierre_contable
    */
   private async validarPeriodoAbierto(fecha: Date, queryRunner?: QueryRunner): Promise<void> {
-    // TODO: Reactivar cuando se corrija error de metadata
-    // const manager = queryRunner ? queryRunner.manager : this.asientoRepository.manager;
-    // const empresa = await manager.findOne(Empresa, { where: { activa: true } });
-    // if (empresa?.fecha_cierre_contable && fecha <= empresa.fecha_cierre_contable) {
-    //   throw new BadRequestException(
-    //     `El periodo está cerrado hasta ${empresa.fecha_cierre_contable}. No se pueden registrar movimientos.`
-    //   );
-    // }
+    // Temporalmente deshabilitada - requiere resolver metadata de Empresa
   }
 
   /**

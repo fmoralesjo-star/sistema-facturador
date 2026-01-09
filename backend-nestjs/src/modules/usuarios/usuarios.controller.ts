@@ -73,34 +73,4 @@ export class UsuariosController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.usuariosService.remove(id);
   }
-
-  @Post('sync-firebase')
-  @HttpCode(HttpStatus.OK)
-  syncFirebaseUser(@Body() body: {
-    firebase_uid: string;
-    email: string;
-    nombre_completo: string;
-    identificacion?: string;
-    telefono?: string;
-    direccion?: string;
-    fecha_nacimiento?: string;
-    sueldo?: number;
-    foto_cedula_anverso?: string;
-    foto_cedula_reverso?: string;
-  }) {
-    return this.usuariosService.syncFirebaseUser(
-      body.firebase_uid,
-      body.email,
-      body.nombre_completo,
-      {
-        identificacion: body.identificacion,
-        telefono: body.telefono,
-        direccion: body.direccion,
-        fecha_nacimiento: body.fecha_nacimiento,
-        sueldo: body.sueldo,
-        foto_cedula_anverso: body.foto_cedula_anverso,
-        foto_cedula_reverso: body.foto_cedula_reverso
-      }
-    );
-  }
 }

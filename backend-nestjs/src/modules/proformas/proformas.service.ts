@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between, Like } from 'typeorm';
 import { Proforma } from './entities/proforma.entity';
 import { ProformaDetalle } from './entities/proforma-detalle.entity';
-// import { CreateProformaDto } from './dto/create-proforma.dto';
 
 @Injectable()
 export class ProformasService {

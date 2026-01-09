@@ -63,24 +63,11 @@ export class SriService {
 
   /**
    * Consulta el estado de una tarea en la cola
+   * Nota: Implementación pendiente para PostgresQueueService
    */
   async consultarEstadoTarea(jobId: string) {
     try {
-      // TODO: Implement getJob in PostgresQueueService if needed for frontend status
-      // const job = await this.sriQueue.getJob(jobId);
       return { msg: 'Status check not implemented for Postgres Queue yet' };
-      /*
-      if (!job) {
-        return { error: 'Tarea no encontrada' };
-      }
-      return {
-        id: job.id,
-        state: await job.getState(),
-        progress: job.progress,
-        returnvalue: job.returnvalue,
-        failedReason: job.failedReason,
-      };
-      */
     } catch (error) {
       return { error: 'Error al consultar tarea' };
     }
