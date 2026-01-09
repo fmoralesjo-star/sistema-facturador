@@ -39,6 +39,10 @@ import { ComprobanteRetencion } from '../modules/compras/entities/comprobante-re
 import { Proveedor } from '../modules/compras/entities/proveedor.entity';
 import { QueueJob } from '../modules/common/entities/queue-job.entity';
 import { StoredFile } from '../modules/common/entities/stored-file.entity';
+import { ImpuestoIVA } from '../modules/sri/entities/impuesto-iva.entity';
+import { RetencionSRI } from '../modules/sri/entities/retencion-sri.entity';
+import { SustentoTributario } from '../modules/sri/entities/sustento-tributario.entity';
+import { NotaCredito } from '../modules/notas-credito/entities/nota-credito.entity';
 
 const useFirestore = process.env.USE_FIRESTORE === 'true' || process.env.USE_FIRESTORE === 'True';
 
@@ -104,6 +108,10 @@ if (useFirestore) {
                 Proveedor,
                 QueueJob,
                 StoredFile,
+                ImpuestoIVA,
+                RetencionSRI,
+                SustentoTributario,
+                NotaCredito,
               ],
               synchronize: true, // FORZADO: Asegurar creación de tablas en Render (v3)
               logging: true,
@@ -169,6 +177,10 @@ if (useFirestore) {
               Proveedor,
               QueueJob,
               StoredFile,
+              ImpuestoIVA,
+              RetencionSRI,
+              SustentoTributario,
+              NotaCredito,
             ],
             synchronize: true, // FORZADO TEMPORALMENTE para debug
             logging: true,
