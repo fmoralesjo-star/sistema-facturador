@@ -23,7 +23,7 @@ services:
     runtime: node
     plan: starter # Plan gratuito (512 MB RAM, suspende tras 15 min inactividad)
     rootDir: backend-nestjs
-    buildCommand: npm install && npm run build && ls -R dist
+    buildCommand: npm install && npx nest build && ls -R dist
     startCommand: npm run start:prod
     healthCheckPath: /health
     envVars:
