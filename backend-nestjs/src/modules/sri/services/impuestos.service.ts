@@ -5,7 +5,7 @@ import { SriRetencionV3, TipoRetencion } from '../entities/sri-retencion.entity'
 import { Proveedor } from '../../compras/entities/proveedor.entity';
 
 @Injectable()
-export class TaxEngineService {
+export class TaxEngineService { // V3 Updated - Force Rebuild
     constructor(
         @InjectRepository(SriRetencionV3)
         private retencionesRepository: Repository<SriRetencionV3>,
