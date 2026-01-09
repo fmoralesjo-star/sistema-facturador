@@ -5,55 +5,43 @@ import {
   Body,
   Param,
   ParseIntPipe,
-  UseGuards,
   Request,
   ForbiddenException,
 } from '@nestjs/common';
 import { AdministracionTIService } from './administracion-ti.service';
 import { SolicitarRolContadorDto } from './dto/solicitar-rol-contador.dto';
 import { Verificar2FADto } from './dto/verificar-2fa.dto';
-import { FirebaseAuthGuard } from '../firebase/guards/firebase-auth.guard';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Usuario } from '../usuarios/entities/usuario.entity';
 import { UsuariosService } from '../usuarios/usuarios.service';
 
 @Controller('administracion-ti')
-@UseGuards(FirebaseAuthGuard)
 export class AdministracionTIController {
   constructor(
     private readonly administracionTIService: AdministracionTIService,
     @InjectRepository(Usuario)
     private usuarioRepository: Repository<Usuario>,
     private readonly usuariosService: UsuariosService,
-  ) {}
+  ) { }
 
   /**
-   * Obtiene el usuarioId desde el token de Firebase
+   * Obtiene el usuarioId desde la sesión o request
+   * TODO: Implementar autenticación con JWT en lugar de Firebase
    */
   private async obtenerUsuarioId(req: any): Promise<number> {
-    const firebaseUser = req.user;
-    if (!firebaseUser || !firebaseUser.email) {
+    // Placeholder: Se debe implementar autenticación JWT
+    // Por ahora, buscar por email en el request
+    const userEmail = req.user?.email || req.body?.email;
+
+    if (!userEmail) {
       throw new ForbiddenException('Usuario no autenticado. Por favor, inicia sesión nuevamente.');
     }
 
     // Buscar usuario por email
-    let usuario = await this.usuarioRepository.findOne({
-      where: { email: firebaseUser.email },
+    const usuario = await this.usuarioRepository.findOne({
+      where: { email: userEmail },
     });
-
-    // Si no existe, intentar sincronizar desde Firebase
-    if (!usuario) {
-      try {
-        usuario = await this.usuariosService.syncFirebaseUser(
-          firebaseUser.uid,
-          firebaseUser.email,
-          firebaseUser.name || firebaseUser.email?.split('@')[0] || 'Usuario'
-        );
-      } catch (error) {
-        console.error('Error al sincronizar usuario:', error);
-      }
-    }
 
     if (!usuario) {
       throw new ForbiddenException(
@@ -72,11 +60,11 @@ export class AdministracionTIController {
     try {
       const usuarioId = await this.obtenerUsuarioId(req);
       const esAdminTI = await this.administracionTIService.esAdministradorTI(usuarioId);
-      return { 
+      return {
         esAdminTI,
         usuarioId,
-        mensaje: esAdminTI 
-          ? 'Acceso autorizado como Administrador de TI' 
+        mensaje: esAdminTI
+          ? 'Acceso autorizado como Administrador de TI'
           : 'No tienes permisos de Administrador de TI'
       };
     } catch (error) {
