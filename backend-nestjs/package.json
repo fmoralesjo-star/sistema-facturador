@@ -11,7 +11,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "echo '🚀 STARTING V3.1 (PATH FIX)' && (node dist/src/main || node dist/main || (echo '❌ FAIL: Neither path worked. Listing dist:' && dir dist /s /b && ls -R dist))",
+    "start:prod": "echo '🚀 STARTING V3.2 (FIX NODE_ENV)' && (node dist/src/main || node dist/main || (echo '❌ FAIL. Listing dist:' && ls -la dist && ls -la dist/src))",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
