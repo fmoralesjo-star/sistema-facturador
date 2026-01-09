@@ -42,103 +42,22 @@ import { StoredFile } from '../modules/common/entities/stored-file.entity';
 import { ImpuestoIVA } from '../modules/sri/entities/impuesto-iva.entity';
 import { RetencionSRI } from '../modules/sri/entities/retencion-sri.entity';
 import { SustentoTributario } from '../modules/sri/entities/sustento-tributario.entity';
-import { NotaCredito } from '../modules/notas-credito/entities/nota-credito.entity';
-
-const useFirestore = process.env.USE_FIRESTORE === 'true' || process.env.USE_FIRESTORE === 'True';
-
-// Log para debugging
-if (useFirestore) {
-  console.log('🔥 DatabaseModule: Firestore activado - TypeORM deshabilitado');
-} else {
-  console.log('🗄️ DatabaseModule: PostgreSQL activado - TypeORM habilitado');
-}
+import { NotaCredito, NotaCreditoDetalle } from '../modules/notas-credito/entities/nota-credito.entity';
 
 @Module({
   imports: [
-    // Solo inicializar TypeORM si NO se usa Firestore
-    // TypeORM se necesita para módulos como Facturas, SRI, etc.
-    ...(!useFirestore ? [
-      TypeOrmModule.forRootAsync({
-        imports: [ConfigModule],
-        useFactory: (configService: ConfigService) => {
-          const isProduction = configService.get('NODE_ENV') === 'production';
-          const databaseUrl = configService.get('DATABASE_URL');
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => {
+        const isProduction = configService.get('NODE_ENV') === 'production';
+        const databaseUrl = configService.get('DATABASE_URL');
 
-          // Opción 1: Usar DATABASE_URL (Render y otros servicios cloud)
-          if (databaseUrl) {
-            console.log('🌐 Using DATABASE_URL for connection (production mode)');
-            return {
-              type: 'postgres',
-              url: databaseUrl,
-              entities: [
-                Producto,
-                Cliente,
-                Factura,
-                FacturaDetalle,
-                MovimientoInventario,
-                AsientoContable,
-                CuentaContable,
-                PartidaContable,
-                Empresa,
-                Establecimiento,
-                Voucher,
-                Empleado,
-                Asistencia,
-                Rol,
-                Usuario,
-                UsuarioPermiso,
-                PuntoVenta,
-                ProductoPuntoVenta,
-                Transferencia,
-                TransferenciaDetalle,
-                Ubicacion,
-                ProductoUbicacion,
-                CajaChicaMovimiento,
-                AuditLog,
-                BackupLog,
-                DocumentoPendienteSRI,
-                Configuracion,
-                SriRetencionV3,
-                MovimientoBancarioExtracto,
-                Banco,
-                ConciliacionBancaria,
-                PlantillaAsiento,
-                PlantillaDetalle,
-                ComprobanteRetencion,
-                Proveedor,
-                QueueJob,
-                StoredFile,
-                ImpuestoIVA,
-                RetencionSRI,
-                SustentoTributario,
-                NotaCredito,
-              ],
-              synchronize: true, // FORZADO: Asegurar creación de tablas en Render (v3)
-              logging: true,
-              ssl: { rejectUnauthorized: false }, // Requerido por Render
-              extra: {
-                max: 20, // Aumentar pool size
-                connectionTimeoutMillis: 10000,
-                keepAlive: true,
-              },
-            };
-          }
-
-          // Opción 2: Usar variables individuales (desarrollo local)
-          console.log('🔍 DEBUG DB CONNECTION:', {
-            user: configService.get('DATABASE_USER'),
-            db: configService.get('DATABASE_NAME'),
-            host: configService.get('DATABASE_HOST', 'localhost'),
-            port: 5432
-          });
+        // Opción 1: Usar DATABASE_URL (Render y otros servicios cloud)
+        if (databaseUrl) {
+          console.log('🌐 Using DATABASE_URL for connection (production mode)');
           return {
             type: 'postgres',
-            host: configService.get('DATABASE_HOST', 'localhost'),
-            connectTimeoutMS: 10000,
-            port: configService.get('DATABASE_PORT', 5432),
-            username: configService.get('DATABASE_USER', 'facturador'),
-            password: configService.get('DATABASE_PASSWORD', 'password'),
-            database: configService.get('DATABASE_NAME', 'facturador_db'),
+            url: databaseUrl,
             entities: [
               Producto,
               Cliente,
@@ -181,16 +100,85 @@ if (useFirestore) {
               RetencionSRI,
               SustentoTributario,
               NotaCredito,
+              NotaCreditoDetalle,
             ],
-            synchronize: true, // FORZADO TEMPORALMENTE para debug
+            synchronize: true, // FORZADO: Asegurar creación de tablas en Render (v3)
             logging: true,
-            ssl: false,
+            ssl: { rejectUnauthorized: false }, // Requerido por Render
+            extra: {
+              max: 20, // Aumentar pool size
+              connectionTimeoutMillis: 10000,
+              keepAlive: true,
+            },
           };
-        },
-        inject: [ConfigService],
-      }),
-    ] : []),
+        }
+
+        // Opción 2: Usar variables individuales (desarrollo local)
+        console.log('🔍 DEBUG DB CONNECTION:', {
+          user: configService.get('DATABASE_USER'),
+          db: configService.get('DATABASE_NAME'),
+          host: configService.get('DATABASE_HOST', 'localhost'),
+          port: 5432
+        });
+        return {
+          type: 'postgres',
+          host: configService.get('DATABASE_HOST', 'localhost'),
+          connectTimeoutMS: 10000,
+          port: configService.get('DATABASE_PORT', 5432),
+          username: configService.get('DATABASE_USER', 'facturador'),
+          password: configService.get('DATABASE_PASSWORD', 'password'),
+          database: configService.get('DATABASE_NAME', 'facturador_db'),
+          entities: [
+            Producto,
+            Cliente,
+            Factura,
+            FacturaDetalle,
+            MovimientoInventario,
+            AsientoContable,
+            CuentaContable,
+            PartidaContable,
+            Empresa,
+            Establecimiento,
+            Voucher,
+            Empleado,
+            Asistencia,
+            Rol,
+            Usuario,
+            UsuarioPermiso,
+            PuntoVenta,
+            ProductoPuntoVenta,
+            Transferencia,
+            TransferenciaDetalle,
+            Ubicacion,
+            ProductoUbicacion,
+            CajaChicaMovimiento,
+            AuditLog,
+            BackupLog,
+            DocumentoPendienteSRI,
+            Configuracion,
+            SriRetencionV3,
+            MovimientoBancarioExtracto,
+            Banco,
+            ConciliacionBancaria,
+            PlantillaAsiento,
+            PlantillaDetalle,
+            ComprobanteRetencion,
+            Proveedor,
+            QueueJob,
+            StoredFile,
+            ImpuestoIVA,
+            RetencionSRI,
+            SustentoTributario,
+            NotaCredito,
+            NotaCreditoDetalle,
+          ],
+          synchronize: true, // FORZADO TEMPORALMENTE para debug
+          logging: true,
+          ssl: false,
+        };
+      },
+      inject: [ConfigService],
+    }),
   ],
 })
 export class DatabaseModule { }
-
