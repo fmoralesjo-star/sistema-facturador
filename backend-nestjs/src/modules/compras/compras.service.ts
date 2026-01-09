@@ -9,7 +9,7 @@ import { CreateCompraDto } from './dto/create-compra.dto';
 import { InventarioService } from '../inventario/inventario.service';
 import { ContabilidadService } from '../contabilidad/contabilidad.service';
 import { EventsGateway } from '../../gateways/events.gateway';
-import { TaxEngineService } from '../sri/services/impuestos.service';
+import { TaxEngineService } from '../sri/services/tax-engine.service';
 import { RetencionesService } from './services/retenciones.service';
 import { parseStringPromise } from 'xml2js';
 

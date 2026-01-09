@@ -22,7 +22,7 @@ import { Configuracion } from '../admin/entities/configuracion.entity';
 
 import { NotaCredito } from '../notas-credito/entities/nota-credito.entity';
 import { SriRetencionV3 } from './entities/sri-retencion.entity';
-import { TaxEngineService } from './services/impuestos.service';
+import { TaxEngineService } from './services/tax-engine.service';
 import { ContabilidadModule } from '../contabilidad/contabilidad.module';
 
 
