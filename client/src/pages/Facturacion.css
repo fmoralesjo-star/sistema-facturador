@@ -373,16 +373,28 @@ body {
 }
 
 /* Grid simple sin Excel */
+/* Grid Body Scrollable Area */
 .grid-container {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-height: calc(100vh - 350px);
-  overflow-y: auto;
-  overflow-x: hidden;
-  flex: 1;
-  min-height: 0;
+  height: 400px;
+  /* Fixed height to force scroll */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+  /* Contain inner scrolls */
+  margin-bottom: 0;
 }
+
+.grid-body {
+  flex: 1;
+  overflow-y: auto;
+  /* Enable vertical scroll */
+  overflow-x: hidden;
+  /* Prevent horizontal scroll on body */
+}
+
+/* Ensure no other styles conflict */
 
 .grid-header {
   display: grid;

@@ -4288,22 +4288,22 @@ Este enlace te permitirá actualizar tu información de contacto.`
                         No hay productos
                       </div>
                     </div>
-                  )}
                 </div>
               </div>
               <button
                 onClick={agregarFila}
                 style={{
                   marginTop: '8px',
-                  padding: '4px 10px',
+                  padding: '6px 12px',
                   cursor: 'pointer',
                   background: 'var(--azul-electrico)',
                   color: 'white',
                   border: 'none',
                   borderRadius: '4px',
                   fontWeight: 'bold',
-                  fontSize: '10px',
-                  alignSelf: 'flex-start'
+                  fontSize: '11px',
+                  alignSelf: 'flex-start',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
                 }}
               >
                 + Agregar Fila
