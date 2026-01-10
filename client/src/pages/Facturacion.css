@@ -381,10 +381,10 @@ body {
   /* Ocupa el espacio disponible en el panel padre */
   min-height: 0;
   /* CRÍTICO: Permite que el contenedor se encoja para activar el scroll */
-  height: 280px;
-  /* Altura fija reducida para asegurar visibilidad del botón en laptops */
-  min-height: 280px;
-  max-height: 280px;
+  height: 200px;
+  /* Altura muy compacta para garantizar que entre en cualquier pantalla */
+  min-height: 200px;
+  max-height: 200px;
   border: 1px solid #ddd;
   border-radius: 4px;
   overflow: hidden;
