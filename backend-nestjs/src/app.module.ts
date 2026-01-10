@@ -29,6 +29,7 @@ import { AtsModule } from './modules/ats/ats.module';
 import { CommonModule } from './modules/common/common.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { MediaModule } from './modules/media/media.module';
+import { TiendaConfigModule } from './modules/tienda-config/tienda-config.module';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { MediaModule } from './modules/media/media.module';
     CommonModule,
     AuthModule,
     MediaModule,
+    TiendaConfigModule,
 
     // Scheduler
     ScheduleModule.forRoot(),

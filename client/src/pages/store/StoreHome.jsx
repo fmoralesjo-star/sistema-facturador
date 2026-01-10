@@ -4,7 +4,7 @@ import axios from 'axios';
 import { API_URL } from '../../config/api';
 
 const StoreHome = () => {
-    const { addToCart } = useOutletContext();
+    const { addToCart, storeConfig } = useOutletContext();
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -45,7 +45,7 @@ const StoreHome = () => {
     };
 
     if (loading) return (
-        <div style={{ minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#0066FF' }}>
+        <div style={{ minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'var(--store-primary)' }}>
             <h2>Cargando Patoshub Store...</h2>
         </div>
     );
@@ -53,18 +53,20 @@ const StoreHome = () => {
     return (
         <>
             {/* Hero Section */}
-            <section className="store-hero-section">
-                <div className="hero-blob"></div>
-                <div className="store-container">
-                    <div className="store-hero-content">
-                        <h1>Tecnología que impulsa tu mundo</h1>
-                        <p>Encuentra los mejores productos con calidad garantizada y envío rápido.</p>
-                        <button className="hero-cta" onClick={() => document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth' })}>
-                            Ver Ofertas
-                        </button>
+            {storeConfig?.mostrarBanner !== false && (
+                <section className="store-hero-section">
+                    <div className="hero-blob"></div>
+                    <div className="store-container">
+                        <div className="store-hero-content">
+                            <h1>{storeConfig?.bannerTitulo || 'Tecnología que impulsa tu mundo'}</h1>
+                            <p>{storeConfig?.bannerSubtitulo || 'Encuentra los mejores productos con calidad garantizada y envío rápido.'}</p>
+                            <button className="hero-cta" onClick={() => document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth' })}>
+                                Ver Ofertas
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
 
             <div className="store-container" id="catalogo">
                 {/* Categories */}

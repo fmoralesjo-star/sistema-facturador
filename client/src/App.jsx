@@ -29,7 +29,7 @@ import GeneradorATS from './pages/admin/GeneradorATS'
 import NotasCredito from './pages/NotasCredito'
 import RecursosHumanos from './pages/RecursosHumanos'
 import Cartera from './pages/Cartera'
-import MobileAppDashboard from './pages/MobileAppDashboard'
+import EcommerceDashboard from './pages/EcommerceDashboard'
 import StoreLayout from './pages/store/StoreLayout'
 import StoreHome from './pages/store/StoreHome'
 import StoreCheckout from './pages/store/StoreCheckout'
@@ -528,7 +528,7 @@ function App() {
               path="/mobile-app"
               element={
                 <ProtectedRoute>
-                  <MobileAppDashboard />
+                  <EcommerceDashboard />
                 </ProtectedRoute>
               }
             />
@@ -689,6 +689,12 @@ function NavBar() {
           </Link>
           <Link to="/recursos-humanos" className={location.pathname === '/recursos-humanos' ? 'active' : ''}>
             RR.HH.
+          </Link>
+          <Link to="/mobile-app" className={location.pathname === '/mobile-app' ? 'active' : ''}>
+            Tienda Online
+          </Link>
+          <Link to="/mobile-app" className={location.pathname === '/mobile-app' ? 'active' : ''}>
+            Tienda Online
           </Link>
         </div>
         {firebaseEnabled && isAuthenticated && currentUser && (

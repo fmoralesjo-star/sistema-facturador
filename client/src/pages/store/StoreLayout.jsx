@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { API_URL } from '../../config/api';
 import './Store.css';
 
 const StoreLayout = () => {
     const navigate = useNavigate();
     const [cart, setCart] = useState([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const [storeConfig, setStoreConfig] = useState(null);
 
     // Load cart from local storage on mount
     useEffect(() => {
@@ -13,12 +16,34 @@ const StoreLayout = () => {
         if (savedCart) {
             setCart(JSON.parse(savedCart));
         }
+        fetchStoreConfig();
     }, []);
 
     // Save cart to local storage when it changes
     useEffect(() => {
         localStorage.setItem('patoshub_cart', JSON.stringify(cart));
     }, [cart]);
+
+    const fetchStoreConfig = async () => {
+        try {
+            const res = await axios.get(`${API_URL}/tienda-config`);
+            if (res.data) {
+                setStoreConfig(res.data);
+                if (res.data.colorPrimario) {
+                    document.documentElement.style.setProperty('--store-primary', res.data.colorPrimario);
+                    // Generate darker variant
+                    // Helper to darken hex
+                    // For now simple fallback or same
+                    document.documentElement.style.setProperty('--store-primary-dark', res.data.colorPrimario);
+                }
+                if (res.data.colorSecundario) {
+                    document.documentElement.style.setProperty('--store-secondary', res.data.colorSecundario);
+                }
+            }
+        } catch (error) {
+            console.error("Error loading store config", error);
+        }
+    };
 
     const addToCart = (product) => {
         setCart(prev => {
@@ -74,7 +99,7 @@ const StoreLayout = () => {
 
             {/* Main Content */}
             <main className="store-main">
-                <Outlet context={{ addToCart, cart, isCartOpen, setIsCartOpen }} />
+                <Outlet context={{ addToCart, cart, isCartOpen, setIsCartOpen, storeConfig }} />
             </main>
 
             {/* Cart Sidebar */}
