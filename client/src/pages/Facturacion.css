@@ -377,14 +377,14 @@ body {
 .grid-container {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  /* Ocupar espacio restante disponible */
-  min-height: 200px;
-  /* Altura mínima para no colapsar */
+  height: 350px;
+  /* Fixed height! - Table content scrolls inside this */
+  min-height: 350px;
+  max-height: 350px;
   border: 1px solid #ddd;
   border-radius: 4px;
   overflow: hidden;
-  /* Contain inner scrolls */
+  /* Important: contain scroll inside */
   margin-bottom: 0;
 }
 
