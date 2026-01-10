@@ -772,50 +772,76 @@ function Facturacion({ socket }) {
       } catch (error) {
         console.error('Error al guardar anchos de columnas:', error)
       }
-    }, 300) // Debounce de 300ms para evitar escrituras excesivas durante el resize
+    }, 300) // Debounce de 300ms para evitar escrituras excesivas
 
     return () => clearTimeout(timeoutId)
   }, [columnWidths])
+
+  // Refs para el manejo de redimensionado sin problemas de closure
+  const resizingState = useRef({
+    isResizing: false,
+    column: null,
+    startX: 0,
+    startWidth: 0
+  });
 
   // Handler para iniciar resize
   const handleResizeStart = (e, column) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsResizing(true);
-    setResizingColumn(column);
-    resizeStartX.current = e.clientX;
-    resizeStartWidth.current = columnWidths[column];
 
-    // Agregar listeners globales
+    // Guardar estado en ref mutable (inmediato)
+    resizingState.current = {
+      isResizing: true,
+      column: column,
+      startX: e.clientX,
+      startWidth: columnWidths[column]
+    };
+
+    setIsResizing(true); // Solo para cambios visuales si los hubiera
+    setResizingColumn(column);
+
     document.addEventListener('mousemove', handleResizeMove);
     document.addEventListener('mouseup', handleResizeEnd);
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
   }
 
-  const handleResizeMove = (e) => {
-    if (!isResizing) return;
-    const deltaX = e.clientX - resizeStartX.current;
-    const newWidth = Math.max(40, resizeStartWidth.current + deltaX); // Min width 40px
+  const handleResizeMove = useCallback((e) => {
+    // Leer directamente del ref para evitar closures viejos
+    const state = resizingState.current;
+    if (!state.isResizing) return;
 
+    const deltaX = e.clientX - state.startX;
+    const newWidth = Math.max(40, state.startWidth + deltaX);
+
+    // Actualizar estado de React para renderizar (usando callback para asegurar estado fresco)
     setColumnWidths(prev => ({
       ...prev,
-      [resizingColumn]: newWidth
+      [state.column]: newWidth
     }));
-  }
+  }, []); // Sin dependencias, siempre usa el ref
 
-  const handleResizeEnd = () => {
+  const handleResizeEnd = useCallback(() => {
+    resizingState.current.isResizing = false;
+    resizingState.current.column = null;
+
     setIsResizing(false);
     setResizingColumn(null);
+
     document.removeEventListener('mousemove', handleResizeMove);
     document.removeEventListener('mouseup', handleResizeEnd);
-  }
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  }, [handleResizeMove]); // Dependencia necesaria para remover el listener correcto
 
-  // Efecto para limpiar listeners si el componente se desmonta mientras se redimensiona
+  // Efecto para limpiar listeners
   useEffect(() => {
     return () => {
       document.removeEventListener('mousemove', handleResizeMove);
       document.removeEventListener('mouseup', handleResizeEnd);
     }
-  }, []);
+  }, [handleResizeMove, handleResizeEnd]);
 
 
 
