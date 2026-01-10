@@ -597,15 +597,18 @@ function Facturacion({ socket }) {
     const porcentajeIVA = (configuracion.ivaPorcentaje || 15) / 100
     const iva = subtotalGeneral * porcentajeIVA
 
-    // Retenciones: Por ahora en 0 ya que no debe ser hardcoded 1%
-    const retenciones = 0 // subtotalGeneral * 0.01 (Hardcode eliminado)
+    // Calcular retenciones desde los datos ingresados
+    const valRetIR = parseFloat(retencionData.valorIR) || 0
+    const valRetIVA = parseFloat(retencionData.valorIVA) || 0
+    const retenciones = valRetIR + valRetIVA
 
     const total = subtotalGeneral + iva - retenciones
 
     setTotales(prev => {
       // Solo actualizar si cambió algo significativo
       if (Math.abs(prev.subtotal - subtotalGeneral) < 0.01 &&
-        Math.abs(prev.total - total) < 0.01) {
+        Math.abs(prev.total - total) < 0.01 &&
+        Math.abs(prev.retenciones - retenciones) < 0.01) {
         return prev
       }
 
@@ -625,7 +628,7 @@ function Facturacion({ socket }) {
     }, 0)
     return () => clearTimeout(timeoutId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items])
+  }, [items, retencionData, configuracion.ivaPorcentaje])
 
   // Deshabilitar zoom en la pantalla de facturación
   useEffect(() => {
@@ -6272,6 +6275,98 @@ Este enlace te permitirá actualizar tu información de contacto.`
           />
         )
       }
+
+      {/* Modal de Retenciones */}
+      {mostrarModalRetencion && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '20px',
+            borderRadius: '8px',
+            width: '350px',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+          }}>
+            <h3 style={{ marginTop: 0, color: '#1e40af' }}>Registrar Retención</h3>
+
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', fontSize: '13px', marginBottom: '5px' }}>N° Comprobante Retención:</label>
+              <input
+                type="text"
+                className="input-text"
+                value={retencionData.numero}
+                onChange={(e) => setRetencionData({ ...retencionData, numero: e.target.value })}
+                placeholder="001-001-000000001"
+                style={{ width: '100%' }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+              <div style={{ flex: 1 }}>
+                <label style={{ display: 'block', fontSize: '13px', marginBottom: '5px' }}>Valor Ret. Renta ($):</label>
+                <input
+                  type="number"
+                  className="input-text"
+                  step="0.01"
+                  value={retencionData.valorIR}
+                  onChange={(e) => setRetencionData({ ...retencionData, valorIR: e.target.value })}
+                  style={{ width: '100%' }}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={{ display: 'block', fontSize: '13px', marginBottom: '5px' }}>Valor Ret. IVA ($):</label>
+                <input
+                  type="number"
+                  className="input-text"
+                  step="0.01"
+                  value={retencionData.valorIVA}
+                  onChange={(e) => setRetencionData({ ...retencionData, valorIVA: e.target.value })}
+                  style={{ width: '100%' }}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button
+                onClick={() => setMostrarModalRetencion(false)}
+                style={{
+                  padding: '8px 16px',
+                  border: '1px solid #ccc',
+                  background: 'white',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  setMostrarModalRetencion(false)
+                  // El cálculo se dispara automáticamente por el useEffect al cambiar retencionData
+                }}
+                style={{
+                  padding: '8px 16px',
+                  background: '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                Guardar Retención
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
