@@ -403,8 +403,9 @@ body {
   user-select: none;
   position: relative;
   /* For resizer positioning */
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: visible;
+  /* CRITICAL: Allow resizer to be clickable outside bounds */
+  text-overflow: clip;
   white-space: nowrap;
 }
 
