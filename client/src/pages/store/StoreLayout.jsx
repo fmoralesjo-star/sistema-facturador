@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { API_URL } from '../../config/api';
 import './Store.css';
-
-// Simple Cart Context implemented as a hook via outlet context
-// In a real big app we would use Context API.
 
 const StoreLayout = () => {
     const navigate = useNavigate();
@@ -61,15 +56,18 @@ const StoreLayout = () => {
             <nav className="store-navbar">
                 <div className="store-container nav-content">
                     <Link to="/store" className="store-brand">
-                        🛍️ Patoshub Store
+                        <span style={{ fontSize: '1.5rem' }}>🔹</span> Patoshub
                     </Link>
 
+                    <div className="store-search-bar">
+                        <input type="text" placeholder="Buscar productos..." className="store-search-input" />
+                    </div>
+
                     <div className="store-nav-links">
-                        <Link to="/store">Catálogo</Link>
-                        <button className="cart-btn" onClick={() => setIsCartOpen(!isCartOpen)}>
-                            🛒 Carrito ({cartCount})
+                        <button className="cart-indicator-btn" onClick={() => setIsCartOpen(!isCartOpen)}>
+                            🛒 <span className="cart-count-badge">{cartCount}</span>
                         </button>
-                        <Link to="/login" className="login-link">Admin Login</Link>
+                        <Link to="/login" className="login-link">Admin</Link>
                     </div>
                 </div>
             </nav>
@@ -82,22 +80,30 @@ const StoreLayout = () => {
             {/* Cart Sidebar */}
             <div className={`cart-sidebar ${isCartOpen ? 'open' : ''}`}>
                 <div className="cart-header">
-                    <h3>Tu Carrito</h3>
-                    <button onClick={() => setIsCartOpen(false)}>✕</button>
+                    <h3>Tu Carrito ({cartCount})</h3>
+                    <button onClick={() => setIsCartOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
                 </div>
 
                 <div className="cart-items">
                     {cart.length === 0 ? (
-                        <p className="empty-cart">El carrito está vacío</p>
+                        <div style={{ textAlign: 'center', padding: '2rem', color: '#888' }}>
+                            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🛒</div>
+                            <p>Tu carrito está vacío</p>
+                            <button onClick={() => setIsCartOpen(false)} style={{ marginTop: '1rem', color: 'var(--store-primary)', border: 'none', background: 'none', textDecoration: 'underline', cursor: 'pointer' }}>Seguir comprando</button>
+                        </div>
                     ) : (
                         cart.map(item => (
                             <div key={item.id} className="cart-item">
-                                {item.imagen_url && (
-                                    <img src={item.imagen_url} alt={item.nombre} className="cart-item-img" />
-                                )}
+                                <div style={{ width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
+                                    {item.imagen_url ? (
+                                        <img src={item.imagen_url} alt={item.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    ) : (
+                                        <div style={{ width: '100%', height: '100%', background: '#eee' }}></div>
+                                    )}
+                                </div>
                                 <div className="cart-item-info">
                                     <h4>{item.nombre}</h4>
-                                    <p>${Number(item.precio_venta || item.precio).toFixed(2)}</p>
+                                    <p style={{ color: 'var(--store-primary)', fontWeight: 'bold' }}>${Number(item.precio_venta || item.precio).toFixed(2)}</p>
                                     <div className="qty-controls">
                                         <button onClick={() => updateQuantity(item.id, -1)}>-</button>
                                         <span>{item.quantity}</span>
@@ -107,7 +113,8 @@ const StoreLayout = () => {
                                 <button
                                     className="remove-btn"
                                     onClick={() => removeFromCart(item.id)}
-                                >🗑️</button>
+                                    style={{ color: '#ff4444' }}
+                                >✕</button>
                             </div>
                         ))
                     )}
@@ -116,9 +123,10 @@ const StoreLayout = () => {
                 {cart.length > 0 && (
                     <div className="cart-footer">
                         <div className="cart-total">
-                            <span>Total:</span>
+                            <span>Subtotal:</span>
                             <span>${cartTotal.toFixed(2)}</span>
                         </div>
+                        <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '1rem' }}>Envío e impuestos calculados al finalizar.</p>
                         <button
                             className="checkout-btn"
                             onClick={() => navigate('/store/checkout', { state: { cart, total: cartTotal } })}
