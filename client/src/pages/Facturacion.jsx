@@ -227,9 +227,9 @@ function Facturacion({ socket }) {
     try {
       const width = localStorage.getItem(`${columnName}Width`)
       const parsedWidth = width ? parseInt(width) : defaultWidth
-      // Para código de barras, limitar a máximo 200px (suficiente para 20 caracteres)
-      if (columnName === 'codigoBarras' && parsedWidth > 200) {
-        return 200
+      // Para código de barras, limitar a máximo 300px (suficiente para muchos caracteres)
+      if (columnName === 'codigoBarras' && parsedWidth > 300) {
+        return 300
       }
       return parsedWidth
     } catch (error) {
@@ -238,7 +238,7 @@ function Facturacion({ socket }) {
   }
 
   const [columnWidths, setColumnWidths] = useState({
-    codigo: getInitialColumnWidth('codigoBarras', 160), // Aumentado de 130
+    codigo: getInitialColumnWidth('codigoBarras', 200), // Aumentado para 16-20 caracteres
     descripcion: getInitialColumnWidth('descripcion', 450), // Mucho más espacio para descripción
     cantidad: getInitialColumnWidth('cantidad', 60),        // Más compacto
     precio: getInitialColumnWidth('precio', 90),
