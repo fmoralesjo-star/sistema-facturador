@@ -4152,19 +4152,51 @@ Este enlace te permitirá actualizar tu información de contacto.`
                 </span>
               </h3>
               <div className="grid-container">
-                <div className="grid-header">
-                  <div className="grid-header-cell">CODIGO DE BARRAS</div>
-                  <div className="grid-header-cell">DESCRIPCION</div>
-                  <div className="grid-header-cell">CANT.</div>
-                  <div className="grid-header-cell">PRECIO</div>
-                  <div className="grid-header-cell">DESCUENTO</div>
-                  <div className="grid-header-cell">SUBTOTAL</div>
+                {/* Grid Header */}
+                <div
+                  className="grid-header"
+                  style={{
+                    gridTemplateColumns: `${columnWidths.codigo}px ${columnWidths.descripcion}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 40px`
+                  }}
+                >
+                  <div className="grid-header-cell">
+                    CÓDIGO
+                    <div className="resizer" onMouseDown={(e) => handleResizeStart(e, 'codigo')}></div>
+                  </div>
+                  <div className="grid-header-cell">
+                    DESCRIPCIÓN
+                    <div className="resizer" onMouseDown={(e) => handleResizeStart(e, 'descripcion')}></div>
+                  </div>
+                  <div className="grid-header-cell">
+                    CANT.
+                    <div className="resizer" onMouseDown={(e) => handleResizeStart(e, 'cantidad')}></div>
+                  </div>
+                  <div className="grid-header-cell">
+                    PRECIO
+                    <div className="resizer" onMouseDown={(e) => handleResizeStart(e, 'precio')}></div>
+                  </div>
+                  <div className="grid-header-cell">
+                    DESC %
+                    <div className="resizer" onMouseDown={(e) => handleResizeStart(e, 'descuento')}></div>
+                  </div>
+                  <div className="grid-header-cell">
+                    SUBTOTAL
+                    <div className="resizer" onMouseDown={(e) => handleResizeStart(e, 'subtotal')}></div>
+                  </div>
                   <div className="grid-header-cell"></div>
                 </div>
+
+                {/* Grid Body */}
                 <div className="grid-body">
                   {items && items.length > 0 ? (
-                    items.map((item, rowIndex) => (
-                      <div key={item.id} className="grid-row">
+                    items.map((item, index) => (
+                      <div
+                        key={item.id}
+                        className="grid-row"
+                        style={{
+                          gridTemplateColumns: `${columnWidths.codigo}px ${columnWidths.descripcion}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 40px`
+                        }}
+                      >
                         <div
                           className="grid-cell"
                           contentEditable
