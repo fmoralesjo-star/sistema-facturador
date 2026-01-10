@@ -30,6 +30,9 @@ import NotasCredito from './pages/NotasCredito'
 import RecursosHumanos from './pages/RecursosHumanos'
 import Cartera from './pages/Cartera'
 import MobileAppDashboard from './pages/MobileAppDashboard'
+import StoreLayout from './pages/store/StoreLayout'
+import StoreHome from './pages/store/StoreHome'
+import StoreCheckout from './pages/store/StoreCheckout'
 import { useAuth } from './contexts/AuthContext'
 import ConnectionStatus from './components/ConnectionStatus'
 import './App.css'
@@ -529,6 +532,12 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* Rutas Públicas de la Tienda (E-commerce) */}
+            <Route path="/store" element={<StoreLayout />}>
+              <Route index element={<StoreHome />} />
+              <Route path="checkout" element={<StoreCheckout />} />
+            </Route>
           </Routes>
         </div>
       </div>
@@ -575,7 +584,8 @@ function NavBar() {
     '/notas-credito',
     '/cartera',
     '/tesoreria',
-    '/mobile-app'
+    '/mobile-app',
+    '/store' // Ocultar Navbar Admin en la tienda (tiene su propia Navbar)
   ]
 
   if (rutasSinNavbar.some(ruta => location.pathname === ruta || location.pathname.startsWith(ruta + '/'))) {
