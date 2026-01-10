@@ -386,7 +386,7 @@ body {
 
 .grid-header {
   display: grid;
-  grid-template-columns: 120px 120px 1fr 70px 90px 80px 100px 40px;
+  /* grid-template-columns set via inline style in JSX */
   width: 100%;
   background-color: #f0f0f0;
   position: sticky;
@@ -401,21 +401,35 @@ body {
   font-size: 13px;
   border-right: 1px solid #ddd;
   user-select: none;
+  position: relative;
+  /* For resizer positioning */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.grid-header-cell:last-child {
-  border-right: none;
+/* Resizer Handle */
+.resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  cursor: col-resize;
+  background: transparent;
+  z-index: 20;
 }
 
-.grid-body {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+.resizer:hover,
+.grid-header-cell:hover .resizer {
+  background: #00d2ff;
+  /* Highlight on hover */
 }
 
+/* Grid Row */
 .grid-row {
   display: grid;
-  grid-template-columns: 120px 120px 1fr 70px 90px 80px 100px 40px;
+  /* grid-template-columns set via inline style in JSX */
   width: 100%;
   border-bottom: 1px solid #ddd;
 }
