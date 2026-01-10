@@ -44,6 +44,10 @@ export class InsertarRolesService implements OnModuleInit {
         nombre: 'Dueño',
         descripcion: 'Dueño de la empresa con acceso completo y autorización para aprobar solicitudes de roles',
       },
+      {
+        nombre: 'cliente',
+        descripcion: 'Cliente final que accede desde la aplicación móvil',
+      },
     ];
 
     for (const rolData of rolesPredefinidos) {

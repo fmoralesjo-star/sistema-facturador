@@ -172,7 +172,7 @@ import { NotaCredito, NotaCreditoDetalle } from '../modules/notas-credito/entiti
             NotaCredito,
             NotaCreditoDetalle,
           ],
-          synchronize: true, // FORZADO TEMPORALMENTE para debug
+          synchronize: false, // FORZADO TEMPORALMENTE para debug
           logging: true,
           ssl: false,
         };

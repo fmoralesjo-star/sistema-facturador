@@ -1,0 +1,23 @@
+SISTEMA FACTURADOR - ACCESO WEB
+===============================
+
+¡Tu sistema ya está en la nube! 
+
+🔗 LINK DE INGRESO:
+https://sistema-facturador-1sistema-facturador.onrender.com
+
+INSTRUCCIONES PARA OTRAS COMPUTADORAS:
+1. No necesitas copiar ningún archivo.
+2. No necesitas instalar nada.
+3. Solo abre Google Chrome (o cualquier navegador).
+4. Escribe la dirección de arriba.
+5. Ingresa tu usuario y contraseña.
+
+TIP PRO:
+Para que parezca una aplicación instalada:
+1. Abre el link en Chrome.
+2. Ve al menú (tres puntos arriba a la derecha).
+3. "Guardar y compartir" > "Crear acceso directo" (o "Instalar Sistema Facturador").
+4. Marca "Abrir como ventana".
+
+Ahora tendrás un ícono en el escritorio que abre directo el sistema.

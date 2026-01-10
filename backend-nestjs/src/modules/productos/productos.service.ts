@@ -37,6 +37,7 @@ export class UpdateProductoDto {
   sku?: string; // Stock Keeping Unit
   nombre?: string;
   descripcion?: string;
+  imagen_url?: string;
   coleccion?: string;
   categoria?: string;
   talla?: string;

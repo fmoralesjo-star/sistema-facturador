@@ -27,6 +27,8 @@ import { ProveedoresModule } from './modules/proveedores/proveedores.module';
 import { ComprasModule } from './modules/compras/compras.module';
 import { AtsModule } from './modules/ats/ats.module';
 import { CommonModule } from './modules/common/common.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { MediaModule } from './modules/media/media.module';
 
 @Module({
   imports: [
@@ -59,7 +61,10 @@ import { CommonModule } from './modules/common/common.module';
     ProveedoresModule,
     ComprasModule,
     AtsModule,
+
     CommonModule,
+    AuthModule,
+    MediaModule,
 
     // Scheduler
     ScheduleModule.forRoot(),

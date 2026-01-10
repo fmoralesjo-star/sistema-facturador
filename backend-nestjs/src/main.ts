@@ -90,6 +90,14 @@ async function bootstrap() {
   if (fs.existsSync(clientPath)) {
     console.log(`📂 Sirviendo Frontend desde: ${clientPath}`);
     app.useStaticAssets(clientPath);
+    // Servir uploads de imágenes
+    const uploadsPath = join(__dirname, '..', 'uploads');
+    if (!fs.existsSync(uploadsPath)) {
+      fs.mkdirSync(uploadsPath, { recursive: true });
+    }
+    app.useStaticAssets(uploadsPath, {
+      prefix: '/uploads/',
+    });
 
     // SPA Fallback: Cualquier ruta que no empiece con /api devuelve index.html
     // Interceptamos 404s en el lado de NestJS para rutas no encontradas y enviamos index.html

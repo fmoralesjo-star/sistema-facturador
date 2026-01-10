@@ -29,6 +29,7 @@ import GeneradorATS from './pages/admin/GeneradorATS'
 import NotasCredito from './pages/NotasCredito'
 import RecursosHumanos from './pages/RecursosHumanos'
 import Cartera from './pages/Cartera'
+import MobileAppDashboard from './pages/MobileAppDashboard'
 import { useAuth } from './contexts/AuthContext'
 import ConnectionStatus from './components/ConnectionStatus'
 import './App.css'
@@ -520,6 +521,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/mobile-app"
+              element={
+                <ProtectedRoute>
+                  <MobileAppDashboard />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </div>
       </div>
@@ -565,7 +574,8 @@ function NavBar() {
     '/proveedores',
     '/notas-credito',
     '/cartera',
-    '/tesoreria'
+    '/tesoreria',
+    '/mobile-app'
   ]
 
   if (rutasSinNavbar.some(ruta => location.pathname === ruta || location.pathname.startsWith(ruta + '/'))) {

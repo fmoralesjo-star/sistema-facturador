@@ -294,6 +294,10 @@ export class UsuariosService {
     return rol;
   }
 
+  async findRolByName(nombre: string) {
+    return this.rolRepository.findOne({ where: { nombre } });
+  }
+
   async aplicarPermisosPorRol(usuarioId: number, rolId: number) {
     const rol = await this.findOneRol(rolId);
     const permisosPorRol = this.getPermisosPorRol(rol.nombre);

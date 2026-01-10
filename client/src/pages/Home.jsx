@@ -192,6 +192,15 @@ function Home() {
       color: '#0e7490',
       gradiente: 'linear-gradient(135deg, #0e7490 0%, #155e75 100%)'
     },
+    {
+      id: 27,
+      titulo: 'App Móvil',
+      descripcion: 'Gestión y monitoreo de Patoshub',
+      icono: '📱',
+      ruta: '/mobile-app',
+      color: '#ec4899', // Pinkish/Purple
+      gradiente: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)'
+    }
 
   ]
 
@@ -286,7 +295,7 @@ function Home() {
       }
     },
     'Administración': {
-      ids: [12, 14, 19, 11, 18],
+      ids: [12, 14, 19, 11, 18, 27],
       style: {
         background: 'linear-gradient(to right, #818cf8, #eef2ff)',
         borderLeft: '5px solid #4338ca',
