@@ -377,8 +377,10 @@ body {
 .grid-container {
   display: flex;
   flex-direction: column;
-  height: 400px;
-  /* Fixed height to force scroll */
+  flex: 1;
+  /* Ocupar espacio restante disponible */
+  min-height: 200px;
+  /* Altura mínima para no colapsar */
   border: 1px solid #ddd;
   border-radius: 4px;
   overflow: hidden;
