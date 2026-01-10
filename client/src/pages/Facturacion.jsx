@@ -238,7 +238,7 @@ function Facturacion({ socket }) {
   }
 
   const [columnWidths, setColumnWidths] = useState({
-    codigo: getInitialColumnWidth('codigoBarras', 130),
+    codigo: getInitialColumnWidth('codigoBarras', 160), // Aumentado de 130
     descripcion: getInitialColumnWidth('descripcion', 450), // Mucho más espacio para descripción
     cantidad: getInitialColumnWidth('cantidad', 60),        // Más compacto
     precio: getInitialColumnWidth('precio', 90),
