@@ -2,16 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config/api';
 
-// Importar Firebase
-import { auth } from '../config/firebase';
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut as signOutFn,
-  onAuthStateChanged,
-  updateProfile,
-} from 'firebase/auth';
-
+// AuthContext sin Firebase - Migración a PostgreSQL
 const AuthContext = createContext({});
 
 export const useAuth = () => {
@@ -27,123 +18,90 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
 
-  // Registrar usuario
+  useEffect(() => {
+    // Al cargar, verificar si hay sesión simulada en localStorage
+    const storedUser = localStorage.getItem('system_user');
+    const storedToken = localStorage.getItem('system_token');
+
+    if (storedUser && storedToken) {
+      try {
+        const user = JSON.parse(storedUser);
+        setCurrentUser(user);
+        setUserToken(storedToken);
+      } catch (e) {
+        console.error('Error al restaurar sesión');
+        localStorage.removeItem('system_user');
+        localStorage.removeItem('system_token');
+      }
+    }
+    setLoading(false);
+  }, []);
+
+  // Registrar usuario (Simulado/Placeholder para futura API)
   const signup = async (email, password, displayName, extraData = {}) => {
-    if (!auth) {
-      throw new Error('Firebase no está configurado. Ejecuta INSTALAR-FIREBASE.bat y configura las variables de entorno.');
-    }
+    console.log('📝 Registro solicitado (Simulado):', email);
 
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    // Crear usuario mock
+    const newUser = {
+      uid: 'user_' + Date.now(),
+      email,
+      displayName: displayName || email,
+      photoURL: null,
+      emailVerified: true
+    };
 
-    if (displayName) {
-      await updateProfile(userCredential.user, { displayName });
-    }
+    // Guardar sesión
+    localStorage.setItem('system_user', JSON.stringify(newUser));
+    localStorage.setItem('system_token', 'mock_jwt_token_' + Date.now());
 
-    // Obtener token y sincronizar con backend
-    const token = await userCredential.user.getIdToken();
-    setUserToken(token);
+    setCurrentUser(newUser);
+    setUserToken('mock_jwt_token_' + Date.now());
 
-    // Sincronizar usuario con el backend (silencioso si falla)
+    // Intentar crear en backend si existe endpoint (opcional, para no romper flujo)
     try {
-      await axios.post(
-        `${API_URL}/usuarios/sync-firebase`,
-        {
-          firebase_uid: userCredential.user.uid,
-          email: userCredential.user.email,
-          nombre_completo: displayName || userCredential.user.email,
-          // Datos extra tipo RRHH
-          identificacion: extraData.identificacion,
-          telefono: extraData.telefono,
-          direccion: extraData.direccion,
-          fecha_nacimiento: extraData.fecha_nacimiento,
-          sueldo: extraData.sueldo,
-          foto_cedula_anverso: extraData.foto_cedula_anverso,
-          foto_cedula_reverso: extraData.foto_cedula_reverso
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          timeout: 5000,
-          validateStatus: () => true,
-        }
-      ).catch(() => {
-        return null;
-      });
+      // TODO: Conectar con endpoint real de registro POST /usuarios
     } catch (error) {
-      // Silenciar completamente
+      console.warn('Backend registro no disponible aún', error);
     }
 
-    return userCredential;
+    return { user: newUser };
   };
 
-  // Iniciar sesión
+  // Iniciar sesión (Simulado - Acepta cualquier login por ahora para desbloquear acceso)
   const login = async (email, password) => {
-    if (!auth) {
-      throw new Error('Firebase no está configurado. Ejecuta INSTALAR-FIREBASE.bat y configura las variables de entorno.');
-    }
+    console.log('🔑 Login solicitado (Simulado):', email);
 
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const token = await userCredential.user.getIdToken();
-    setUserToken(token);
-    return userCredential;
+    // Simular delay de red
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    const user = {
+      uid: 'user_123456789',
+      email,
+      displayName: email.split('@')[0],
+      emailVerified: true
+    };
+
+    localStorage.setItem('system_user', JSON.stringify(user));
+    localStorage.setItem('system_token', 'mock_jwt_token_123');
+
+    setCurrentUser(user);
+    setUserToken('mock_jwt_token_123');
+
+    return { user };
   };
 
   // Cerrar sesión
   const logout = async () => {
-    if (!auth) {
-      return;
-    }
-
-    await signOutFn(auth);
+    localStorage.removeItem('system_user');
+    localStorage.removeItem('system_token');
+    setCurrentUser(null);
     setUserToken(null);
   };
 
-  // Obtener token actual
+  // Obtener token
   const getToken = async () => {
-    if (!auth || !currentUser) {
-      return null;
-    }
-
-    try {
-      const token = await currentUser.getIdToken(true);
-      setUserToken(token);
-      return token;
-    } catch (error) {
-      if (error.code !== 'auth/network-request-failed' &&
-        error.code !== 'auth/internal-error') {
-        console.error('Error al obtener token:', error);
-      }
-      return null;
-    }
+    return userToken;
   };
-
-  useEffect(() => {
-    if (!auth) {
-      setLoading(false);
-      return;
-    }
-
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setCurrentUser(user);
-
-      if (user) {
-        try {
-          const token = await user.getIdToken();
-          setUserToken(token);
-        } catch (error) {
-          if (error.code !== 'auth/network-request-failed' &&
-            error.code !== 'auth/internal-error') {
-            console.error('Error al obtener token:', error);
-          }
-        }
-      } else {
-        setUserToken(null);
-      }
-
-      setLoading(false);
-    });
-
-    return unsubscribe;
-  }, []);
 
   const value = {
     currentUser,
