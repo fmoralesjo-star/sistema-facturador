@@ -4156,7 +4156,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
                 <div
                   className="grid-header"
                   style={{
-                    gridTemplateColumns: `${columnWidths.codigo}px ${columnWidths.descripcion}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 40px`
+                    gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 50px`
                   }}
                 >
                   <div className="grid-header-cell">
@@ -4194,7 +4194,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
                         key={item.id}
                         className="grid-row"
                         style={{
-                          gridTemplateColumns: `${columnWidths.codigo}px ${columnWidths.descripcion}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 40px`
+                          gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 50px`
                         }}
                       >
                         <div

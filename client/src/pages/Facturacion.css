@@ -411,10 +411,12 @@ body {
 /* Resizer Handle */
 .resizer {
   position: absolute;
-  right: 0;
+  right: -5px;
+  /* Center the hit area on the border */
   top: 0;
   bottom: 0;
-  width: 5px;
+  width: 10px;
+  /* Wider hit area */
   cursor: col-resize;
   background: transparent;
   z-index: 20;
@@ -422,8 +424,8 @@ body {
 
 .resizer:hover,
 .grid-header-cell:hover .resizer {
-  background: #00d2ff;
-  /* Highlight on hover */
+  background: rgba(0, 210, 255, 0.3);
+  /* Subtle highlight */
 }
 
 /* Grid Row */
