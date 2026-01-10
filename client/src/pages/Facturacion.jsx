@@ -4304,6 +4304,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
                   fontWeight: 'bold',
                   fontSize: '11px',
                   alignSelf: 'flex-start',
+                  flexShrink: 0, /* No encoger el botón */
                   boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
                 }}
               >

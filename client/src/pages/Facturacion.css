@@ -377,14 +377,13 @@ body {
 .grid-container {
   display: flex;
   flex-direction: column;
-  height: 350px;
-  /* Fixed height! - Table content scrolls inside this */
-  min-height: 350px;
-  max-height: 350px;
+  flex: 1;
+  /* Ocupa el espacio disponible en el panel padre */
+  min-height: 0;
+  /* CRÍTICO: Permite que el contenedor se encoja para activar el scroll */
   border: 1px solid #ddd;
   border-radius: 4px;
   overflow: hidden;
-  /* Important: contain scroll inside */
   margin-bottom: 0;
 }
 
