@@ -1,55 +1,28 @@
 .home-container {
-  padding: 1rem;
+  padding: 0;
+  /* Remove container padding for full screen */
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
+  /* Fixed height to 100vh to avoid scroll on body if possible */
+  overflow: hidden;
+  /* Prevent body scroll, handle scroll inside content */
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  background-color: #f1f5f9;
-  /* Color de fondo suave para toda la página */
+  background-color: #f8fafc;
+  /* Match sidebar background for consistency */
 }
 
 .dashboard-header {
-  margin-bottom: 0.5rem;
-  padding-bottom: 0.5rem;
+  margin-bottom: 0;
+  padding: 1rem 1.5rem;
+  /* Add padding here since container has none */
   border-bottom: 1px solid #e2e8f0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.dashboard-header h1 {
-  font-size: 1.25rem;
-  color: #1e293b;
-  margin: 0;
-}
-
-.btn-logout-panel {
-  background-color: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.btn-logout-panel:hover {
-  background-color: #fecaca;
-  color: #991b1b;
-  transform: translateY(-1px);
-}
-
-.fecha-actual {
-  color: #64748b;
-  font-size: 0.85rem;
-  text-transform: capitalize;
-  margin: 0;
+  background: white;
+  /* Ensure header stands out */
 }
 
 /* Main Dashboard Layout */
@@ -59,10 +32,13 @@
   gap: 0;
   overflow: hidden;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  margin-top: 1rem;
-  border: 1px solid #e2e8f0;
+  border-radius: 0;
+  /* Remove radius for full screen */
+  box-shadow: none;
+  /* Remove shadow */
+  margin-top: 0;
+  /* Remove margin */
+  border: none;
 }
 
 /* Sidebar Styling */
