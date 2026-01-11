@@ -85,7 +85,7 @@ async function bootstrap() {
 
   // Configuración de Frontend (Archivos Estáticos)
   // Nota: Esto asume que el build de React está en ../client/dist o donde indique CLIENT_PATH
-  const clientPath = process.env.CLIENT_PATH || join(__dirname, '..', 'client', 'dist');
+  const clientPath = process.env.CLIENT_PATH || join(__dirname, '..', '..', 'client', 'dist');
 
   if (fs.existsSync(clientPath)) {
     console.log(`📂 Sirviendo Frontend desde: ${clientPath}`);
