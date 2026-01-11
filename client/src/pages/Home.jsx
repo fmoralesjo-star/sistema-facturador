@@ -241,6 +241,9 @@ function Home() {
     return modulosIniciales
   })
 
+  // Estado para la categoría activa
+  const [activeCategory, setActiveCategory] = useState('Ventas')
+
   const [modoEdicion, setModoEdicion] = useState(false)
   const [moduloArrastrando, setModuloArrastrando] = useState(null)
   const [moduloSobre, setModuloSobre] = useState(null)
@@ -428,149 +431,73 @@ function Home() {
         </div>
       )}
 
-      {/* Grid Organizado por Áreas */}
-      <div className="areas-container">
-        {Object.entries(areasConfig).map(([nombreArea, config]) => {
-          const modulosArea = getModulosArea(nombreArea)
-          if (modulosArea.length === 0) return null
+      {/* Layout Principal: Sidebar Izquierdo + Contenido Derecho */}
+      <div className="dashboard-main-layout">
 
-          return (
-            <div key={nombreArea} className="area-section">
-              <h2 className="area-title">
-                {nombreArea}
-              </h2>
-              <div className="area-grid">
-                {modulosArea.map(modulo => (
-                  <Link
-                    to={modulo.ruta}
-                    key={modulo.id}
-                    className="module-card-link"
-                    style={{ textDecoration: 'none' }}
-                  >
-                    <div
-                      className="module-card"
-                      style={{ position: 'relative' }}
-                    >
-                      {modulo.id === 6 && pendientesSRI > 0 && (
-                        <div style={{
-                          position: 'absolute',
-                          top: '-10px',
-                          right: '-10px',
-                          background: '#ff0000',
-                          color: 'white',
-                          borderRadius: '50%',
-                          minWidth: '28px',
-                          height: '28px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '0.9rem',
-                          fontWeight: 'bold',
-                          boxShadow: '0 4px 8px rgba(220, 38, 38, 0.5)', // Sombra roja resplandeciente
-                          zIndex: 100,
-                          padding: '0 4px',
-                          border: '2px solid white',
-                          animation: 'pulse 2s infinite' // Asumiendo que definiremos pulse o al menos llamará la atención
-                        }}>
-                          {pendientesSRI}
-                        </div>
-                      )}
-                      <div className="module-icon" style={{ background: modulo.gradiente }}>
-                        {modulo.icono}
-                      </div>
-                      <div className="module-info">
-                        <h3>{modulo.titulo}</h3>
-                        <p>{modulo.descripcion}</p>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+        {/* Sidebar de Categorías */}
+        <div className="dashboard-sidebar">
+          {Object.keys(areasConfig).map(categoria => (
+            <button
+              key={categoria}
+              className={`sidebar-item ${activeCategory === categoria ? 'active' : ''}`}
+              onClick={() => setActiveCategory(categoria)}
+            >
+              <div className="sidebar-icon">
+                {/* Iconos simples para las categorías */}
+                {categoria === 'Ventas' && '📈'}
+                {categoria === 'Compras' && '🛒'}
+                {categoria === 'Tesorería' && '💰'}
+                {categoria === 'Inventario' && '📦'}
+                {categoria === 'Financiero' && '📊'}
+                {categoria === 'Administración' && '⚙️'}
               </div>
-            </div>
-          )
-        })}
-
-        {modulosOtros.length > 0 && (
-          <div className="area-section">
-            <h2 className="area-title">Otros</h2>
-            <div className="area-grid">
-              {modulosOtros.map(modulo => (
-                <Link to={modulo.ruta} key={modulo.id} className="module-card-link">
-                  <div className="module-card" style={{ position: 'relative' }}>
-                    {modulo.id === 6 && pendientesSRI > 0 && (
-                      <div style={{
-                        position: 'absolute',
-                        top: '-10px',
-                        right: '-10px',
-                        background: '#ff0000',
-                        color: 'white',
-                        borderRadius: '50%',
-                        minWidth: '28px',
-                        height: '28px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '0.9rem',
-                        fontWeight: 'bold',
-                        boxShadow: '0 4px 8px rgba(220, 38, 38, 0.5)',
-                        zIndex: 100,
-                        padding: '0 4px',
-                        border: '2px solid white',
-                        animation: 'pulse 2s infinite'
-                      }}>
-                        {pendientesSRI}
-                      </div>
-                    )}
-                    <div className="module-icon" style={{ background: modulo.gradiente }}>
-                      {modulo.icono}
-                    </div>
-                    <div className="module-info">
-                      <h3>{modulo.titulo}</h3>
-                      <p>{modulo.descripcion}</p>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Alerta de Firma Electrónica (Modal) - Mantenemos ambas por si el usuario prefiere una */}
-      {mostrarAlertaSRI && certificadoAlerta && (
-        <div className="sri-alert-overlay">
-          <div className="sri-alert-modal">
-            <span className="sri-alert-icon">⚠️</span>
-            <h2>¡Alerta de Firma Electrónica!</h2>
-            <p>
-              Tu certificado de firma electrónica (.p12) está por vencer o ya ha vencido.
-              Es obligatorio renovarlo para poder seguir facturando legalmente.
-            </p>
-            <div className="dias-badge">
-              {certificadoAlerta.vencido
-                ? '¡CERTIFICADO VENCIDO!'
-                : `Quedan ${certificadoAlerta.dias} días`}
-            </div>
-            <div className="sri-alert-actions">
-              <button
-                className="btn-renovar"
-                onClick={() => {
-                  setMostrarAlertaSRI(false)
-                  navigate('/admin')
-                }}
-              >
-                Actualizar Certificado Ahora
-              </button>
-              <button
-                className="btn-entendido"
-                onClick={() => setMostrarAlertaSRI(false)}
-              >
-                Continuar de todas formas
-              </button>
-            </div>
-          </div>
+              <span>{categoria}</span>
+              {categoria === 'Compras' && pendientesSRI > 0 && (
+                <span className="badge-notification">{pendientesSRI}</span>
+              )}
+            </button>
+          ))}
         </div>
-      )}
+
+        {/* Área de Contenido (Módulos) */}
+        <div className="dashboard-content">
+          <div className="category-header">
+            <h2>{activeCategory}</h2>
+            <p className="category-description">
+              {activeCategory === 'Ventas' && 'Gestión de facturación, clientes y notas de crédito.'}
+              {activeCategory === 'Compras' && 'Control de adquisiciones y proveedores.'}
+              {activeCategory === 'Tesorería' && 'Manejo de flujo de caja, bancos y pagos.'}
+              {activeCategory === 'Inventario' && 'Control de stock y productos.'}
+              {activeCategory === 'Financiero' && 'Contabilidad y reportes financieros.'}
+              {activeCategory === 'Administración' && 'Configuración del sistema y gestión de usuarios.'}
+            </p>
+          </div>
+
+          <div className="modules-grid-large">
+            {getModulosArea(activeCategory).map(modulo => (
+              <Link
+                to={modulo.ruta}
+                key={modulo.id}
+                className="module-card-large"
+              >
+                <div className="module-icon-large" style={{ background: modulo.gradiente || '#3b82f6' }}>
+                  {modulo.icono}
+                </div>
+                <div className="module-info-large">
+                  <h3>{modulo.titulo}</h3>
+                  <p>{modulo.descripcion}</p>
+                </div>
+                {modulo.id === 6 && pendientesSRI > 0 && (
+                  <div className="module-badge">{pendientesSRI}</div>
+                )}
+              </Link>
+            ))}
+          </div>
+
+          {/* Mostrar 'Otros' solo si están en la categoría activa (opcional, o moverlos a Admin) */}
+          {/* Por simplicidad del requerimiento, asumimos que todos los módulos importantes están en las categorías definidas. */}
+        </div>
+      </div>
     </div>
   )
 }
