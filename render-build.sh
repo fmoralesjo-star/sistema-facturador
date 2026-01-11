@@ -26,8 +26,12 @@ echo "🔨 Compilando Frontend (React Vite)..."
 npm run build
 
 # 6. Mover build del frontend a donde el backend lo espera
-# El backend espera estar en backend-nestjs y busca ../client/dist
-# En Render, la estructura se mantiene, así que no es necesario mover, 
-# pero verificamos que exista.
+echo "🚚 Moviendo build al backend..."
+# Regresar a root
+cd ..
+# Asegurar directorio destino
+mkdir -p backend-nestjs/client/dist
+# Copiar contenido
+cp -r client/dist/* backend-nestjs/client/dist/
 
-echo "✅ Build finalizado."
+echo "✅ Build finalizado y archivos copiados."
