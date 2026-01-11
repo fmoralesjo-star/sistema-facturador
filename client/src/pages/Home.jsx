@@ -410,7 +410,6 @@ function Home() {
               month: 'long',
               day: 'numeric'
             })}
-            <span style={{ fontSize: '0.8rem', opacity: 0.7, marginLeft: '10px' }}>(v1.2.0 - Tienda Fix)</span>
           </p>
         </div>
         <button className="btn-logout-panel" onClick={handleLogout} title="Cerrar Sesión">

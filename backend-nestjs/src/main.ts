@@ -136,27 +136,6 @@ async function bootstrap() {
 
   console.log(`🚀 Server running on http://localhost:${port}`);
 
-  // DEBUGGING PATHS
-  console.log('--- DEBUG INFO ---');
-  console.log(`Current Working Directory: ${process.cwd()}`);
-  console.log(`__dirname: ${__dirname}`);
-  console.log(`Calculated clientPath: ${clientPath}`);
-  try {
-    if (fs.existsSync(clientPath)) {
-      console.log(`Contents of clientPath:`, fs.readdirSync(clientPath));
-    } else {
-      console.log(`clientPath DOES NOT exist.`);
-      // Try to find where it is
-      console.log(`Listing CWD:`, fs.readdirSync(process.cwd()));
-      if (fs.existsSync(join(process.cwd(), 'client'))) {
-        console.log(`Listing client:`, fs.readdirSync(join(process.cwd(), 'client')));
-      }
-    }
-  } catch (e) {
-    console.error('Error during debug listing:', e);
-  }
-  console.log('------------------');
-
   if (fs.existsSync(clientPath)) {
     console.log(`🎨 Frontend served at http://localhost:${port}`);
   }

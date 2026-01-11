@@ -74,7 +74,7 @@ const StoreCheckout = () => {
             if (res.status === 201) {
                 setSuccess(true);
                 // Clear cart
-                localStorage.removeItem('patoshub_cart');
+                localStorage.removeItem('store_cart');
                 // We can't clear context cart easily from here without dispatch, but we can trigger a reload or nav.
                 // For now, assume success state hides cart.
             }

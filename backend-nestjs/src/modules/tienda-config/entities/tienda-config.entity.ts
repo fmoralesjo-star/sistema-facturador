@@ -5,7 +5,7 @@ export class TiendaConfig {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ default: 'Bienvenido a Patoshub Store' })
+    @Column({ default: 'Bienvenido a Urban Style Store' })
     bannerTitulo: string;
 
     @Column({ default: 'Tecnología que impulsa tu mundo' })

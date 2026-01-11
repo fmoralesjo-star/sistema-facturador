@@ -12,7 +12,7 @@ const StoreLayout = () => {
 
     // Load cart from local storage on mount
     useEffect(() => {
-        const savedCart = localStorage.getItem('patoshub_cart');
+        const savedCart = localStorage.getItem('store_cart');
         if (savedCart) {
             setCart(JSON.parse(savedCart));
         }
@@ -21,7 +21,7 @@ const StoreLayout = () => {
 
     // Save cart to local storage when it changes
     useEffect(() => {
-        localStorage.setItem('patoshub_cart', JSON.stringify(cart));
+        localStorage.setItem('store_cart', JSON.stringify(cart));
     }, [cart]);
 
     const fetchStoreConfig = async () => {
