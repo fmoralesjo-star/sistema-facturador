@@ -1,6 +1,6 @@
 // Versión del cache - incrementar para forzar actualización
 // Cambiar este número cada vez que quieras forzar una actualización
-const CACHE_VERSION = 'v2.0.4-' + Date.now();
+const CACHE_VERSION = 'v2.1.0-URBAN-FIX-' + Date.now();
 const CACHE_NAME = `sistema-facturador-${CACHE_VERSION}`;
 const urlsToCache = [
   '/',
@@ -16,19 +16,19 @@ const urlsToCache = [
 // Instalación del Service Worker - Forzar actualización inmediata
 self.addEventListener('install', (event) => {
   console.log('[SW] Instalando Service Worker...');
-  
+
   // Detectar si estamos en desarrollo (puerto 5173)
-  const isDevelopment = self.location.origin.includes(':5173') || 
-                        self.location.origin.includes('localhost:5173') ||
-                        self.location.origin.includes('127.0.0.1:5173');
-  
+  const isDevelopment = self.location.origin.includes(':5173') ||
+    self.location.origin.includes('localhost:5173') ||
+    self.location.origin.includes('127.0.0.1:5173');
+
   // EN DESARROLLO: No instalar cache, solo activar inmediatamente
   if (isDevelopment) {
     console.log('[SW] Modo desarrollo detectado - sin cache');
     self.skipWaiting();
     return;
   }
-  
+
   // EN PRODUCCIÓN: Instalar con cache
   // NO forzar skipWaiting inmediatamente para evitar recargas constantes
   event.waitUntil(
@@ -49,7 +49,7 @@ self.addEventListener('install', (event) => {
 // Activación del Service Worker
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activando Service Worker...');
-  
+
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
@@ -61,11 +61,11 @@ self.addEventListener('activate', (event) => {
         })
       );
     })
-    .then(() => {
-      // NO tomar control inmediatamente para evitar recargas
-      // return self.clients.claim();
-      console.log('[SW] Service Worker activado (sin claim inmediato)');
-    })
+      .then(() => {
+        // NO tomar control inmediatamente para evitar recargas
+        // return self.clients.claim();
+        console.log('[SW] Service Worker activado (sin claim inmediato)');
+      })
   );
 });
 
@@ -77,9 +77,9 @@ self.addEventListener('fetch', (event) => {
   }
 
   // No interceptar requests a la API - dejarlos pasar directamente
-  if (event.request.url.includes('/api/') || 
-      (event.request.url.includes('localhost:3001') && !event.request.url.includes('run.app')) ||
-      event.request.url.includes('socket.io')) {
+  if (event.request.url.includes('/api/') ||
+    (event.request.url.includes('localhost:3001') && !event.request.url.includes('run.app')) ||
+    event.request.url.includes('socket.io')) {
     return;
   }
 
@@ -90,9 +90,9 @@ self.addEventListener('fetch', (event) => {
 
   // EN DESARROLLO: No cachear nada, siempre usar la red
   // Detectar desarrollo por el puerto 5173 (Vite dev server)
-  if (event.request.url.includes(':5173') || 
-      event.request.url.includes('localhost:5173') ||
-      event.request.url.includes('127.0.0.1:5173')) {
+  if (event.request.url.includes(':5173') ||
+    event.request.url.includes('localhost:5173') ||
+    event.request.url.includes('127.0.0.1:5173')) {
     // En desarrollo, solo pasar la petición sin cachear
     return;
   }
@@ -102,7 +102,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   url.searchParams.set('_t', Date.now().toString());
   const requestWithTimestamp = new Request(url, event.request);
-  
+
   event.respondWith(
     fetch(requestWithTimestamp, { cache: 'no-store' })
       .then((response) => {
@@ -145,7 +145,7 @@ self.addEventListener('message', (event) => {
       });
     });
   }
-  
+
   if (event.data && event.data.type === 'CHECK_UPDATE') {
     // Forzar verificación de actualización
     self.registration.update();
