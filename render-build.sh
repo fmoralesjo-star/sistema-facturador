@@ -32,8 +32,8 @@ echo "🚚 Moviendo build al backend..."
 # Regresar a root
 cd ..
 # Asegurar directorio destino
-mkdir -p backend-nestjs/client/dist
+mkdir -p backend-nestjs/dist
 # Copiar contenido
-cp -r client/dist/* backend-nestjs/client/dist/
+cp -r client/dist/* backend-nestjs/dist/
 
 echo "✅ Build finalizado y archivos copiados."
