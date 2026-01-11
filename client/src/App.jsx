@@ -184,30 +184,15 @@ try {
   socket = null;
 }
 
-// Componente para proteger rutas (opcional si Firebase está configurado)
+// Componente para proteger rutas
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
 
-  // Verificar si Firebase está configurado
-  const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  };
-
-  const firebaseEnabled = !!(firebaseConfig.apiKey && firebaseConfig.projectId);
-
   console.log('🔐 ProtectedRoute:', {
-    firebaseEnabled,
     loading,
     isAuthenticated,
     path: window.location.pathname
   });
-
-  // Si Firebase no está configurado, permitir acceso sin autenticación
-  if (!firebaseEnabled) {
-    console.log('✅ Firebase no configurado, permitiendo acceso')
-    return children;
-  }
 
   if (loading) {
     console.log('⏳ ProtectedRoute: Cargando...')
@@ -218,7 +203,7 @@ function ProtectedRoute({ children }) {
     );
   }
 
-  if (!isAuthenticated && firebaseEnabled) {
+  if (!isAuthenticated) {
     console.log('🚫 ProtectedRoute: No autenticado, redirigiendo a login')
     return <Navigate to="/login" replace />;
   }
@@ -550,13 +535,6 @@ function NavBar() {
   const [actualizando, setActualizando] = useState(false)
   const { currentUser, logout, isAuthenticated } = useAuth();
 
-  // Verificar si Firebase está configurado
-  const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  };
-  const firebaseEnabled = !!(firebaseConfig.apiKey && firebaseConfig.projectId);
-
   // Ocultar navbar en la página principal, facturación y login
   // Ocultar navbar en la página principal, login y módulos que ya tienen su propio encabezado/navegación
   const rutasSinNavbar = [
@@ -694,7 +672,7 @@ function NavBar() {
             Admin Tienda
           </Link>
         </div>
-        {firebaseEnabled && isAuthenticated && currentUser && (
+        {isAuthenticated && currentUser && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginRight: '10px' }}>
             <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.9)' }}>
               {currentUser.email}

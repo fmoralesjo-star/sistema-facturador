@@ -391,12 +391,7 @@ function Home() {
     verificarFirma()
   }, [isAuthenticated, getToken])
 
-  // Verificar si Firebase está configurado
-  const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  }
-  const firebaseEnabled = !!(firebaseConfig.apiKey && firebaseConfig.projectId)
+  // Verificar si Firebase está configurado (Eliminado)
 
   return (
     <div className="home-container">

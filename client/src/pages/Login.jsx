@@ -234,7 +234,7 @@ function Login() {
             <small>
               {isSignUp
                 ? 'Al registrarte, aceptas nuestros términos y condiciones'
-                : 'Usa tus credenciales de Firebase para iniciar sesión'}
+                : 'Ingrese sus credenciales para iniciar sesión'}
             </small>
           </p>
         </div>
