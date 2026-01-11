@@ -255,22 +255,22 @@ function Home() {
   // Definición de Áreas
   const areasConfig = {
     'Ventas': {
-      ids: [1, 16, 3, 13]
+      ids: [1, 16, 3, 13] // Facturación, Notas Crédito, Clientes, Promociones
     },
     'Compras': {
-      ids: [6, 26, 21]
+      ids: [6, 26, 21] // Compras, NC Compras, Proveedores
     },
     'Tesorería': {
-      ids: [10, 11, 22, 17, 20]
+      ids: [10, 17, 22, 20] // Bancos, Tesorería, Cajas Chicas, Cartera
     },
     'Inventario': {
-      ids: [4, 5]
+      ids: [4, 5] // Productos, Inventario
     },
     'Financiero': {
-      ids: [2, 15, 25]
+      ids: [2, 15, 25] // Contabilidad, Reportes, Activos Fijos
     },
     'Administración': {
-      ids: [12, 14, 19, 11, 18, 27]
+      ids: [14, 7, 18, 19, 27] // Dashboard, Administración, RRHH, Admin TI, App Móvil
     }
   }
 
