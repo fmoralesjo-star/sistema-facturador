@@ -366,16 +366,18 @@ body {
     animation: spin 1s infinite linear;
 }
 
-display: none;
-position: fixed;
-bottom: 0;
-left: 0;
-right: 0;
-background: white;
-border-top: 1px solid var(--nexus-border);
-padding: 10px 0;
-z-index: 9999;
-padding-bottom: env(safe-area-inset-bottom);
+/* Mobile Bottom Nav */
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid var(--nexus-border);
+    padding: 10px 0;
+    z-index: 9999;
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 @media (max-width: 768px) {
