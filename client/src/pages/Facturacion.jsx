@@ -1125,6 +1125,8 @@ Este enlace te permitirá actualizar tu información de contacto.`
       metodoPago,
       tipoPago
     }))
+    // Debugging: Verificar que se está llamando
+    alert(`Tipo de pago seleccionado: ${tipoPago} (${metodoPago})`);
   }
 
   // Función para generar link de pago
@@ -5901,7 +5903,9 @@ Este enlace te permitirá actualizar tu información de contacto.`
           borderTop: '1px solid #e5e7eb',
           boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
           padding: '10px 20px',
-          marginTop: 'auto'
+          marginTop: 'auto',
+          position: 'relative', /* Ensure z-index works */
+          zIndex: 50 /* Above potential overlays */
         }}>
           <div className="footer-content-wrapper" style={{
             display: 'flex',
