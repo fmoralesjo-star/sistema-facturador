@@ -1458,6 +1458,58 @@ Este enlace te permitirá actualizar tu información de contacto.`
       return
     }
 
+    // Validación de pagos múltiples
+    let pagosPayload = []
+    let formaPagoPrincipal = facturaData.formaPago || 'SIN UTILIZACION DEL SISTEMA FINANCIERO'
+    let metodoPagoPrincipal = facturaData.metodoPago || 'EFECTIVO'
+
+    if (listaPagos.length > 0) {
+      const totalPagado = listaPagos.reduce((acc, p) => acc + p.monto, 0)
+      const totalAbonar = totales.total - (totales.retenciones || 0)
+
+      // Permitir margen de error de 1 centavo
+      if (Math.abs(totalPagado - totalAbonar) > 0.05) {
+        alert(`Los pagos registrados ($${totalPagado.toFixed(2)}) no coinciden con el total a pagar ($${totalAbonar.toFixed(2)})`)
+        return
+      }
+
+      // Construir payload de pagos
+      pagosPayload = listaPagos.map(p => {
+        let codigoSri = '01' // Efectivo
+        let formaPagoDesc = 'SIN UTILIZACION DEL SISTEMA FINANCIERO'
+
+        if (p.tipo === 'TARJETA') {
+          codigoSri = '19' // Tarjeta de Crédito
+          formaPagoDesc = 'TARJETA DE CRÉDITO'
+        } else if (p.tipo === 'TRANSFERENCIA') {
+          codigoSri = '20' // Transferencia
+          formaPagoDesc = 'OTROS CON UTILIZACION DEL SISTEMA FINANCIERO'
+        }
+
+        return {
+          codigo: codigoSri,
+          formaPago: formaPagoDesc,
+          metodoPago: p.tipo,
+          tipoPago: p.tipo,
+          monto: parseFloat(p.monto),
+          detalles: p.detalles
+        } // Cierre del obj
+      }) // Cierre del map
+
+      // Determinar pago principal (el de mayor monto)
+      const pagoMayor = listaPagos.reduce((prev, current) => (prev.monto > current.monto) ? prev : current)
+      if (pagoMayor.tipo === 'TARJETA') {
+        formaPagoPrincipal = 'TARJETA DE CRÉDITO'
+        metodoPagoPrincipal = 'TARJETA'
+      } else if (pagoMayor.tipo === 'TRANSFERENCIA') {
+        formaPagoPrincipal = 'OTROS CON UTILIZACION DEL SISTEMA FINANCIERO'
+        metodoPagoPrincipal = 'TRANSFERENCIA'
+      } else {
+        formaPagoPrincipal = 'SIN UTILIZACION DEL SISTEMA FINANCIERO'
+        metodoPagoPrincipal = 'EFECTIVO'
+      }
+    }
+
     if (!window.confirm(esFirma ? '¿Está seguro de guardar y firmar esta factura?' : '¿Está seguro de guardar esta factura?')) {
       return
     }
@@ -1479,9 +1531,12 @@ Este enlace te permitirá actualizar tu información de contacto.`
         cliente_email: facturaData.clienteEmail,
 
         // Forma y Metodo de pago
-        forma_pago: facturaData.formaPago || 'SIN UTILIZACION DEL SISTEMA FINANCIERO',
+        forma_pago: formaPagoPrincipal,
         condicion_pago: facturaData.condicionPago || 'CONTADO',
-        metodoPago: facturaData.metodoPago || 'EFECTIVO',
+        metodoPago: metodoPagoPrincipal,
+
+        // Agregar lista de pagos
+        pagos: pagosPayload,
 
         // Items
         detalles: items.map(item => ({
