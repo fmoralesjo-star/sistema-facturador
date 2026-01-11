@@ -376,8 +376,9 @@ function Home() {
 
           if (diffDays < 15) {
             setCertificadoAlerta({
-              dias: diffDays,
-              vencido: diffDays <= 0
+              diasRestantes: diffDays,
+              vencido: diffDays <= 0,
+              fechaCaducidad: response.data.certificado.fechaVencimiento
             })
             setMostrarAlertaSRI(true)
           }
