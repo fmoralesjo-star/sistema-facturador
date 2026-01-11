@@ -248,7 +248,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
     margin: 0;
-    color: white;
+    color: var(--nexus-text);
 }
 
 .countdown-timer {
