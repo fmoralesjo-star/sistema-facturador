@@ -691,10 +691,7 @@ function NavBar() {
             RR.HH.
           </Link>
           <Link to="/mobile-app" className={location.pathname === '/mobile-app' ? 'active' : ''}>
-            Tienda Online
-          </Link>
-          <Link to="/mobile-app" className={location.pathname === '/mobile-app' ? 'active' : ''}>
-            Tienda Online
+            Admin Tienda
           </Link>
         </div>
         {firebaseEnabled && isAuthenticated && currentUser && (
