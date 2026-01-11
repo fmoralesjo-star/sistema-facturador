@@ -4,6 +4,7 @@ import axios from 'axios';
 import { API_URL } from '../../config/api';
 
 const StoreHome = () => {
+    console.log("Store Loaded: Fashion Theme v2.0 (Mobile Fix)");
     const { addToCart, storeConfig } = useOutletContext();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
