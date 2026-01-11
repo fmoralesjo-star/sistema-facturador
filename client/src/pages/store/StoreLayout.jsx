@@ -81,7 +81,7 @@ const StoreLayout = () => {
             <nav className="store-navbar">
                 <div className="store-container nav-content">
                     <Link to="/store" className="store-brand">
-                        <span style={{ fontSize: '1.5rem' }}>🔹</span> Patoshub
+                        NEXUS <span className="highlight">GEAR</span>
                     </Link>
 
                     <div className="store-search-bar">
