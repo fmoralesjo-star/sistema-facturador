@@ -136,6 +136,10 @@ const StoreHome = () => {
                     <span>👤</span> Perfil
                 </a>
             </nav>
+
+            <div style={{ textAlign: 'center', padding: '10px', fontSize: '0.7rem', color: '#ccc' }}>
+                v2.1 Urban Style - Mobile Fix
+            </div>
         </div>
     );
 };
