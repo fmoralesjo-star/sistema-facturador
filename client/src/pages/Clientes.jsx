@@ -593,26 +593,49 @@ function Clientes({ socket }) {
         <table className="table">
           <thead>
             <tr>
-              <th>Nombre</th>
-              <th>RUC / Cédula</th>
+              <th>Nombre / Razón Social</th>
+              <th>Identificación (RUC)</th>
+              <th>Tipo</th>
+              <th>Categoría / Rol</th>
+              <th>Vendedor</th>
               <th>Dirección</th>
               <th>Teléfono</th>
               <th>Email</th>
-              <th>Fecha de Nacimiento</th>
-              <th>Extranjero</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {clientes.map(cliente => (
               <tr key={cliente.id}>
-                <td>{cliente.nombre}</td>
-                <td>{cliente.ruc || 'N/A'}</td>
-                <td>{cliente.direccion || 'N/A'}</td>
+                <td>
+                  <div style={{ fontWeight: '500' }}>{cliente.nombre}</div>
+                  {cliente.nombre_comercial && cliente.nombre_comercial !== cliente.nombre && (
+                    <div style={{ fontSize: '12px', color: '#666' }}>{cliente.nombre_comercial}</div>
+                  )}
+                </td>
+                <td>
+                  <span style={{ fontWeight: 'bold' }}>{cliente.ruc || 'N/A'}</span>
+                  {cliente.contribuyente_especial && (
+                    <div style={{ fontSize: '10px', background: '#eef2ff', color: '#4338ca', padding: '2px 4px', borderRadius: '4px', display: 'inline-block', marginTop: '2px' }}>
+                      Cont. Esp: {cliente.contribuyente_especial}
+                    </div>
+                  )}
+                </td>
+                <td>{cliente.tipo_persona || 'NATURAL'}</td>
+                <td>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    {cliente.categoria_persona && <span style={{ fontSize: '12px', color: '#555' }}>Cat: {cliente.categoria_persona}</span>}
+                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                      {cliente.es_cliente && <span style={{ fontSize: '10px', background: '#dcfce7', color: '#166534', padding: '2px 6px', borderRadius: '10px' }}>Cliente</span>}
+                      {cliente.es_proveedor && <span style={{ fontSize: '10px', background: '#fef3c7', color: '#92400e', padding: '2px 6px', borderRadius: '10px' }}>Prov</span>}
+                      {cliente.es_empleado && <span style={{ fontSize: '10px', background: '#dbeafe', color: '#1e40af', padding: '2px 6px', borderRadius: '10px' }}>Emp</span>}
+                    </div>
+                  </div>
+                </td>
+                <td>{cliente.vendedor_asignado || '-'}</td>
+                <td style={{ fontSize: '13px' }}>{cliente.direccion || 'N/A'}</td>
                 <td>{cliente.telefono || 'N/A'}</td>
                 <td>{cliente.email || 'N/A'}</td>
-                <td>{cliente.fechaNacimiento ? new Date(cliente.fechaNacimiento).toLocaleDateString('es-ES') : 'N/A'}</td>
-                <td style={{ textAlign: 'center' }}>{cliente.esExtranjero ? '✅ Sí' : '❌ No'}</td>
                 <td>
                   <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                     <button
@@ -642,7 +665,7 @@ function Clientes({ socket }) {
                       style={{ padding: '0.25rem 0.5rem', fontSize: '0.875rem' }}
                       onClick={() => eliminarCliente(cliente.id)}
                     >
-                      Eliminar
+                      🗑️
                     </button>
                   </div>
                 </td>
