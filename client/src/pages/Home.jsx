@@ -194,7 +194,7 @@ function Home() {
     },
     {
       id: 27,
-      titulo: 'Tienda Ecommerce',
+      titulo: 'TIENDA URBAN STYLE',
       descripcion: 'Gestión de catálogo online y pedidos web',
       icono: '🛍️',
       ruta: '/store',
