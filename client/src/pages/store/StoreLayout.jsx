@@ -81,7 +81,7 @@ const StoreLayout = () => {
             <nav className="store-navbar">
                 <div className="store-container nav-content">
                     <Link to="/store" className="store-brand">
-                        NEXUS <span className="highlight">GEAR</span>
+                        URBAN <span className="highlight">STYLE</span>
                     </Link>
 
                     <div className="store-search-bar">
