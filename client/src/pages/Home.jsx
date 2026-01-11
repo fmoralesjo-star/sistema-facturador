@@ -197,7 +197,7 @@ function Home() {
       titulo: 'Tienda Ecommerce',
       descripcion: 'Gestión de catálogo online y pedidos web',
       icono: '🛍️',
-      ruta: '/mobile-app',
+      ruta: '/store',
       color: '#ec4899', // Pinkish/Purple
       gradiente: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)'
     }
