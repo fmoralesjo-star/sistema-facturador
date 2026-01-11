@@ -11,6 +11,7 @@ npm install
 
 # 2. Compilar Backend
 echo "🔨 Compilando Backend..."
+rm -rf dist
 npm run build
 
 # 3. Volver a raíz e ir a Client
@@ -23,6 +24,7 @@ npm install
 
 # 5. Compilar Frontend
 echo "🔨 Compilando Frontend (React Vite)..."
+rm -rf dist
 npm run build
 
 # 6. Mover build del frontend a donde el backend lo espera
