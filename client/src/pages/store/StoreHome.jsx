@@ -54,7 +54,7 @@ const StoreHome = () => {
                 {/* Hero Section */}
                 <section className="nexus-hero">
                     <div className="nexus-hero-content">
-                        <h1>FLASH SALES: <br /><span style={{ color: 'var(--nexus-primary)' }}>UP TO 50% OFF</span></h1>
+                        <h1>FLASH SALES: <br /><span style={{ color: 'white' }}>UP TO 50% OFF</span></h1>
                         <p className="hero-subtitle">Equípate con lo mejor de la tecnología.</p>
                         <button className="nexus-btn-primary">Comprar Ahora</button>
                     </div>
