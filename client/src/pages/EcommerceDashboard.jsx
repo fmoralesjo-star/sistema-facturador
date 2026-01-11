@@ -97,18 +97,27 @@ function EcommerceDashboard() {
         <div className="admin-container" style={{ minHeight: '100vh', width: '100%', maxWidth: '100%', margin: 0, padding: '20px', background: '#f8fafc', boxSizing: 'border-box' }}>
             <div className="admin-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', background: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
                 <div>
-                    <h2>🛍️ Gestión de Tienda Online (E-commerce)</h2>
-                    <p>Personaliza tu tienda y gestiona las imágenes de tus productos</p>
+                    <h2 style={{ fontSize: '1.8rem', color: '#1a202c', marginBottom: '0.5rem' }}>🛍️ Gestión de Tienda Online</h2>
+                    <p style={{ color: '#718096', margin: 0 }}>Personaliza tu tienda y gestiona las imágenes de tus productos</p>
                 </div>
-                <a
-                    href="/store"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-primary"
-                    style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem', padding: '0.75rem 1.5rem', borderRadius: '50px', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}
-                >
-                    🌐 Ver Tienda en Vivo
-                </a>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                    <Link
+                        to="/"
+                        className="btn-secondary"
+                        style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem', padding: '0.75rem 1.5rem', borderRadius: '50px' }}
+                    >
+                        🏠 Inicio
+                    </Link>
+                    <a
+                        href="/store"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-primary"
+                        style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem', padding: '0.75rem 1.5rem', borderRadius: '50px', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}
+                    >
+                        🌐 Ver Tienda en Vivo
+                    </a>
+                </div>
             </div>
 
             <div className="dashboard-grid" style={{ gridTemplateColumns: '1fr' }}>
