@@ -67,7 +67,21 @@
     }
   </style>
   <script>
-
+    // EMERGENCY SW KILL SWITCH
+    // Esto desregistra cualquier SW anterior para limpiar el ambiente de versiones corruptas
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (let registration of registrations) {
+            console.log("🧹 Desregistrando SW existente por precaución:", registration);
+            await registration.unregister();
+          }
+        } catch (e) {
+          console.error("Error limpiando SW:", e);
+        }
+      });
+    }
   </script>
 </head>
 
