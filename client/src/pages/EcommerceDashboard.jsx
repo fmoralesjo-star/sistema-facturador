@@ -94,9 +94,20 @@ function EcommerceDashboard() {
 
     return (
         <div className="admin-container">
-            <div className="admin-header">
-                <h2>🛍️ Gestión de Tienda Online (E-commerce)</h2>
-                <p>Personaliza tu tienda y gestiona las imágenes de tus productos</p>
+            <div className="admin-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                    <h2>🛍️ Gestión de Tienda Online (E-commerce)</h2>
+                    <p>Personaliza tu tienda y gestiona las imágenes de tus productos</p>
+                </div>
+                <a
+                    href="/store"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary"
+                    style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem', padding: '0.75rem 1.5rem', borderRadius: '50px', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}
+                >
+                    🌐 Ver Tienda en Vivo
+                </a>
             </div>
 
             <div className="dashboard-grid" style={{ gridTemplateColumns: '1fr' }}>
