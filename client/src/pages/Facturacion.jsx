@@ -950,7 +950,11 @@ function Facturacion({ socket }) {
           clienteNombre: clienteEncontrado.nombre || '',
           clienteDireccion: clienteEncontrado.direccion || '',
           clienteTelefono: clienteEncontrado.telefono || '',
-          clienteEmail: clienteEncontrado.email || ''
+          clienteEmail: clienteEncontrado.email || '',
+          // Integración con campos extendidos (Crédito y Descuento)
+          condicionPago: (clienteEncontrado.dias_credito && clienteEncontrado.dias_credito > 0) ? 'CREDITO' : 'CONTADO',
+          observaciones: (clienteEncontrado.dias_credito > 0) ? `Crédito a ${clienteEncontrado.dias_credito} días.` : '',
+          descuentoCliente: clienteEncontrado.descuento_porcentaje || 0
         }))
         setMostrarFormularioNuevoCliente(false)
         setMostrarRegistrarCliente(false)
