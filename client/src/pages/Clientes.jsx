@@ -477,11 +477,18 @@ function Clientes({ socket }) {
                   </div>
                   <div className="form-group">
                     <label>Cuenta por Cobrar</label>
-                    <input
-                      type="text"
+                    <select
+                      className="input-text"
                       value={formData.cuenta_por_cobrar || ''}
                       onChange={(e) => setFormData({ ...formData, cuenta_por_cobrar: e.target.value })}
-                    />
+                    >
+                      <option value="">-- Seleccione Cuenta --</option>
+                      {cuentasContables.map(c => (
+                        <option key={c.id} value={c.codigo}>
+                          {c.fullLabel}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="form-group">
                     <label>Centro Costo (Proveedor)</label>
@@ -493,11 +500,18 @@ function Clientes({ socket }) {
                   </div>
                   <div className="form-group">
                     <label>Cuenta por Pagar</label>
-                    <input
-                      type="text"
+                    <select
+                      className="input-text"
                       value={formData.cuenta_por_pagar || ''}
                       onChange={(e) => setFormData({ ...formData, cuenta_por_pagar: e.target.value })}
-                    />
+                    >
+                      <option value="">-- Seleccione Cuenta --</option>
+                      {cuentasContables.map(c => (
+                        <option key={c.id} value={c.codigo}>
+                          {c.fullLabel}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               )}
