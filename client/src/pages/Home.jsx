@@ -252,55 +252,25 @@ function Home() {
     setModulos(nuevoOrden)
   }
 
-  // Definición de Áreas con colores
+  // Definición de Áreas
   const areasConfig = {
     'Ventas': {
-      ids: [1, 16, 3, 13],
-      style: {
-        background: 'linear-gradient(to right, #60a5fa, #eff6ff)',
-        borderLeft: '5px solid #1d4ed8',
-        color: '#172554'
-      }
+      ids: [1, 16, 3, 13]
     },
     'Compras': {
-      ids: [6, 26, 21],
-      style: {
-        background: 'linear-gradient(to right, #22d3ee, #ecfeff)',
-        borderLeft: '5px solid #0e7490',
-        color: '#164e63'
-      }
+      ids: [6, 26, 21]
     },
     'Tesorería': {
-      ids: [10, 11, 22, 17, 20],
-      style: {
-        background: 'linear-gradient(to right, #fb923c, #fff7ed)',
-        borderLeft: '5px solid #c2410c',
-        color: '#7c2d12'
-      }
+      ids: [10, 11, 22, 17, 20]
     },
     'Inventario': {
-      ids: [4, 5],
-      style: {
-        background: 'linear-gradient(to right, #f472b6, #fdf2f8)',
-        borderLeft: '5px solid #be185d',
-        color: '#831843'
-      }
+      ids: [4, 5]
     },
     'Financiero': {
-      ids: [2, 15, 25],
-      style: {
-        background: 'linear-gradient(to right, #34d399, #ecfdf5)',
-        borderLeft: '5px solid #047857',
-        color: '#022c22'
-      }
+      ids: [2, 15, 25]
     },
     'Administración': {
-      ids: [12, 14, 19, 11, 18, 27],
-      style: {
-        background: 'linear-gradient(to right, #818cf8, #eef2ff)',
-        borderLeft: '5px solid #4338ca',
-        color: '#312e81'
-      }
+      ids: [12, 14, 19, 11, 18, 27]
     }
   }
 
@@ -466,12 +436,7 @@ function Home() {
 
           return (
             <div key={nombreArea} className="area-section">
-              <h2 className="area-title" style={{
-                ...config.style,
-                padding: '10px 15px',
-                borderRadius: '8px',
-                marginBottom: '15px'
-              }}>
+              <h2 className="area-title">
                 {nombreArea}
               </h2>
               <div className="area-grid">
@@ -484,7 +449,7 @@ function Home() {
                   >
                     <div
                       className="module-card"
-                      style={{ background: 'white', borderLeft: `4px solid ${modulo.color}`, position: 'relative' }}
+                      style={{ position: 'relative' }}
                     >
                       {modulo.id === 6 && pendientesSRI > 0 && (
                         <div style={{
@@ -531,7 +496,7 @@ function Home() {
             <div className="area-grid">
               {modulosOtros.map(modulo => (
                 <Link to={modulo.ruta} key={modulo.id} className="module-card-link">
-                  <div className="module-card" style={{ background: 'white', borderLeft: `4px solid ${modulo.color}`, position: 'relative' }}>
+                  <div className="module-card" style={{ position: 'relative' }}>
                     {modulo.id === 6 && pendientesSRI > 0 && (
                       <div style={{
                         position: 'absolute',
