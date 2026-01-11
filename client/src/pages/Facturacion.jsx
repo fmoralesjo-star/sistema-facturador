@@ -196,13 +196,36 @@ function Facturacion({ socket }) {
     fecha: new Date().toISOString().split('T')[0]
   })
 
-  // Estado para la modal de pago con tarjeta
-  const [mostrarModalTarjeta, setMostrarModalTarjeta] = useState(false)
-  const [datosTarjeta, setDatosTarjeta] = useState({
-    referencia: '',
-    lote: '',
-    terminal: ''
-  })
+  // Estado para pagos múltiples
+  const [listaPagos, setListaPagos] = useState([])
+  const [mostrarModalPago, setMostrarModalPago] = useState(false)
+  const [tipoPagoActual, setTipoPagoActual] = useState(null)
+  const [montoPago, setMontoPago] = useState('')
+  const [detallesPago, setDetallesPago] = useState({})
+
+  // Handler para agregar pago
+  const agregarPagoALista = () => {
+    const monto = parseFloat(montoPago)
+    if (!monto || monto <= 0) {
+      alert('Ingrese un monto válido')
+      return
+    }
+
+    const nuevoPago = {
+      id: Date.now(),
+      tipo: tipoPagoActual,
+      monto: monto,
+      detalles: { ...detallesPago }
+    }
+
+    setListaPagos([...listaPagos, nuevoPago])
+    setMostrarModalPago(false)
+    setMontoPago('')
+    setDetallesPago({})
+
+    // Actualizar datos generales para compatibilidad (usar el de mayor monto como principal)
+    // Opcional: Podríamos dejar el último o el más alto.
+  }
 
   const [cargandoDetalleFactura, setCargandoDetalleFactura] = useState(false)
   const [mostrarBuscarFactura, setMostrarBuscarFactura] = useState(false)
@@ -1098,42 +1121,38 @@ Este enlace te permitirá actualizar tu información de contacto.`
 
   // Funciones para manejar tipos de pago
   const seleccionarTipoPago = (tipo) => {
-    let formaPago = ''
-    let metodoPago = ''
-    let tipoPago = ''
+    // Calcular saldo pendiente
+    const totalPagado = listaPagos.reduce((acc, p) => acc + p.monto, 0)
+    const saldoPendiente = Math.max(0, parseFloat((totales.total - totalPagado - totales.retenciones).toFixed(2)))
+
+    if (saldoPendiente <= 0 && tipo !== 'RETENCIONES') {
+      alert('El saldo ya está cubierto. Elimine un pago si desea modificar.')
+      // return // Permitir si quieren agregar más por alguna razón (propina? cambio?) - mejor no bloquear estricto pero avisar
+    }
 
     switch (tipo) {
       case 'TARJETAS':
-        formaPago = 'TARJETA DE CRÉDITO/DÉBITO'
-        metodoPago = 'TARJETA'
-        tipoPago = 'Tarjeta'
-        setMostrarModalTarjeta(true) // Abrir modal para datos de tarjeta
+        setTipoPagoActual('TARJETA')
+        setMontoPago(saldoPendiente > 0 ? saldoPendiente.toString() : '')
+        setMostrarModalPago(true)
         break
       case 'EFECTIVO':
-        formaPago = 'SIN UTILIZACION DEL SISTEMA FINANCIERO'
-        metodoPago = 'EFECTIVO'
-        tipoPago = 'Efectivo'
-        break
-      case 'RETENCIONES':
-        formaPago = 'RETENCIONES'
-        metodoPago = 'RETENCION'
-        tipoPago = 'Retención'
+        setTipoPagoActual('EFECTIVO')
+        setMontoPago(saldoPendiente > 0 ? saldoPendiente.toString() : '')
+        setMostrarModalPago(true)
         break
       case 'TRANSFERENCIA':
-        formaPago = 'TRANSFERENCIA BANCARIA'
-        metodoPago = 'TRANSFERENCIA'
-        tipoPago = 'Transferencia'
+        setTipoPagoActual('TRANSFERENCIA')
+        setMontoPago(saldoPendiente > 0 ? saldoPendiente.toString() : '')
+        setMostrarModalPago(true)
+        break
+      case 'RETENCIONES':
+        // Mantener lógica anterior para retenciones ya que es un descuento al total, no un "pago"
+        setMostrarModalRetencion(true)
         break
       default:
         return
     }
-
-    setFacturaData(prev => ({
-      ...prev,
-      formaPago,
-      metodoPago,
-      tipoPago
-    }))
   }
 
   // Función para generar link de pago
@@ -5925,6 +5944,41 @@ Este enlace te permitirá actualizar tu información de contacto.`
                 {totales.totalLetras}
               </div>
 
+              {/* Lista de Pagos Agregados */}
+              {listaPagos.length > 0 && (
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                  {listaPagos.map(pago => (
+                    <div key={pago.id} style={{
+                      backgroundColor: '#e0e7ff',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      fontSize: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      border: '1px solid #c7d2fe'
+                    }}>
+                      <span style={{ fontWeight: 'bold' }}>{pago.tipo === 'TARJETA' ? '💳' : pago.tipo === 'EFECTIVO' ? '💵' : '🏦'} {pago.tipo}:</span>
+                      <span>${pago.monto.toFixed(2)}</span>
+                      <button
+                        onClick={() => setListaPagos(listaPagos.filter(p => p.id !== pago.id))}
+                        style={{ border: 'none', background: 'transparent', color: 'red', cursor: 'pointer', fontWeight: 'bold', marginLeft: '4px' }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                  <div style={{
+                    padding: '4px 8px',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    color: (totales.total - listaPagos.reduce((a, b) => a + b.monto, 0) - totales.retenciones) > 0.01 ? 'red' : 'green'
+                  }}>
+                    Restante: ${(totales.total - listaPagos.reduce((a, b) => a + b.monto, 0) - totales.retenciones).toFixed(2)}
+                  </div>
+                </div>
+              )}
+
               {/* Botones de Pago / Acciones Proforma */}
               <div style={{
                 display: 'flex',
@@ -6379,97 +6433,134 @@ Este enlace te permitirá actualizar tu información de contacto.`
         </div>
       )}
 
-      {/* Modal de Pago con Tarjeta */}
-      {
-        mostrarModalTarjeta && (
+      {/* Modal Unificado de Pagos Multiples */}
+      {mostrarModalPago && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
           <div style={{
-            position: 'fixed',
-            top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000
+            backgroundColor: 'white',
+            padding: '20px',
+            borderRadius: '8px',
+            width: '400px',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
           }}>
-            <div style={{
-              backgroundColor: 'white',
-              padding: '20px',
-              borderRadius: '8px',
-              width: '350px',
-              boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-            }}>
-              <h3 style={{ marginTop: 0, color: '#1e40af', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                💳 Datos de Tarjeta
-              </h3>
+            <h3 style={{ marginTop: 0, color: '#1e40af', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>
+              {tipoPagoActual === 'TARJETA' && '💳 Pago con Tarjeta'}
+              {tipoPagoActual === 'EFECTIVO' && '💵 Pago en Efectivo'}
+              {tipoPagoActual === 'TRANSFERENCIA' && '🏦 Pago con Transferencia'}
+            </h3>
 
+            <div style={{ marginBottom: '15px' }}>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: 'bold', marginBottom: '5px' }}>Monto a Pagar ($):</label>
+              <input
+                type="number"
+                step="0.01"
+                className="input-text"
+                value={montoPago}
+                onChange={(e) => setMontoPago(e.target.value)}
+                autoFocus
+                style={{ width: '100%', fontSize: '18px', padding: '8px' }}
+              />
+              <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+                Saldo pendiente: <strong>${Math.max(0, totales.total - listaPagos.reduce((acc, p) => acc + p.monto, 0) - totales.retenciones).toFixed(2)}</strong>
+              </div>
+            </div>
+
+            {/* Campos condicionales según tipo */}
+            {tipoPagoActual === 'TARJETA' && (
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '13px', marginBottom: '2px' }}>Referencia:</label>
+                  <input
+                    type="text"
+                    className="input-text"
+                    placeholder="Voucher"
+                    value={detallesPago.referencia || ''}
+                    onChange={(e) => setDetallesPago({ ...detallesPago, referencia: e.target.value })}
+                    style={{ width: '100%' }}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: '13px', marginBottom: '2px' }}>Lote:</label>
+                  <input
+                    type="text"
+                    className="input-text"
+                    placeholder="Opcional"
+                    value={detallesPago.lote || ''}
+                    onChange={(e) => setDetallesPago({ ...detallesPago, lote: e.target.value })}
+                    style={{ width: '100%' }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {tipoPagoActual === 'TRANSFERENCIA' && (
               <div style={{ marginBottom: '15px' }}>
-                <label style={{ display: 'block', fontSize: '13px', marginBottom: '5px' }}>Referencia / Voucher:</label>
+                <label style={{ display: 'block', fontSize: '13px', marginBottom: '2px' }}>Documento / Banco:</label>
                 <input
                   type="text"
                   className="input-text"
-                  value={datosTarjeta.referencia}
-                  onChange={(e) => setDatosTarjeta({ ...datosTarjeta, referencia: e.target.value })}
-                  placeholder="Ej: 000123"
+                  placeholder="Ej: Banco Pichincha - 123456"
+                  value={detallesPago.banco || ''}
+                  onChange={(e) => setDetallesPago({ ...detallesPago, banco: e.target.value })}
                   style={{ width: '100%' }}
-                  autoFocus
                 />
               </div>
+            )}
 
-              <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '13px', marginBottom: '5px' }}>Lote (Opcional):</label>
-                  <input
-                    type="text"
-                    className="input-text"
-                    value={datosTarjeta.lote}
-                    onChange={(e) => setDatosTarjeta({ ...datosTarjeta, lote: e.target.value })}
-                    style={{ width: '100%' }}
-                  />
+            {tipoPagoActual === 'EFECTIVO' && (
+              <div style={{ marginBottom: '15px', padding: '10px', backgroundColor: '#f0fdf4', borderRadius: '4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                  <span>Recibido:</span>
+                  <strong>${parseFloat(montoPago || 0).toFixed(2)}</strong>
                 </div>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '13px', marginBottom: '5px' }}>Terminal (Opcional):</label>
-                  <input
-                    type="text"
-                    className="input-text"
-                    value={datosTarjeta.terminal}
-                    onChange={(e) => setDatosTarjeta({ ...datosTarjeta, terminal: e.target.value })}
-                    style={{ width: '100%' }}
-                  />
-                </div>
+                {parseFloat(montoPago) > (totales.total - listaPagos.reduce((acc, p) => acc + p.monto, 0) - totales.retenciones) && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', marginTop: '5px', color: 'green', fontWeight: 'bold' }}>
+                    <span>Cambio:</span>
+                    <span>${(parseFloat(montoPago) - (totales.total - listaPagos.reduce((acc, p) => acc + p.monto, 0) - totales.retenciones)).toFixed(2)}</span>
+                  </div>
+                )}
               </div>
+            )}
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                <button
-                  onClick={() => setMostrarModalTarjeta(false)}
-                  style={{
-                    padding: '8px 16px',
-                    border: '1px solid #ccc',
-                    background: 'white',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Cerrar
-                </button>
-                <button
-                  onClick={() => setMostrarModalTarjeta(false)}
-                  style={{
-                    padding: '8px 16px',
-                    background: '#2563eb',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  Confirmar
-                </button>
-              </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button
+                onClick={() => setMostrarModalPago(false)}
+                style={{
+                  padding: '8px 16px',
+                  border: '1px solid #ccc',
+                  background: 'white',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={agregarPagoALista}
+                style={{
+                  padding: '8px 16px',
+                  background: '#2563eb',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                Agregar Pago
+              </button>
             </div>
           </div>
-        )
-      }
+        </div>
+      )}
     </>
   )
 }
