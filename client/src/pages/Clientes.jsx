@@ -3,6 +3,19 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { API_URL } from '../config/api'
 
+const INITIAL_FORM_STATE = {
+  nombre: '', ruc: '', direccion: '', telefono: '', email: '', fechaNacimiento: '', esExtranjero: false,
+  tipo_persona: 'NATURAL', razon_social: '', nombre_comercial: '', contribuyente_especial: '',
+  persona_relacionada: '', categoria_persona: '', vendedor_asignado: '',
+  es_cliente: true, es_proveedor: false, es_vendedor: false, es_empleado: false, es_artesano: false, para_exportacion: false,
+  centro_costo_cliente: '', cuenta_por_cobrar: '', centro_costo_proveedor: '', cuenta_por_pagar: '',
+  descuento_porcentaje: '', dias_credito: '', pvp_por_defecto: '', limite_credito: '',
+  banco_nombre: '', cuenta_bancaria_numero: '', cuenta_bancaria_tipo: '',
+  departamento: '', cargo: '', grupo_empleado: '', sueldo: '', tiempo_trabajo: '',
+  fecha_ultimo_ingreso: '', fecha_ultima_salida: '', numero_cargas: '', vacaciones_tomadas: '',
+  centro_costo_rrhh: '', tipo_contrato: '', notas: ''
+}
+
 function Clientes({ socket }) {
   const navigate = useNavigate()
   const [clientes, setClientes] = useState([])
@@ -10,15 +23,8 @@ function Clientes({ socket }) {
   const [editingId, setEditingId] = useState(null)
   const [mostrarMensajeExito, setMostrarMensajeExito] = useState(false)
   const [mensajeExito, setMensajeExito] = useState('')
-  const [formData, setFormData] = useState({
-    nombre: '',
-    ruc: '',
-    direccion: '',
-    telefono: '',
-    email: '',
-    fechaNacimiento: '',
-    esExtranjero: false
-  })
+  const [formData, setFormData] = useState({ ...INITIAL_FORM_STATE })
+  const [formTab, setFormTab] = useState('generales')
 
   // Estados para el historial de cliente
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null)
@@ -70,15 +76,7 @@ function Clientes({ socket }) {
         await axios.post(`${API_URL}/clientes`, formData)
       }
 
-      setFormData({
-        nombre: '',
-        ruc: '',
-        direccion: '',
-        telefono: '',
-        email: '',
-        fechaNacimiento: '',
-        esExtranjero: false
-      })
+      setFormData({ ...INITIAL_FORM_STATE })
       setMostrarFormulario(false)
       setEditingId(null)
       alert(editingId ? 'Cliente actualizado' : 'Cliente creado')
@@ -208,98 +206,385 @@ function Clientes({ socket }) {
           <button className="btn btn-primary" onClick={() => {
             setMostrarFormulario(!mostrarFormulario)
             setEditingId(null)
-            setFormData({
-              nombre: '',
-              ruc: '',
-              direccion: '',
-              telefono: '',
-              email: '',
-              fechaNacimiento: '',
-              esExtranjero: false
-            })
+            setFormData({ ...INITIAL_FORM_STATE })
           }}>
             {mostrarFormulario ? 'Cancelar' : '+ Nuevo Cliente'}
           </button>
         </div>
 
         {mostrarFormulario && (
-          <form onSubmit={handleSubmit} style={{ marginTop: '1.5rem' }}>
-            <div className="grid grid-2">
-              <div className="form-group">
-                <label>Nombre *</label>
-                <input
-                  type="text"
-                  value={formData.nombre}
-                  onChange={(e) => setFormData({ ...formData, nombre: e.target.value.toUpperCase() })}
-                  required
-                  style={{ textTransform: 'uppercase' }}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>RUC</label>
-                <input
-                  type="text"
-                  value={formData.ruc}
-                  onChange={(e) => setFormData({ ...formData, ruc: e.target.value })}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Dirección</label>
-                <input
-                  type="text"
-                  value={formData.direccion}
-                  onChange={(e) => setFormData({ ...formData, direccion: e.target.value.toUpperCase() })}
-                  style={{ textTransform: 'uppercase' }}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Teléfono</label>
-                <input
-                  type="text"
-                  value={formData.telefono}
-                  onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Email</label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value.toLowerCase() })}
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Fecha de Nacimiento</label>
-                <input
-                  type="date"
-                  value={formData.fechaNacimiento || ''}
-                  onChange={(e) => setFormData({ ...formData, fechaNacimiento: e.target.value })}
-                />
-              </div>
-
-              <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <input
-                  type="checkbox"
-                  id="esExtranjero"
-                  checked={formData.esExtranjero || false}
-                  onChange={(e) => setFormData({ ...formData, esExtranjero: e.target.checked })}
-                  style={{ width: '20px', height: '20px', cursor: 'pointer' }}
-                />
-                <label htmlFor="esExtranjero" style={{ cursor: 'pointer', margin: 0 }}>
-                  Es Extranjero
-                </label>
-              </div>
+          <div style={{ marginTop: '1.5rem' }}>
+            {/* Tabs de Navegación del Formulario */}
+            <div style={{ display: 'flex', borderBottom: '1px solid #e5e7eb', marginBottom: '20px', gap: '5px', overflowX: 'auto' }}>
+              {[
+                { id: 'generales', label: 'Datos Generales' },
+                { id: 'roles', label: 'Roles y Categoría' },
+                { id: 'comercial', label: 'Comercial y Contable' },
+                { id: 'bancarios', label: 'Datos Bancarios' },
+                { id: 'rrhh', label: 'Recursos Humanos' }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setFormTab(tab.id)}
+                  style={{
+                    padding: '10px 15px',
+                    border: 'none',
+                    background: formTab === tab.id ? 'white' : '#f3f4f6',
+                    borderBottom: formTab === tab.id ? '2px solid #2563eb' : '2px solid transparent',
+                    color: formTab === tab.id ? '#2563eb' : '#6b7280',
+                    cursor: 'pointer',
+                    fontWeight: '500',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
 
-            <button type="submit" className="btn btn-primary">
-              {editingId ? 'Actualizar' : 'Crear'} Cliente
-            </button>
-          </form>
+            <form onSubmit={handleSubmit}>
+              {/* === TAB 1: DATOS GENERALES === */}
+              {formTab === 'generales' && (
+                <div className="grid grid-2">
+                  <div className="form-group">
+                    <label>Tipo Persona</label>
+                    <select
+                      className="input-text"
+                      value={formData.tipo_persona || 'NATURAL'}
+                      onChange={(e) => setFormData({ ...formData, tipo_persona: e.target.value })}
+                    >
+                      <option value="NATURAL">NATURAL</option>
+                      <option value="JURIDICA">JURIDICA</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>RUC / Cédula / Pasaporte *</label>
+                    <input
+                      type="text"
+                      value={formData.ruc}
+                      onChange={(e) => setFormData({ ...formData, ruc: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Razón Social (Nombre Legal) *</label>
+                    <input
+                      type="text"
+                      value={formData.nombre} // Mapeado a 'nombre' en BD
+                      onChange={(e) => setFormData({ ...formData, nombre: e.target.value.toUpperCase(), razon_social: e.target.value.toUpperCase() })}
+                      required
+                      style={{ textTransform: 'uppercase' }}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Nombre Comercial</label>
+                    <input
+                      type="text"
+                      value={formData.nombre_comercial || ''}
+                      onChange={(e) => setFormData({ ...formData, nombre_comercial: e.target.value.toUpperCase() })}
+                      style={{ textTransform: 'uppercase' }}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Dirección</label>
+                    <input
+                      type="text"
+                      value={formData.direccion}
+                      onChange={(e) => setFormData({ ...formData, direccion: e.target.value.toUpperCase() })}
+                      style={{ textTransform: 'uppercase' }}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Teléfono</label>
+                    <input
+                      type="text"
+                      value={formData.telefono}
+                      onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Email</label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value.toLowerCase() })}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Fecha de Nacimiento</label>
+                    <input
+                      type="date"
+                      value={formData.fechaNacimiento || ''}
+                      onChange={(e) => setFormData({ ...formData, fechaNacimiento: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <input
+                      type="checkbox"
+                      id="esExtranjero"
+                      checked={formData.esExtranjero || false}
+                      onChange={(e) => setFormData({ ...formData, esExtranjero: e.target.checked })}
+                      style={{ width: '20px', height: '20px', cursor: 'pointer' }}
+                    />
+                    <label htmlFor="esExtranjero" style={{ cursor: 'pointer', margin: 0 }}>
+                      Es Extranjero
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* === TAB 2: ROLES Y CATEGORÍA === */}
+              {formTab === 'roles' && (
+                <div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '15px', marginBottom: '20px' }}>
+                    {[
+                      { key: 'es_cliente', label: 'Es Cliente' },
+                      { key: 'es_proveedor', label: 'Es Proveedor' },
+                      { key: 'es_vendedor', label: 'Es Vendedor' },
+                      { key: 'es_empleado', label: 'Es Empleado' },
+                      { key: 'es_artesano', label: 'Es Artesano' },
+                      { key: 'para_exportacion', label: 'Para Exportación' },
+                    ].map(role => (
+                      <div key={role.key} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px', border: '1px solid #eee', borderRadius: '4px' }}>
+                        <input
+                          type="checkbox"
+                          id={role.key}
+                          checked={formData[role.key] || false}
+                          onChange={(e) => setFormData({ ...formData, [role.key]: e.target.checked })}
+                          style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                        />
+                        <label htmlFor={role.key} style={{ margin: 0, cursor: 'pointer', fontSize: '14px' }}>{role.label}</label>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-2">
+                    <div className="form-group">
+                      <label>Categoría Persona</label>
+                      <input
+                        type="text"
+                        value={formData.categoria_persona || ''}
+                        onChange={(e) => setFormData({ ...formData, categoria_persona: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Persona Relacionada</label>
+                      <input
+                        type="text"
+                        value={formData.persona_relacionada || ''}
+                        onChange={(e) => setFormData({ ...formData, persona_relacionada: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Vendedor Asignado</label>
+                      <input
+                        type="text"
+                        value={formData.vendedor_asignado || ''}
+                        onChange={(e) => setFormData({ ...formData, vendedor_asignado: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Contribuyente Especial (N° Res)</label>
+                      <input
+                        type="text"
+                        placeholder="Ej: 534"
+                        value={formData.contribuyente_especial || ''}
+                        onChange={(e) => setFormData({ ...formData, contribuyente_especial: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* === TAB 3: COMERCIAL Y CONTABLE === */}
+              {formTab === 'comercial' && (
+                <div className="grid grid-2">
+                  <div className="form-group">
+                    <label>PVP por Defecto</label>
+                    <input
+                      type="text"
+                      placeholder="Ej: PVP1, MAYORISTA"
+                      value={formData.pvp_por_defecto || ''}
+                      onChange={(e) => setFormData({ ...formData, pvp_por_defecto: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Descuento (%)</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={formData.descuento_porcentaje || ''}
+                      onChange={(e) => setFormData({ ...formData, descuento_porcentaje: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Monto Crédito ($)</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={formData.limite_credito || ''}
+                      onChange={(e) => setFormData({ ...formData, limite_credito: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Días Crédito</label>
+                    <input
+                      type="number"
+                      value={formData.dias_credito || ''}
+                      onChange={(e) => setFormData({ ...formData, dias_credito: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Centro Costo (Cliente)</label>
+                    <input
+                      type="text"
+                      value={formData.centro_costo_cliente || ''}
+                      onChange={(e) => setFormData({ ...formData, centro_costo_cliente: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Cuenta por Cobrar</label>
+                    <input
+                      type="text"
+                      value={formData.cuenta_por_cobrar || ''}
+                      onChange={(e) => setFormData({ ...formData, cuenta_por_cobrar: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Centro Costo (Proveedor)</label>
+                    <input
+                      type="text"
+                      value={formData.centro_costo_proveedor || ''}
+                      onChange={(e) => setFormData({ ...formData, centro_costo_proveedor: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Cuenta por Pagar</label>
+                    <input
+                      type="text"
+                      value={formData.cuenta_por_pagar || ''}
+                      onChange={(e) => setFormData({ ...formData, cuenta_por_pagar: e.target.value })}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* === TAB 4: BANCARIOS === */}
+              {formTab === 'bancarios' && (
+                <div className="grid grid-2">
+                  <div className="form-group">
+                    <label>Banco</label>
+                    <input
+                      type="text"
+                      value={formData.banco_nombre || ''}
+                      onChange={(e) => setFormData({ ...formData, banco_nombre: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>N° Cuenta Bancaria</label>
+                    <input
+                      type="text"
+                      value={formData.cuenta_bancaria_numero || ''}
+                      onChange={(e) => setFormData({ ...formData, cuenta_bancaria_numero: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Tipo Cuenta</label>
+                    <select
+                      className="input-text"
+                      value={formData.cuenta_bancaria_tipo || ''}
+                      onChange={(e) => setFormData({ ...formData, cuenta_bancaria_tipo: e.target.value })}
+                    >
+                      <option value="">-- Seleccionar --</option>
+                      <option value="AHORROS">AHORROS</option>
+                      <option value="CORRIENTE">CORRIENTE</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {/* === TAB 5: RRHH (Solo si es empleado) === */}
+              {formTab === 'rrhh' && (
+                <div>
+                  {!formData.es_empleado && (
+                    <div style={{ padding: '10px', background: '#fff7ed', border: '1px solid #fdba74', borderRadius: '4px', marginBottom: '15px', color: '#9a3412' }}>
+                      ⚠️ Active la opción "Es Empleado" en la pestaña Roles para que estos datos sean relevantes.
+                    </div>
+                  )}
+                  <div className="grid grid-2">
+                    <div className="form-group">
+                      <label>Departamento</label>
+                      <input type="text" value={formData.departamento || ''} onChange={(e) => setFormData({ ...formData, departamento: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <label>Cargo</label>
+                      <input type="text" value={formData.cargo || ''} onChange={(e) => setFormData({ ...formData, cargo: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <label>Grupo</label>
+                      <input type="text" value={formData.grupo_empleado || ''} onChange={(e) => setFormData({ ...formData, grupo_empleado: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <label>Sueldo</label>
+                      <input type="number" step="0.01" value={formData.sueldo || ''} onChange={(e) => setFormData({ ...formData, sueldo: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <label>Tiempo Trabajo</label>
+                      <input type="text" value={formData.tiempo_trabajo || ''} onChange={(e) => setFormData({ ...formData, tiempo_trabajo: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <label>Fecha Últ. Ingreso</label>
+                      <input type="date" value={formData.fecha_ultimo_ingreso || ''} onChange={(e) => setFormData({ ...formData, fecha_ultimo_ingreso: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <label>Fecha Últ. Salida</label>
+                      <input type="date" value={formData.fecha_ultima_salida || ''} onChange={(e) => setFormData({ ...formData, fecha_ultima_salida: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <label>N° Cargas</label>
+                      <input type="number" value={formData.numero_cargas || ''} onChange={(e) => setFormData({ ...formData, numero_cargas: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <label>Vacaciones Tomadas</label>
+                      <input type="number" value={formData.vacaciones_tomadas || ''} onChange={(e) => setFormData({ ...formData, vacaciones_tomadas: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <label>Centro Costos (RRHH)</label>
+                      <input type="text" value={formData.centro_costo_rrhh || ''} onChange={(e) => setFormData({ ...formData, centro_costo_rrhh: e.target.value })} />
+                    </div>
+                    <div className="form-group">
+                      <label>Contrato</label>
+                      <input type="text" value={formData.tipo_contrato || ''} onChange={(e) => setFormData({ ...formData, tipo_contrato: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="form-group" style={{ marginTop: '10px' }}>
+                    <label>Nota</label>
+                    <textarea
+                      value={formData.notas || ''}
+                      onChange={(e) => setFormData({ ...formData, notas: e.target.value })}
+                      style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ddd' }}
+                      rows="3"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid #eee', paddingTop: '15px' }}>
+                <button type="submit" className="btn btn-primary" style={{ padding: '10px 30px', fontSize: '16px' }}>
+                  {editingId ? 'Actualizar' : 'Guardar'} Cliente
+                </button>
+              </div>
+            </form>
+          </div>
         )}
       </div>
 
