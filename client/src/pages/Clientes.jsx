@@ -23,6 +23,30 @@ function Clientes({ socket }) {
   const [editingId, setEditingId] = useState(null)
   const [mostrarMensajeExito, setMostrarMensajeExito] = useState(false)
   const [mensajeExito, setMensajeExito] = useState('')
+  const [cuentasContables, setCuentasContables] = useState([])
+
+  // Cargar plan de cuentas para selects
+  useEffect(() => {
+    const cargarCuentas = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/plan-cuentas`)
+        // Aplanar el árbol para el select
+        const aplanar = (nodos) => {
+          let flat = []
+          nodos.forEach(n => {
+            flat.push({ id: n.id, codigo: n.codigo, nombre: n.nombre, fullLabel: `${n.codigo} - ${n.nombre}` })
+            if (n.hijos) flat = flat.concat(aplanar(n.hijos))
+          })
+          return flat
+        }
+        setCuentasContables(aplanar(res.data))
+      } catch (error) {
+        console.error('Error cargando plan de cuentas:', error)
+      }
+    }
+    cargarCuentas()
+  }, [])
+
   const [formData, setFormData] = useState({ ...INITIAL_FORM_STATE })
   const [formTab, setFormTab] = useState('generales')
 
