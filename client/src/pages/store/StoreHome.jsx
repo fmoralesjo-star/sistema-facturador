@@ -3,233 +3,145 @@ import { useOutletContext } from 'react-router-dom';
 import axios from 'axios';
 import { API_URL } from '../../config/api';
 
-import React, { useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import axios from 'axios';
-import { API_URL } from '../../config/api';
-const { addToCart, storeConfig } = useOutletContext();
-const [products, setProducts] = useState([]);
-const [filteredProducts, setFilteredProducts] = useState([]);
-const [loading, setLoading] = useState(true);
-const [error, setError] = useState(null);
+const StoreHome = () => {
+    const { addToCart, storeConfig } = useOutletContext();
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-// Filter States
-const [categories, setCategories] = useState(['Todos']);
-const [activeCategory, setActiveCategory] = useState('Todos');
-const [searchTerm, setSearchTerm] = useState('');
-const [priceRange, setPriceRange] = useState(1000); // Max default
-const [showFilters, setShowFilters] = useState(false);
+    // Categories Demo
+    const categories = [
+        { id: '1', name: 'Moviles', icon: '📱' },
+        { id: '2', name: 'Laptops', icon: '💻' },
+        { id: '3', name: 'Audio', icon: '🎧' },
+        { id: '4', name: 'Relojes', icon: '⌚' }
+    ];
 
-useEffect(() => {
-    fetchProducts();
-}, []);
+    const [activeCat, setActiveCat] = useState('All');
 
-useEffect(() => {
-    let result = products;
+    useEffect(() => {
+        fetchProducts();
+    }, []);
 
-    // Category Filter
-    if (activeCategory !== 'Todos') {
-        result = result.filter(p => p.categoria === activeCategory);
-    }
-
-    // Search Filter
-    if (searchTerm) {
-        result = result.filter(p =>
-            p.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            p.codigo?.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    }
-
-    // Price Filter
-    result = result.filter(p => Number(p.precio_venta || p.precio) <= priceRange);
-
-    setFilteredProducts(result);
-}, [activeCategory, searchTerm, priceRange, products]);
-
-const fetchProducts = async () => {
-    try {
-        const res = await axios.get(`${API_URL}/productos`);
-        if (res.data && res.data.data) {
-            setProducts(res.data.data);
-            const cats = ['Todos', ...new Set(res.data.data.map(p => p.categoria || 'Varios').filter(Boolean))];
-            setCategories(cats);
-
-            // Find max price for slider
-            const maxPrice = Math.max(...res.data.data.map(p => Number(p.precio_venta || p.precio)));
-            setPriceRange(Math.ceil(maxPrice) || 1000);
+    const fetchProducts = async () => {
+        try {
+            const res = await axios.get(`${API_URL}/productos`);
+            if (res.data && res.data.data) {
+                setProducts(res.data.data);
+            }
+            setLoading(false);
+        } catch (err) {
+            setLoading(false);
         }
-        setLoading(false);
-    } catch (err) {
-        setLoading(false);
-        setError("No se pudieron cargar los productos.");
-    }
-};
+    };
 
-const handleAddToCart = (product) => {
-    addToCart(product);
-    // Could implement a toast notification here
-    const btn = document.getElementById(`btn-add-${product.id}`);
-    if (btn) {
-        const originalText = btn.innerHTML;
-        btn.innerHTML = "✓ Agregado";
-        btn.style.background = "var(--store-secondary)";
-        btn.style.color = "white";
-        setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.style.background = "";
-            btn.style.color = "";
-        }, 1500);
-    }
-};
+    const handleAddToCart = (product) => {
+        addToCart(product);
+        // Simple visual feedback could be added here
+        alert('Producto agregado al carrito');
+    };
 
-if (loading) return (
-    <div className="store-loader">
-        <div className="spinner"></div>
-        <p>Cargando Tienda...</p>
-    </div>
-);
+    // Filter logic
+    const displayedProducts = activeCat === 'All'
+        ? products
+        : products.filter(p => p.categoria?.includes(activeCat) || p.nombre?.includes(activeCat));
 
-return (
-    <div className="store-bg">
-        {/* Super Robust Hero Section */}
-        {storeConfig?.mostrarBanner !== false && (
-            <section className="store-hero">
-                <div className="store-hero-overlay"></div>
-                <div className="store-hero-content-wrapper store-container">
-                    <div className="store-hero-text">
-                        <span className="hero-badge">Nueva Colección 2026</span>
-                        <h1 className="hero-title">{storeConfig?.bannerTitulo || 'Innovación & Calidad'}</h1>
-                        <p className="hero-subtitle">{storeConfig?.bannerSubtitulo || 'Descubre los mejores productos seleccionados para ti con la mejor garantía del mercado.'}</p>
-                        <div className="hero-buttons">
-                            <button className="btn-hero-primary" onClick={() => document.getElementById('shop-section').scrollIntoView({ behavior: 'smooth' })}>Ver Catálogo</button>
-                            <button className="btn-hero-secondary">Nuestras Ofertas</button>
+    if (loading) return <div className="store-loader"><div className="spinner"></div></div>;
+
+    return (
+        <div className="nexus-home">
+            <div className="store-container">
+
+                {/* Hero Section */}
+                <section className="nexus-hero">
+                    <div className="nexus-hero-content">
+                        <h1>FLASH SALES: <br /><span style={{ color: 'var(--nexus-primary)' }}>UP TO 50% OFF</span></h1>
+                        <p className="hero-subtitle">Equípate con lo mejor de la tecnología.</p>
+                        <button className="nexus-btn-primary">Comprar Ahora</button>
+                    </div>
+                    <div className="nexus-hero-image">
+                        {/* Placeholder for tech visual */}
+                        <div style={{ fontSize: '8rem' }}>💻</div>
+                    </div>
+                </section>
+
+                {/* Categories Row */}
+                <section className="nexus-categories">
+                    {categories.map(cat => (
+                        <div
+                            key={cat.id}
+                            className={`nexus-cat-item ${activeCat === cat.name ? 'active' : ''}`}
+                            onClick={() => setActiveCat(cat.name)}
+                        >
+                            <div className="cat-icon-box">{cat.icon}</div>
+                            <span className="cat-label">{cat.name}</span>
+                        </div>
+                    ))}
+                    <div className={`nexus-cat-item ${activeCat === 'All' ? 'active' : ''}`} onClick={() => setActiveCat('All')}>
+                        <div className="cat-icon-box">♾️</div>
+                        <span className="cat-label">Todos</span>
+                    </div>
+                </section>
+
+                {/* New Arrivals & Countdown */}
+                <section className="nexus-section">
+                    <div className="nexus-section-header">
+                        <div>
+                            <h2>Nuevos Arrivos</h2>
+                            <p style={{ color: 'var(--nexus-text-muted)', margin: 0 }}>Lo mejor de la semana</p>
+                        </div>
+                        <div className="countdown-timer">
+                            00:00:00
                         </div>
                     </div>
-                    <div className="store-hero-visual">
-                        {/* Abstract decorative elements or a designated hero image if config supported it */}
-                        <div className="floating-card glass">
-                            <span>🔥 Oferta Semanal</span>
-                            <h3>-20% Descuento</h3>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        )}
 
-        <div className="store-container" id="shop-section" style={{ paddingBottom: '4rem' }}>
-
-            {/* Search & Filter Bar Mobile */}
-            <div className="mobile-filter-toggle">
-                <input
-                    type="text"
-                    placeholder="Buscar producto..."
-                    className="mobile-search-input"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <button className="btn-filter-toggle" onClick={() => setShowFilters(!showFilters)}>
-                    🌪️ Filtros
-                </button>
-            </div>
-
-            <div className="store-layout-grid">
-                {/* Sidebar Filters */}
-                <aside className={`store-sidebar ${showFilters ? 'show' : ''}`}>
-                    <div className="sidebar-group">
-                        <h3>🔍 Buscar</h3>
-                        <input
-                            type="text"
-                            placeholder="Escribe aquí..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="sidebar-input"
-                        />
-                    </div>
-
-                    <div className="sidebar-group">
-                        <h3>📂 Categorías</h3>
-                        <ul className="category-list">
-                            {categories.map(cat => (
-                                <li
-                                    key={cat}
-                                    className={activeCategory === cat ? 'active' : ''}
-                                    onClick={() => { setActiveCategory(cat); setShowFilters(false); }}
-                                >
-                                    {cat}
-                                    {cat !== 'Todos' && <span className="count-badge">{products.filter(p => p.categoria === cat).length}</span>}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    <div className="sidebar-group">
-                        <h3>💰 Precio Máximo: ${priceRange}</h3>
-                        <input
-                            type="range"
-                            min="0"
-                            max={Math.max(...products.map(p => p.precio_venta || p.precio), 1000)}
-                            value={priceRange}
-                            onChange={(e) => setPriceRange(Number(e.target.value))}
-                            className="price-slider"
-                        />
-                    </div>
-                </aside>
-
-                {/* Products Grid */}
-                <div className="store-content-area">
-                    <div className="results-header">
-                        <h2>{activeCategory === 'Todos' ? 'Catálogo Completo' : activeCategory}</h2>
-                        <span className="results-count">{filteredProducts.length} productos encontrados</span>
-                    </div>
-
-                    {filteredProducts.length === 0 ? (
-                        <div className="no-results">
-                            <div style={{ fontSize: '3rem' }}>🔍</div>
-                            <h3>No encontramos lo que buscas</h3>
-                            <p>Intenta con otra categoría o ajusta los filtros.</p>
-                            <button className="btn-reset" onClick={() => { setActiveCategory('Todos'); setSearchTerm(''); }}>Ver Todo</button>
-                        </div>
-                    ) : (
-                        <div className="premium-products-grid">
-                            {filteredProducts.map(product => (
-                                <div key={product.id} className="premium-product-card">
-                                    <div className="card-image-wrapper">
-                                        {product.imagen_url ? (
-                                            <img src={product.imagen_url} alt={product.nombre} loading="lazy" />
-                                        ) : (
-                                            <div className="placeholder-img">{product.nombre[0]}</div>
-                                        )}
-                                        <button
-                                            className="btn-quick-add"
-                                            onClick={() => handleAddToCart(product)}
-                                            title="Agregar Rápido"
-                                        >
-                                            +
-                                        </button>
-                                    </div>
-                                    <div className="card-details">
-                                        <span className="card-category">{product.categoria || 'General'}</span>
-                                        <h3 className="card-title">{product.nombre}</h3>
-                                        <div className="card-footer">
-                                            <span className="price">${Number(product.precio_venta || product.precio).toFixed(2)}</span>
-                                            <button
-                                                id={`btn-add-${product.id}`}
-                                                className="btn-add-cart"
-                                                onClick={() => handleAddToCart(product)}
-                                            >
-                                                Agregar
-                                            </button>
-                                        </div>
-                                    </div>
+                    <div className="nexus-grid">
+                        {displayedProducts.map(product => (
+                            <div key={product.id} className="nexus-card">
+                                <div className="nexus-card-img">
+                                    <span className="nexus-badge">New</span>
+                                    {product.imagen_url ? (
+                                        <img src={product.imagen_url} alt={product.nombre} />
+                                    ) : (
+                                        <div style={{ fontSize: '3rem' }}>📦</div>
+                                    )}
                                 </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                                <div className="nexus-card-info">
+                                    <h3 className="nexus-title">{product.nombre}</h3>
+                                    <div className="nexus-price-row">
+                                        <span className="current-price">${Number(product.precio_venta || product.precio).toFixed(2)}</span>
+                                        <span className="old-price">${(Number(product.precio_venta || product.precio) * 1.2).toFixed(2)}</span>
+                                    </div>
+                                    <button
+                                        className="nexus-btn-add"
+                                        onClick={() => handleAddToCart(product)}
+                                    >
+                                        Añadir al Carrito
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
             </div>
+
+            {/* Mobile Bottom Nav */}
+            <nav className="mobile-bottom-nav">
+                <a href="#" className="nav-item active">
+                    <span>🏠</span> Home
+                </a>
+                <a href="#" className="nav-item">
+                    <span>🔍</span> Buscar
+                </a>
+                <a href="#" className="nav-item">
+                    <span>🛒</span> Carrito
+                </a>
+                <a href="#" className="nav-item">
+                    <span>👤</span> Cuenta
+                </a>
+            </nav>
         </div>
-    </div>
-);
+    );
 };
 
 export default StoreHome;
