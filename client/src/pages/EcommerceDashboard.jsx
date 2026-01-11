@@ -93,8 +93,8 @@ function EcommerceDashboard() {
     )
 
     return (
-        <div className="admin-container">
-            <div className="admin-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="admin-container" style={{ minHeight: '100vh', width: '100%', maxWidth: '100%', margin: 0, padding: '20px', background: '#f8fafc', boxSizing: 'border-box' }}>
+            <div className="admin-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', background: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
                 <div>
                     <h2>🛍️ Gestión de Tienda Online (E-commerce)</h2>
                     <p>Personaliza tu tienda y gestiona las imágenes de tus productos</p>
