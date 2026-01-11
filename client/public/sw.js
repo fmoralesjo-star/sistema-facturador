@@ -1,6 +1,6 @@
 // Versión del cache - incrementar para forzar actualización
 // Cambiar este número cada vez que quieras forzar una actualización
-const CACHE_VERSION = 'v2.1.0-URBAN-FIX-' + Date.now();
+const CACHE_VERSION = 'v2.2.0-FORCE-UPDATE-1';
 const CACHE_NAME = `sistema-facturador-${CACHE_VERSION}`;
 const urlsToCache = [
   '/',
