@@ -8,12 +8,12 @@ const StoreHome = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Categories Demo
+    // Fashion Categories
     const categories = [
-        { id: '1', name: 'Moviles', icon: '📱' },
-        { id: '2', name: 'Laptops', icon: '💻' },
-        { id: '3', name: 'Audio', icon: '🎧' },
-        { id: '4', name: 'Relojes', icon: '⌚' }
+        { id: '1', name: 'Damas', icon: '👗' },
+        { id: '2', name: 'Caballeros', icon: '👔' },
+        { id: '3', name: 'Calzado', icon: '👠' },
+        { id: '4', name: 'Accesorios', icon: '👜' }
     ];
 
     const [activeCat, setActiveCat] = useState('All');
@@ -36,8 +36,7 @@ const StoreHome = () => {
 
     const handleAddToCart = (product) => {
         addToCart(product);
-        // Simple visual feedback could be added here
-        alert('Producto agregado al carrito');
+        alert('Prenda agregada al carrito');
     };
 
     // Filter logic
@@ -54,13 +53,13 @@ const StoreHome = () => {
                 {/* Hero Section */}
                 <section className="nexus-hero">
                     <div className="nexus-hero-content">
-                        <h1>FLASH SALES: <br /><span style={{ color: 'white' }}>UP TO 50% OFF</span></h1>
-                        <p className="hero-subtitle">Equípate con lo mejor de la tecnología.</p>
-                        <button className="nexus-btn-primary">Comprar Ahora</button>
+                        <h1>NUEVA COLECCIÓN: <br /><span style={{ color: 'white' }}>ESTILO 2026</span></h1>
+                        <p className="hero-subtitle">Descubre las últimas tendencias en moda y viste con personalidad.</p>
+                        <button className="nexus-btn-primary">Ver Catálogo</button>
                     </div>
                     <div className="nexus-hero-image">
-                        {/* Placeholder for tech visual */}
-                        <div style={{ fontSize: '8rem' }}>💻</div>
+                        {/* Fashion Visual Placeholder */}
+                        <div style={{ fontSize: '8rem' }}>👚</div>
                     </div>
                 </section>
 
@@ -77,8 +76,8 @@ const StoreHome = () => {
                         </div>
                     ))}
                     <div className={`nexus-cat-item ${activeCat === 'All' ? 'active' : ''}`} onClick={() => setActiveCat('All')}>
-                        <div className="cat-icon-box">♾️</div>
-                        <span className="cat-label">Todos</span>
+                        <div className="cat-icon-box">✨</div>
+                        <span className="cat-label">Todo</span>
                     </div>
                 </section>
 
@@ -86,11 +85,8 @@ const StoreHome = () => {
                 <section className="nexus-section">
                     <div className="nexus-section-header">
                         <div>
-                            <h2>Nuevos Arrivos</h2>
-                            <p style={{ color: 'var(--nexus-text-muted)', margin: 0 }}>Lo mejor de la semana</p>
-                        </div>
-                        <div className="countdown-timer">
-                            00:00:00
+                            <h2>Tendecias de Temporada</h2>
+                            <p style={{ color: 'var(--nexus-text-muted)', margin: 0 }}>Lo más vendido de la semana</p>
                         </div>
                     </div>
 
@@ -98,24 +94,23 @@ const StoreHome = () => {
                         {displayedProducts.map(product => (
                             <div key={product.id} className="nexus-card">
                                 <div className="nexus-card-img">
-                                    <span className="nexus-badge">New</span>
+                                    <span className="nexus-badge">Nuevo</span>
                                     {product.imagen_url ? (
                                         <img src={product.imagen_url} alt={product.nombre} />
                                     ) : (
-                                        <div style={{ fontSize: '3rem' }}>📦</div>
+                                        <div style={{ fontSize: '3rem' }}>👕</div>
                                     )}
                                 </div>
                                 <div className="nexus-card-info">
                                     <h3 className="nexus-title">{product.nombre}</h3>
                                     <div className="nexus-price-row">
-                                        <span className="current-price">${Number(product.precio_venta || product.precio).toFixed(2)}</span>
-                                        <span className="old-price">${(Number(product.precio_venta || product.precio) * 1.2).toFixed(2)}</span>
+                                        <span className="current-price">${Number(product.precio || 0).toFixed(2)}</span>
                                     </div>
                                     <button
                                         className="nexus-btn-add"
                                         onClick={() => handleAddToCart(product)}
                                     >
-                                        Añadir al Carrito
+                                        Agregar
                                     </button>
                                 </div>
                             </div>
@@ -128,16 +123,16 @@ const StoreHome = () => {
             {/* Mobile Bottom Nav */}
             <nav className="mobile-bottom-nav">
                 <a href="#" className="nav-item active">
-                    <span>🏠</span> Home
+                    <span>🏠</span> Inicio
                 </a>
                 <a href="#" className="nav-item">
                     <span>🔍</span> Buscar
                 </a>
                 <a href="#" className="nav-item">
-                    <span>🛒</span> Carrito
+                    <span>🛍️</span> Carrito
                 </a>
                 <a href="#" className="nav-item">
-                    <span>👤</span> Cuenta
+                    <span>👤</span> Perfil
                 </a>
             </nav>
         </div>
