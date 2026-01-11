@@ -31,7 +31,62 @@ export class CreateClienteDto {
 
   @IsOptional()
   @IsBoolean()
+  @IsOptional()
+  @IsBoolean()
   esExtranjero?: boolean;
+
+  // === CAMPOS EXTENDIDOS ===
+
+  // Identificación
+  @IsOptional() @IsString() tipo_persona?: string;
+  @IsOptional() @IsString() razon_social?: string;
+  @IsOptional() @IsString() nombre_comercial?: string;
+  @IsOptional() @IsString() contribuyente_especial?: string;
+
+  // Relaciones
+  @IsOptional() @IsString() persona_relacionada?: string;
+  @IsOptional() @IsString() categoria_persona?: string;
+  @IsOptional() @IsString() vendedor_asignado?: string;
+
+  // Roles
+  @IsOptional() @IsBoolean() es_cliente?: boolean;
+  @IsOptional() @IsBoolean() es_proveedor?: boolean;
+  @IsOptional() @IsBoolean() es_vendedor?: boolean;
+  @IsOptional() @IsBoolean() es_empleado?: boolean;
+  @IsOptional() @IsBoolean() es_artesano?: boolean;
+  @IsOptional() @IsBoolean() para_exportacion?: boolean;
+
+  // Contabilidad
+  @IsOptional() @IsString() centro_costo_cliente?: string;
+  @IsOptional() @IsString() cuenta_por_cobrar?: string;
+  @IsOptional() @IsString() centro_costo_proveedor?: string;
+  @IsOptional() @IsString() cuenta_por_pagar?: string;
+
+  // Comercial
+  @IsOptional() descuento_porcentaje?: number;
+  @IsOptional() dias_credito?: number;
+  @IsOptional() @IsString() pvp_por_defecto?: string;
+  // monto_credito ya existe en entidad como limite_credito, si se quiere mapear:
+  @IsOptional() limite_credito?: number;
+
+  // Bancario
+  @IsOptional() @IsString() banco_nombre?: string;
+  @IsOptional() @IsString() cuenta_bancaria_numero?: string;
+  @IsOptional() @IsString() cuenta_bancaria_tipo?: string;
+
+  // RRHH
+  @IsOptional() @IsString() departamento?: string;
+  @IsOptional() @IsString() cargo?: string;
+  @IsOptional() @IsString() grupo_empleado?: string;
+  @IsOptional() sueldo?: number;
+  @IsOptional() @IsString() tiempo_trabajo?: string;
+  @IsOptional() @IsString() fecha_ultimo_ingreso?: string;
+  @IsOptional() @IsString() fecha_ultima_salida?: string;
+  @IsOptional() numero_cargas?: number;
+  @IsOptional() vacaciones_tomadas?: number;
+  @IsOptional() @IsString() centro_costo_rrhh?: string;
+  @IsOptional() @IsString() tipo_contrato?: string;
+  @IsOptional() @IsString() notas?: string;
 }
 
 export class UpdateClienteDto {
@@ -62,6 +117,49 @@ export class UpdateClienteDto {
   @IsOptional()
   @IsBoolean()
   esExtranjero?: boolean;
+
+  // === CAMPOS EXTENDIDOS (Mismos que Create) ===
+  @IsOptional() @IsString() tipo_persona?: string;
+  @IsOptional() @IsString() razon_social?: string;
+  @IsOptional() @IsString() nombre_comercial?: string;
+  @IsOptional() @IsString() contribuyente_especial?: string;
+  @IsOptional() @IsString() persona_relacionada?: string;
+  @IsOptional() @IsString() categoria_persona?: string;
+  @IsOptional() @IsString() vendedor_asignado?: string;
+
+  @IsOptional() @IsBoolean() es_cliente?: boolean;
+  @IsOptional() @IsBoolean() es_proveedor?: boolean;
+  @IsOptional() @IsBoolean() es_vendedor?: boolean;
+  @IsOptional() @IsBoolean() es_empleado?: boolean;
+  @IsOptional() @IsBoolean() es_artesano?: boolean;
+  @IsOptional() @IsBoolean() para_exportacion?: boolean;
+
+  @IsOptional() @IsString() centro_costo_cliente?: string;
+  @IsOptional() @IsString() cuenta_por_cobrar?: string;
+  @IsOptional() @IsString() centro_costo_proveedor?: string;
+  @IsOptional() @IsString() cuenta_por_pagar?: string;
+
+  @IsOptional() descuento_porcentaje?: number;
+  @IsOptional() dias_credito?: number;
+  @IsOptional() @IsString() pvp_por_defecto?: string;
+  @IsOptional() limite_credito?: number;
+
+  @IsOptional() @IsString() banco_nombre?: string;
+  @IsOptional() @IsString() cuenta_bancaria_numero?: string;
+  @IsOptional() @IsString() cuenta_bancaria_tipo?: string;
+
+  @IsOptional() @IsString() departamento?: string;
+  @IsOptional() @IsString() cargo?: string;
+  @IsOptional() @IsString() grupo_empleado?: string;
+  @IsOptional() sueldo?: number;
+  @IsOptional() @IsString() tiempo_trabajo?: string;
+  @IsOptional() @IsString() fecha_ultimo_ingreso?: string;
+  @IsOptional() @IsString() fecha_ultima_salida?: string;
+  @IsOptional() numero_cargas?: number;
+  @IsOptional() vacaciones_tomadas?: number;
+  @IsOptional() @IsString() centro_costo_rrhh?: string;
+  @IsOptional() @IsString() tipo_contrato?: string;
+  @IsOptional() @IsString() notas?: string;
 }
 
 @Injectable()
