@@ -510,7 +510,7 @@ function App() {
               }
             />
             <Route
-              path="/mobile-app"
+              path="/admin-tienda"
               element={
                 <ProtectedRoute>
                   <EcommerceDashboard />
@@ -562,7 +562,7 @@ function NavBar() {
     '/notas-credito',
     '/cartera',
     '/tesoreria',
-    '/mobile-app',
+    '/admin-tienda',
     '/store' // Ocultar Navbar Admin en la tienda (tiene su propia Navbar)
   ]
 
@@ -668,7 +668,7 @@ function NavBar() {
           <Link to="/recursos-humanos" className={location.pathname === '/recursos-humanos' ? 'active' : ''}>
             RR.HH.
           </Link>
-          <Link to="/mobile-app" className={location.pathname === '/mobile-app' ? 'active' : ''}>
+          <Link to="/admin-tienda" className={location.pathname === '/admin-tienda' ? 'active' : ''}>
             Admin Tienda
           </Link>
         </div>
