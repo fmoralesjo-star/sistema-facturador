@@ -1,6 +1,6 @@
 // Versión del cache - incrementar para forzar actualización
 // Cambiar este número cada vez que quieras forzar una actualización
-const CACHE_VERSION = 'v2.2.0-FORCE-UPDATE-1';
+const CACHE_VERSION = 'v2.2.1-FIX-NAVIGATE';
 const CACHE_NAME = `sistema-facturador-${CACHE_VERSION}`;
 const urlsToCache = [
   '/',
@@ -98,13 +98,10 @@ self.addEventListener('fetch', (event) => {
   }
 
   // EN PRODUCCIÓN: Usar estrategia Network First - SIEMPRE buscar en la red primero
-  // Agregar timestamp a las peticiones para evitar cache del navegador
-  const url = new URL(event.request.url);
-  url.searchParams.set('_t', Date.now().toString());
-  const requestWithTimestamp = new Request(url, event.request);
+  // Usamos cache: 'no-store' para evitar el cache HTTP del navegador
 
   event.respondWith(
-    fetch(requestWithTimestamp, { cache: 'no-store' })
+    fetch(event.request, { cache: 'no-store' })
       .then((response) => {
         // NO cachear nada - siempre usar la versión más reciente de la red
         return response;
