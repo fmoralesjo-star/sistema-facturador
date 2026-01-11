@@ -62,7 +62,7 @@ function checkForUpdates(registration) {
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     try {
-      navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' })
+      navigator.serviceWorker.register('/sw.js?v=4.0.0', { updateViaCache: 'none' })
         .then((reg) => {
           swRegistration = reg;
           console.log('✅ Service Worker registrado');
