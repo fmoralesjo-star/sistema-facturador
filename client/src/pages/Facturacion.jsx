@@ -196,6 +196,14 @@ function Facturacion({ socket }) {
     fecha: new Date().toISOString().split('T')[0]
   })
 
+  // Estado para la modal de pago con tarjeta
+  const [mostrarModalTarjeta, setMostrarModalTarjeta] = useState(false)
+  const [datosTarjeta, setDatosTarjeta] = useState({
+    referencia: '',
+    lote: '',
+    terminal: ''
+  })
+
   const [cargandoDetalleFactura, setCargandoDetalleFactura] = useState(false)
   const [mostrarBuscarFactura, setMostrarBuscarFactura] = useState(false)
   const [mostrarBuscarFacturaGeneral, setMostrarBuscarFacturaGeneral] = useState(false)
@@ -1099,6 +1107,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
         formaPago = 'TARJETA DE CRÉDITO/DÉBITO'
         metodoPago = 'TARJETA'
         tipoPago = 'Tarjeta'
+        setMostrarModalTarjeta(true) // Abrir modal para datos de tarjeta
         break
       case 'EFECTIVO':
         formaPago = 'SIN UTILIZACION DEL SISTEMA FINANCIERO'
@@ -1125,8 +1134,6 @@ Este enlace te permitirá actualizar tu información de contacto.`
       metodoPago,
       tipoPago
     }))
-    // Debugging: Verificar que se está llamando
-    alert(`Tipo de pago seleccionado: ${tipoPago} (${metodoPago})`);
   }
 
   // Función para generar link de pago
@@ -6370,7 +6377,101 @@ Este enlace te permitirá actualizar tu información de contacto.`
             </div>
           </div>
         </div>
-      )}
+        </div >
+      )
+}
+
+{/* Modal de Pago con Tarjeta */ }
+{
+  mostrarModalTarjeta && (
+    <div style={{
+      position: 'fixed',
+      top: 0, left: 0, right: 0, bottom: 0,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000
+    }}>
+      <div style={{
+        backgroundColor: 'white',
+        padding: '20px',
+        borderRadius: '8px',
+        width: '350px',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+      }}>
+        <h3 style={{ marginTop: 0, color: '#1e40af', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          💳 Datos de Tarjeta
+        </h3>
+
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ display: 'block', fontSize: '13px', marginBottom: '5px' }}>Referencia / Voucher:</label>
+          <input
+            type="text"
+            className="input-text"
+            value={datosTarjeta.referencia}
+            onChange={(e) => setDatosTarjeta({ ...datosTarjeta, referencia: e.target.value })}
+            placeholder="Ej: 000123"
+            style={{ width: '100%' }}
+            autoFocus
+          />
+        </div>
+
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+          <div style={{ flex: 1 }}>
+            <label style={{ display: 'block', fontSize: '13px', marginBottom: '5px' }}>Lote (Opcional):</label>
+            <input
+              type="text"
+              className="input-text"
+              value={datosTarjeta.lote}
+              onChange={(e) => setDatosTarjeta({ ...datosTarjeta, lote: e.target.value })}
+              style={{ width: '100%' }}
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <label style={{ display: 'block', fontSize: '13px', marginBottom: '5px' }}>Terminal (Opcional):</label>
+            <input
+              type="text"
+              className="input-text"
+              value={datosTarjeta.terminal}
+              onChange={(e) => setDatosTarjeta({ ...datosTarjeta, terminal: e.target.value })}
+              style={{ width: '100%' }}
+            />
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+          <button
+            onClick={() => setMostrarModalTarjeta(false)}
+            style={{
+              padding: '8px 16px',
+              border: '1px solid #ccc',
+              background: 'white',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Cerrar
+          </button>
+          <button
+            onClick={() => setMostrarModalTarjeta(false)}
+            style={{
+              padding: '8px 16px',
+              background: '#2563eb',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            Confirmar
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
     </>
   )
 }
