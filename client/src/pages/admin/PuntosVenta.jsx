@@ -54,7 +54,8 @@ function PuntosVenta() {
                 alert('Punto de venta actualizado correctamente');
             } else {
                 // Para creación, nos aseguramos de no enviar ID nulo si el backend es estricto
-                const { id, ...dataToSend } = payload;
+                // TAMBIÉN: Removemos 'activo' ya que el DTO de creación podría no aceptarlo (y el default es true)
+                const { id, activo, ...dataToSend } = payload;
                 await axios.post(`${API_URL}/puntos-venta`, dataToSend);
                 alert('Punto de venta creado correctamente');
             }

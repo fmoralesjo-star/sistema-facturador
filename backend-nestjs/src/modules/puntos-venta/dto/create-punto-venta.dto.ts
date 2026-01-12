@@ -39,4 +39,8 @@ export class CreatePuntoVentaDto {
 
     @IsOptional()
     secuencia_nota_credito?: number;
+
+    @IsBoolean()
+    @IsOptional()
+    activo?: boolean;
 }
