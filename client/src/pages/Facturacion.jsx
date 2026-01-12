@@ -2084,8 +2084,45 @@ Este enlace te permitirá actualizar tu información de contacto.`
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          gap: '10px'
+          gap: '10px',
+          position: 'relative'
         }}>
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+            className="no-print"
+            title="Ir al Inicio"
+            style={{
+              position: 'absolute',
+              left: '10px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              color: 'white',
+              border: '1px solid rgba(255, 255, 255, 0.4)',
+              borderRadius: '6px',
+              padding: '6px 15px',
+              fontSize: '12px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              transition: 'all 0.2s',
+              zIndex: 10,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.4)'
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'
+              e.currentTarget.style.transform = 'translateY(-50%) scale(1)'
+            }}
+          >
+            🏠 INICIO
+          </button>
+
           {esProforma ? (
             <>📝 MODO: COTIZACIÓN / PROFORMA</>
           ) : esNotaCredito ? (
@@ -3552,15 +3589,6 @@ Este enlace te permitirá actualizar tu información de contacto.`
         )}
 
         <div className="factura-content">
-          <button
-            type="button"
-            onClick={() => navigate('/')}
-            className="btn-home"
-            title="Ir al Inicio"
-            style={{ marginBottom: '10px', width: 'fit-content' }}
-          >
-            Inicio
-          </button>
           {/* Botones de acción */}
           <div style={{ marginBottom: '6px', display: 'flex', justifyContent: 'flex-start', gap: '6px', flexWrap: 'wrap', flexShrink: 0 }}>
             <button
