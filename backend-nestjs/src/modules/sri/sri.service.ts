@@ -289,14 +289,9 @@ export class SriService {
       // Endpoint público del SRI para consulta de datos básicos (Catastro)
       const url = `https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/obtenerPorNumerosRuc?numerosRuc=${ruc}`;
 
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        // Fallback or specific error handling
-        throw new Error(`SRI API error: ${response.statusText}`);
-      }
-
-      const data: any = await response.json();
+      const axios = require('axios');
+      const response = await axios.get(url);
+      const data = response.data;
 
       if (Array.isArray(data) && data.length > 0) {
         const contribuyente = data[0];
@@ -315,8 +310,13 @@ export class SriService {
       }
     } catch (error) {
       console.error('Error fetching RUC from SRI:', error);
-      // Fallback a un error controlable, o rethrow
-      throw new BadRequestException(`No se pudo obtener datos del SRI: ${error.message}`);
+      // Check if it's a 404 from SRI or network error
+      if (error.response && error.response.status === 404) {
+        throw new NotFoundException('Contribuyente no encontrado en SRI');
+      }
+      // Safely extract error message
+      const msg = error.response?.data?.mensaje || error.message;
+      throw new BadRequestException(`No se pudo obtener datos del SRI: ${msg}`);
     }
   }
 }
