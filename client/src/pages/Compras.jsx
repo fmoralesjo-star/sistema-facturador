@@ -799,10 +799,35 @@ function Compras({ socket }) {
                       <input
                         type="text"
                         value={formData.autorizacion || ''}
-                        onChange={(e) => setFormData({ ...formData, autorizacion: e.target.value })}
-                        placeholder="Número de autorización del SRI (49 dígitos)"
-                        style={{ fontSize: '0.9em', letterSpacing: '0.5px' }}
+                        onChange={async (e) => {
+                          const val = e.target.value.replace(/\D/g, ''); // Solo números
+                          setFormData({ ...formData, autorizacion: val });
+
+                          // Auto-fetch si son 49 dígitos (Clave Acceso)
+                          if (val.length === 49) {
+                            try {
+                              // Simulación de fetch automático o llamada real si existiera endpoint público
+                              // Por ahora, mostrar feedback visual de que es válido
+                              console.log("Clave de acceso válida detectada:", val);
+                              // Aquí se podría llamar a una función para consultar al SRI si fuera necesario
+                            } catch (err) {
+                              console.error(err);
+                            }
+                          }
+                        }}
+                        placeholder="49 dígitos (Electrónica) o 10 (Física)"
+                        maxLength="49"
+                        style={{
+                          fontSize: '0.9em',
+                          letterSpacing: '0.5px',
+                          borderColor: (formData.autorizacion && (formData.autorizacion.length === 10 || formData.autorizacion.length === 49)) ? '#28a745' : ''
+                        }}
                       />
+                      {formData.autorizacion && formData.autorizacion.length !== 10 && formData.autorizacion.length !== 49 && (
+                        <small style={{ color: 'red', display: 'block', marginTop: '4px' }}>
+                          Debe tener 10 (Física) o 49 (Electrónica) dígitos
+                        </small>
+                      )}
                     </div>
                     <div className="form-group">
                       <label>Tipo de comprobante</label>
