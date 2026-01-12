@@ -4289,7 +4289,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
             </div>
 
             {/* Panel Central - Productos */}
-            <div className="panel" style={{ flex: '1', overflow: 'hidden', display: 'flex', flexDirection: 'column', minWidth: '0' }}>
+            <div className="panel" style={{ flex: '1', overflow: 'visible', display: 'flex', flexDirection: 'column', minWidth: '0' }}>
               <h3 style={{ margin: 0, fontSize: '12px', color: 'var(--azul-oscuro)', fontWeight: 'bold', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 Productos
                 <span style={{
@@ -4472,11 +4472,11 @@ Este enlace te permitirá actualizar tu información de contacto.`
             <div className="panel" style={{ width: '300px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <div style={{
                 backgroundColor: 'white',
-                padding: '20px',
+                padding: '15px',
                 borderRadius: '8px',
                 boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
                 border: '1px solid #e5e7eb',
-                height: '100%',
+                minHeight: '200px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'flex-start'
