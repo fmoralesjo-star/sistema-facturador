@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext'
 import axios from 'axios'
 import './Home.css'
 import { API_URL } from '../config/api'
+import VentasDashboard from '../components/VentasDashboard'
 
 function Home() {
   const { logout, currentUser, isAuthenticated, getToken } = useAuth()
@@ -467,7 +468,12 @@ function Home() {
               {activeCategory === 'Financiero' && 'Contabilidad y reportes financieros.'}
               {activeCategory === 'Administración' && 'Configuración del sistema y gestión de usuarios.'}
             </p>
+
           </div>
+
+          {activeCategory === 'Ventas' && (
+            <VentasDashboard />
+          )}
 
           <div className="modules-grid-large">
             {getModulosArea(activeCategory).map(modulo => (
@@ -494,7 +500,7 @@ function Home() {
           {/* Por simplicidad del requerimiento, asumimos que todos los módulos importantes están en las categorías definidas. */}
         </div>
       </div>
-    </div>
+    </div >
   )
 }
 

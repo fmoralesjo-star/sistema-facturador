@@ -4,6 +4,7 @@ import { Repository, Between } from 'typeorm';
 import { Factura } from '../facturas/entities/factura.entity';
 import { Producto } from '../productos/entities/producto.entity';
 import { Compra } from '../compras/entities/compra.entity';
+import { PuntoVenta } from '../puntos-venta/entities/punto-venta.entity';
 
 @Injectable()
 export class KpisService {
@@ -14,6 +15,8 @@ export class KpisService {
         private productoRepository: Repository<Producto>,
         @InjectRepository(Compra)
         private compraRepository: Repository<Compra>,
+        @InjectRepository(PuntoVenta)
+        private puntoVentaRepository: Repository<PuntoVenta>,
     ) { }
 
     private obtenerFechasPeriodo(periodo: string): { fechaInicio: Date; fechaFin: Date } {
@@ -336,5 +339,83 @@ export class KpisService {
             diasCuentasCobrar: diasCobrar,
             ratioCorriente
         };
+    }
+
+    async obtenerVentasPorVendedor(periodo: string) {
+        const { fechaInicio, fechaFin } = this.obtenerFechasPeriodo(periodo);
+
+        const resultados = await this.facturaRepository
+            .createQueryBuilder('factura')
+            .leftJoinAndSelect('factura.vendedor', 'vendedor') // Using 'vendedor' relation (mapped to Empleado)
+            .select('vendedor.nombres', 'nombre_vendedor')
+            .addSelect('vendedor.apellidos', 'apellido_vendedor')
+            .addSelect('COUNT(factura.id)', 'cantidad_facturas')
+            .addSelect('SUM(factura.total)', 'total_vendido')
+            .where('factura.fecha BETWEEN :fechaInicio AND :fechaFin', { fechaInicio, fechaFin })
+            .andWhere('factura.estado = :estado', { estado: 'AUTORIZADA' })
+            .groupBy('vendedor.id')
+            .addGroupBy('vendedor.nombres')
+            .addGroupBy('vendedor.apellidos')
+            .orderBy('total_vendido', 'DESC')
+            .getRawMany();
+
+        return resultados.map(r => ({
+            vendedor: r.nombre_vendedor ? `${r.nombre_vendedor} ${r.apellido_vendedor || ''}`.trim() : 'Sin Asignar',
+            cantidad: parseInt(r.cantidad_facturas),
+            total: parseFloat(parseFloat(r.total_vendido || '0').toFixed(2))
+        }));
+    }
+
+    async obtenerVentasPorLocal(periodo: string) {
+        const { fechaInicio, fechaFin } = this.obtenerFechasPeriodo(periodo);
+
+        // Since Factura has punto_venta_id but maybe no direct relation in entity, 
+        // we group by ID and then could map if we want, or join if we fixed entity.
+        // But cleaner is to just select from Factura and Join PuntoVenta manually if needed
+        // or just use the ID if we are lazy. But for Dashboard we need Names.
+
+        // Let's try to join via ID manually by subquery or just map later.
+        // Actually, let's query PuntosVenta and their sales.
+
+        const resultados = await this.facturaRepository
+            .createQueryBuilder('factura')
+            .select('factura.punto_venta_id', 'punto_venta_id')
+            .addSelect('COUNT(factura.id)', 'cantidad_facturas')
+            .addSelect('SUM(factura.total)', 'total_vendido')
+            .where('factura.fecha BETWEEN :fechaInicio AND :fechaFin', { fechaInicio, fechaFin })
+            .andWhere('factura.estado = :estado', { estado: 'AUTORIZADA' })
+            .groupBy('factura.punto_venta_id')
+            .getRawMany();
+
+        // Get names for Puntos de Venta
+        const puntosVenta = await this.puntoVentaRepository.find();
+
+        return resultados.map(r => {
+            const pv = puntosVenta.find(p => p.id === parseInt(r.punto_venta_id));
+            return {
+                local: pv ? pv.nombre : `Local ID ${r.punto_venta_id}`,
+                cantidad: parseInt(r.cantidad_facturas),
+                total: parseFloat(parseFloat(r.total_vendido || '0').toFixed(2))
+            };
+        }).sort((a, b) => b.total - a.total);
+    }
+
+    async obtenerResumenVentas(periodo: string) {
+        const { fechaInicio, fechaFin } = this.obtenerFechasPeriodo(periodo);
+
+        const datos = await this.facturaRepository
+            .createQueryBuilder('factura')
+            .select('COUNT(factura.id)', 'cantidad')
+            .addSelect('SUM(factura.total)', 'total_ventas')
+            .addSelect('AVG(factura.total)', 'ticket_promedio')
+            .where('factura.fecha BETWEEN :fechaInicio AND :fechaFin', { fechaInicio, fechaFin })
+            .andWhere('factura.estado = :estado', { estado: 'AUTORIZADA' })
+            .getRawOne();
+
+        return {
+            totalVentas: parseFloat(datos?.total_ventas || '0'),
+            cantidadFacturas: parseInt(datos?.cantidad || '0'),
+            ticketPromedio: parseFloat(parseFloat(datos?.ticket_promedio || '0').toFixed(2))
+        }
     }
 }

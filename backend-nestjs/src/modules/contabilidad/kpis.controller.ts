@@ -55,4 +55,19 @@ export class KpisController {
     ) {
         return this.kpisService.obtenerResumenCompleto(periodo);
     }
+
+    @Get('ventas/vendedores')
+    async getVentasPorVendedor(@Query('periodo') periodo: string = 'mes') {
+        return this.kpisService.obtenerVentasPorVendedor(periodo);
+    }
+
+    @Get('ventas/locales')
+    async getVentasPorLocal(@Query('periodo') periodo: string = 'mes') {
+        return this.kpisService.obtenerVentasPorLocal(periodo);
+    }
+
+    @Get('ventas/resumen')
+    async getResumenVentas(@Query('periodo') periodo: string = 'mes') {
+        return this.kpisService.obtenerResumenVentas(periodo);
+    }
 }
