@@ -63,7 +63,8 @@ export class ComprasService {
         subtotal,
         impuesto,
         total,
-        estado: 'PENDIENTE',
+        forma_pago: createCompraDto.forma_pago || 'Contado',
+        estado: (createCompraDto.forma_pago === 'Contado' || !createCompraDto.forma_pago) ? 'PAGADA' : 'PENDIENTE',
         punto_venta_id: createCompraDto.punto_venta_id,
       });
 

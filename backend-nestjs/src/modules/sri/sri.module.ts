@@ -24,6 +24,7 @@ import { NotaCredito } from '../notas-credito/entities/nota-credito.entity';
 import { SriRetencionV3 } from './entities/sri-retencion.entity';
 import { TaxEngineService } from './services/tax-engine.service';
 import { ContabilidadModule } from '../contabilidad/contabilidad.module';
+import { SriComprobanteRecibido } from './entities/sri-comprobante-recibido.entity';
 
 
 @Module({
@@ -40,7 +41,9 @@ import { ContabilidadModule } from '../contabilidad/contabilidad.module';
       SustentoTributario,
       NotaCredito,
       SriRetencionV3,
-      Configuracion // Necessary for CircuitBreaker
+      SriRetencionV3,
+      Configuracion, // Necessary for CircuitBreaker
+      SriComprobanteRecibido
     ]),
     EmpresaModule,
     ContabilidadModule,

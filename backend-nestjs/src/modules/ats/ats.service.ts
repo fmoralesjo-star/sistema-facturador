@@ -111,7 +111,7 @@ export class AtsService {
                 valRetServ100: '0.00',
                 totbasesImpReemb: '0.00',
                 formasDePago: {
-                    formaPago: '01' // Sin utilización sistema financiero
+                    formaPago: compra.forma_pago === 'Credito' ? '20' : '01'
                 }
             };
         });

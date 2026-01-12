@@ -66,8 +66,11 @@ export class Compra {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   total: number;
 
+  @Column({ length: 20, default: 'Contado', nullable: true })
+  forma_pago: string; // 'Contado' | 'Credito'
+
   @Column({ length: 20, default: 'PENDIENTE' })
-  estado: string; // 'PENDIENTE' | 'COMPLETADA' | 'CANCELADA'
+  estado: string; // 'PENDIENTE' | 'PAGADA' | 'ANULADA'
 
   @Column({ default: false })
   asiento_contable_creado: boolean;

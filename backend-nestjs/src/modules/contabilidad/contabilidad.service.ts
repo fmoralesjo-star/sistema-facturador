@@ -252,9 +252,13 @@ export class ContabilidadService implements OnApplicationBootstrap {
   async crearAsientoCompra(compra: any, queryRunner?: QueryRunner): Promise<AsientoContable> {
     await this.validarPeriodoAbierto(new Date(), queryRunner);
 
-    // 1. Procesar plantilla 'COMPRA_INVENTARIO' (Debe existir en DB)
-    // Se asume uso de plantilla para automatizar cuentas de Inventario, IVA y CxP Proveedores
-    const partidasGeneradas = await this.plantillasService.procesarPlantilla('COMPRA_INVENTARIO', {
+    // 1. Procesar plantilla 'COMPRA_INVENTARIO' o 'COMPRA_CONTADO'
+    // Se asume uso de plantilla para automatizar cuentas.
+    // 'Contado' implica salida de Caja/Bancos (@CAJA_GENERAL en template)
+    // 'Credito' (default) implica Cuenta por Pagar (@PROVEEDOR_CXP)
+    const codigoPlantilla = (compra.forma_pago === 'Contado') ? 'COMPRA_CONTADO' : 'COMPRA_INVENTARIO';
+
+    const partidasGeneradas = await this.plantillasService.procesarPlantilla(codigoPlantilla, {
       total: Number(compra.total),
       subtotal: Number(compra.subtotal),
       iva: Number(compra.impuesto),
@@ -592,6 +596,78 @@ export class ContabilidadService implements OnApplicationBootstrap {
         porcentaje: 100,
         orden: 3,
         referencia_opcional: 'Compra {numero} - Cuentas por Pagar' // Corregido de descripcion_partida a referencia_opcional
+      }));
+
+      // HABER: Retenciones Renta por Pagar
+      await manager.save(PlantillaDetalle, manager.create(PlantillaDetalle, {
+        plantilla_id: p.id,
+        cuenta_codigo: '@RET_RENTA_POR_PAGAR',
+        tipo_movimiento: TipoMovimiento.HABER,
+        tipo_valor: TipoValor.RETENCION_RENTA,
+        porcentaje: 100,
+        orden: 4,
+        referencia_opcional: 'Retención Renta - Compra {numero}'
+      }));
+
+      // HABER: Retenciones IVA por Pagar
+      await manager.save(PlantillaDetalle, manager.create(PlantillaDetalle, {
+        plantilla_id: p.id,
+        cuenta_codigo: '@RET_IVA_POR_PAGAR',
+        tipo_movimiento: TipoMovimiento.HABER,
+        tipo_valor: TipoValor.RETENCION_IVA,
+        porcentaje: 100,
+        orden: 5,
+        referencia_opcional: 'Retención IVA - Compra {numero}'
+      }));
+    }
+
+    // 3. Plantilla COMPRA_CONTADO (Nueva)
+    const compraContado = await this.plantillaRepository.findOne({ where: { codigo: 'COMPRA_CONTADO' } });
+    if (!compraContado) {
+      console.log('Seeding plantilla COMPRA_CONTADO...');
+      const p = await this.plantillaRepository.save(
+        this.plantillaRepository.create({
+          codigo: 'COMPRA_CONTADO',
+          nombre: 'Compra al Contado',
+          descripcion: 'Asiento automático de Compra Inmediata (Caja/Bancos)',
+          origen: OrigenAsiento.COMPRAS,
+          activo: true
+        })
+      );
+
+      const manager = this.plantillaRepository.manager;
+
+      // DEBE: Inventario (Subtotal)
+      await manager.save(PlantillaDetalle, manager.create(PlantillaDetalle, {
+        plantilla_id: p.id,
+        cuenta_codigo: '@INVENTARIO',
+        tipo_movimiento: TipoMovimiento.DEBE,
+        tipo_valor: TipoValor.SUBTOTAL_0,
+        porcentaje: 100,
+        orden: 1,
+        referencia_opcional: 'Compra Contado {numero} - Inventario'
+      }));
+
+      // DEBE: IVA Compras (Activo)
+      await manager.save(PlantillaDetalle, manager.create(PlantillaDetalle, {
+        plantilla_id: p.id,
+        cuenta_codigo: '@IVA_COMPRAS',
+        tipo_movimiento: TipoMovimiento.DEBE,
+        tipo_valor: TipoValor.IVA,
+        porcentaje: 100,
+        orden: 2,
+        referencia_opcional: 'Compra Contado {numero} - IVA'
+      }));
+
+      // HABER: Caja General (Salida de Dinero)
+      await manager.save(PlantillaDetalle, manager.create(PlantillaDetalle, {
+        plantilla_id: p.id,
+        cuenta_codigo: '@CAJA_GENERAL', // O Banco
+        tipo_movimiento: TipoMovimiento.HABER,
+        tipo_valor: TipoValor.TOTAL,
+        porcentaje: 100,
+        orden: 3,
+        referencia_opcional: 'Pago Compra {numero}'
       }));
 
       // HABER: Retenciones Renta por Pagar

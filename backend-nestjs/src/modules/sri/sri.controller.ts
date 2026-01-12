@@ -248,6 +248,16 @@ export class SriController {
   async consultarConteoPendientes() {
     return await this.sriService.consultarConteoPendientes();
   }
+
+  @Post('comprobantes-recibidos/marcar-procesado')
+  async marcarProcesado(@Body() body: { claveAcceso: string }) {
+    if (!body.claveAcceso) { // Validar payload
+      throw new BadRequestException('Se requiere claveAcceso');
+    }
+    await this.sriService.marcarComoProcesado(body.claveAcceso);
+    return { success: true };
+  }
+
   @Get('contribuyente/:ruc')
   async obtenerContribuyente(@Param('ruc') ruc: string) {
     return await this.sriService.consultarContribuyente(ruc);

@@ -16,9 +16,14 @@ export interface SriJobData {
 
 import { PostgresQueueService } from '../common/services/postgres-queue.service';
 
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { SriComprobanteRecibido } from './entities/sri-comprobante-recibido.entity';
+
 @Injectable()
 export class SriService {
   constructor(
+    @InjectRepository(SriComprobanteRecibido) private sriComprobanteRepo: Repository<SriComprobanteRecibido>,
     private sriQueue: PostgresQueueService, // Injected via CommonModule (Global)
     private configService: ConfigService,
     private xmlGeneratorService: XmlGeneratorService,
@@ -200,21 +205,81 @@ export class SriService {
   }
 
   /**
-   * MOCK: Simular consulta de comprobantes recibidos del SRI
+   * Consulta comprobantes recibidos del SRI (Simulado pero persistente)
    */
   async consultarComprobantesRecibidos(fechaInicio: string, fechaFin: string): Promise<any[]> {
-    // Generar entre 5 y 15 comprobantes aleatorios
-    const cantidad = Math.floor(Math.random() * 10) + 5;
-    return this.generarComprobantesMock(cantidad, fechaInicio, fechaFin);
+    const inicio = new Date(fechaInicio);
+    const fin = new Date(fechaFin);
+    fin.setHours(23, 59, 59, 999);
+
+    // 1. Consultar BD Local
+    const existentes = await this.sriComprobanteRepo.createQueryBuilder('c')
+      .where('c.fecha_emision >= :inicio', { inicio })
+      .andWhere('c.fecha_emision <= :fin', { fin })
+      .orderBy('c.fecha_emision', 'DESC')
+      .getMany();
+
+    // Si ya tenemos historial para este rango, lo devolvemos
+    // (Para efectos de demo, si hay al menos 1, asumimos que ya se sincronizó ese rango)
+    if (existentes.length > 0) {
+      return existentes.map(e => ({
+        claveAcceso: e.clave_acceso,
+        rucEmisor: e.ruc_emisor,
+        razonSocialEmisor: e.razon_social_emisor,
+        fechaEmision: e.fecha_emision.toISOString().split('T')[0].split('-').reverse().join('/'), // yyyy-mm-dd -> dd/mm/yyyy
+        tipoComprobante: e.tipo_comprobante,
+        serie: e.serie,
+        numeroComprobante: e.numero_comprobante,
+        importeTotal: e.importe_total,
+        xmlUrl: e.xml_url,
+        estadoLocal: e.estado // Esto servirá para el frontend
+      }));
+    }
+
+    // 2. Si no hay datos, simulamos descarga del SRI y GUARDAMOS
+    const cantidad = Math.floor(Math.random() * 5) + 2; // de 2 a 7 documentos nuevos
+    const nuevos = this.generarComprobantesMock(cantidad, fechaInicio, fechaFin);
+
+    // Guardar en BD
+    const entidades = nuevos.map(mock => {
+      const ent = new SriComprobanteRecibido();
+      ent.clave_acceso = mock.claveAcceso;
+      ent.ruc_emisor = mock.rucEmisor;
+      ent.razon_social_emisor = mock.razonSocialEmisor;
+      // Parsear fecha dd/mm/yyyy
+      const [d, m, y] = mock.fechaEmision.split('/');
+      ent.fecha_emision = new Date(`${y}-${m}-${d}`);
+      ent.tipo_comprobante = mock.tipoComprobante;
+      ent.serie = mock.serie;
+      ent.numero_comprobante = mock.numeroComprobante;
+      ent.importe_total = parseFloat(mock.importeTotal);
+      ent.xml_url = mock.xmlUrl;
+      ent.estado = 'PENDIENTE';
+      return ent;
+    });
+
+    await this.sriComprobanteRepo.save(entidades);
+
+    // Retornamos el formato que espera el frontend
+    return nuevos;
   }
 
   /**
-   * MOCK: Consulta conteo de comprobantes pendientes de sincronizar
+   * Consulta conteo de comprobantes pendientes de sincronizar desde DB
    */
   async consultarConteoPendientes(): Promise<{ pendientes: number }> {
-    // Simular un número aleatorio entre 1 y 5 para demos
-    // En producción esto compararía la lista del SRI con la base de datos
-    return { pendientes: Math.floor(Math.random() * 5) + 1 };
+    const pendientes = await this.sriComprobanteRepo.count({
+      where: { estado: 'PENDIENTE' }
+    });
+    return { pendientes };
+  }
+
+  async marcarComoProcesado(claveAcceso: string) {
+    const comprobante = await this.sriComprobanteRepo.findOne({ where: { clave_acceso: claveAcceso } });
+    if (comprobante) {
+      comprobante.estado = 'PROCESADO';
+      await this.sriComprobanteRepo.save(comprobante);
+    }
   }
 
   private generarComprobantesMock(cantidad: number, fechaInicioStr: string, fechaFinStr: string) {

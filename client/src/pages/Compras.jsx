@@ -64,6 +64,12 @@ function Compras({ socket }) {
     aplicar_retencion: false,
     numero_comprobante_retencion: '',
     concepto_retencion: '',
+    retencion_renta_codigo: '',
+    retencion_renta_porcentaje: 0,
+    retencion_renta_valor: 0,
+    retencion_iva_codigo: '',
+    retencion_iva_porcentaje: 0,
+    retencion_iva_valor: 0,
     detalles: []
   })
 
@@ -160,7 +166,22 @@ function Compras({ socket }) {
       const inicio = fechaInicioSRI
 
       const response = await axios.get(`${API_URL}/sri/comprobantes-recibidos?fechaInicio=${inicio}&fechaFin=${fin}`)
-      setComprobantesSRI(response.data)
+
+      // Cruzar con compras locales para ver estado
+      const resultadosConEstado = response.data.map(doc => {
+        // Buscar si ya existe una compra con esa autorizacion o numero
+        const existeLocalmente = compras.some(c =>
+          (c.autorizacion && c.autorizacion === doc.claveAcceso) ||
+          c.numero_comprobante === `${doc.serie}-${doc.numeroComprobante.split('-')[2]}`
+        );
+
+        // Si el backend dice procesado O lo encontramos localmente, es procesado
+        const estadoFinal = (doc.estadoLocal === 'PROCESADO' || existeLocalmente) ? 'PROCESADO' : 'PENDIENTE';
+
+        return { ...doc, estadoLocal: estadoFinal };
+      });
+
+      setComprobantesSRI(resultadosConEstado)
       setComprobantesSeleccionados([])
     } catch (error) {
       console.error('Error al consultar SRI:', error)
@@ -527,12 +548,28 @@ function Compras({ socket }) {
           precio_unitario: d.costo_unitario,
         })),
         impuesto: formData.impuesto || calcularIVA(),
+        forma_pago: formData.forma_pago, // EXPLICITAMENTE ENVIADO
         observaciones: `Tipo: ${formData.tipo_compra}, Forma Pago: ${formData.forma_pago}, Origen: ${formData.origen}${formData.aplicar_retencion ? `, Retención: ${formData.numero_comprobante_retencion}` : ''}`
       }
 
       await axios.post(`${API_URL}/compras`, compraData)
 
+      // Si tiene autorización (clave acceso), marcar como procesado en historial SRI
+      if (formData.autorizacion && formData.autorizacion.length === 49) {
+        try {
+          await axios.post(`${API_URL}/sri/comprobantes-recibidos/marcar-procesado`, {
+            claveAcceso: formData.autorizacion
+          });
+          // Actualizar contador visual de pendientes si es necesario
+          const resPend = await axios.get(`${API_URL}/sri/comprobantes-recibidos/conteo-pendientes`);
+          setPendientesSRI(resPend.data.pendientes || 0);
+        } catch (err) {
+          console.warn("No se pudo actualizar estado en historial SRI", err);
+        }
+      }
+
       // Limpiar formulario
+      // Limpiar formulario y estados
       setFormData({
         numero_comprobante: '',
         autorizacion: '',
@@ -547,6 +584,12 @@ function Compras({ socket }) {
         aplicar_retencion: false,
         numero_comprobante_retencion: '',
         concepto_retencion: '',
+        retencion_renta_codigo: '',
+        retencion_renta_porcentaje: 0,
+        retencion_renta_valor: 0,
+        retencion_iva_codigo: '',
+        retencion_iva_porcentaje: 0,
+        retencion_iva_valor: 0,
         detalles: []
       })
 
@@ -560,6 +603,18 @@ function Compras({ socket }) {
 
       alert('Compra guardada exitosamente')
       cargarCompras()
+
+      // PREGUNTA DE EMISIÓN INMEDIATA
+      if (compraData.aplicar_retencion || (formData.retencion_renta_valor > 0 || formData.retencion_iva_valor > 0)) {
+        if (confirm('Se ha registrado una retención asociada. ¿Desea EMITIR Y FIRMAR la retención electrónicamente ahora?')) {
+          // Navegar a la pestaña de retenciones o disparar proceso
+          alert('Redirigiendo al módulo de emisión de retenciones...');
+          setTabActiva('retenciones');
+          // Aquí se integraría la llamada a la API : /retenciones/emitir-inmediato/{compra_id}
+          // Como mejora futura, dispararíamos el endpoint directo.
+        }
+      }
+
     } catch (error) {
       console.error('Error al guardar compra:', error)
       alert('Error al guardar la compra: ' + (error.response?.data?.error || error.message))
@@ -1376,14 +1431,110 @@ function Compras({ socket }) {
                             <span>${formatearNumero(calcularRetencionIVA())}</span>
                           </div>
                           <div className="total-item total-final">
-                            <label>Total:</label>
-                            <span>${formatearNumero((formData.base_12 || 0) + (formData.base_0 || 0) + (formData.base_no_objeto || 0) + (formData.base_exenta || 0) + (formData.impuesto || 0) - calcularRetencionIVA())}</span>
+                            <div className="total-item">
+                              <label>Total:</label>
+                              <span>${formatearNumero((formData.base_12 || 0) + (formData.base_0 || 0) + (formData.base_no_objeto || 0) + (formData.base_exenta || 0) + (formData.impuesto || 0) - (formData.retencion_renta_valor || 0) - (formData.retencion_iva_valor || 0))}</span>
+                            </div>
+
+                            {formData.aplicar_retencion && (
+                              <div className="retencion-resumen" style={{ marginTop: '15px', padding: '10px', background: '#e0f2fe', borderRadius: '5px', border: '1px solid #7dd3fc' }}>
+                                <h4 style={{ margin: '0 0 10px 0', fontSize: '0.9rem', color: '#0369a1' }}>Resumen de Retención</h4>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+                                  <div>
+                                    <label style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Cód. Renta:</label>
+                                    <select
+                                      className="form-control"
+                                      style={{ fontSize: '0.8rem', padding: '4px' }}
+                                      value={formData.retencion_renta_codigo}
+                                      onChange={(e) => {
+                                        const codigo = e.target.value;
+                                        // Simulación de porcentajes por código (esto debería venir de una tabla maestra)
+                                        let porc = 0;
+                                        if (codigo === '312') porc = 1.75;
+                                        if (codigo === '344') porc = 2.75;
+                                        if (codigo === '343') porc = 1.00;
+
+                                        const baseImponible = (formData.base_12 || 0) + (formData.base_0 || 0);
+                                        const valor = redondear2Decimales(baseImponible * (porc / 100));
+
+                                        setFormData(prev => ({
+                                          ...prev,
+                                          retencion_renta_codigo: codigo,
+                                          retencion_renta_porcentaje: porc,
+                                          retencion_renta_valor: valor
+                                        }));
+                                      }}
+                                    >
+                                      <option value="">Seleccione Código</option>
+                                      <option value="312">312 - Transf. Bienes (1.75%)</option>
+                                      <option value="344">344 - Serv. Profesionales (2.75%)</option>
+                                      <option value="343">343 - Combustibles (1%)</option>
+                                    </select>
+                                  </div>
+                                  <div>
+                                    <label style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Valor Renta:</label>
+                                    <input
+                                      type="number"
+                                      readOnly
+                                      value={formData.retencion_renta_valor}
+                                      style={{ width: '100%', background: '#f0f9ff' }}
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Cód. IVA:</label>
+                                    <select
+                                      className="form-control"
+                                      style={{ fontSize: '0.8rem', padding: '4px' }}
+                                      value={formData.retencion_iva_codigo}
+                                      onChange={(e) => {
+                                        const codigo = e.target.value;
+                                        let porc = 0;
+                                        if (codigo === '1') porc = 30; // Bienes
+                                        if (codigo === '2') porc = 70; // Servicios
+                                        if (codigo === '3') porc = 100; // Prof.
+                                        if (codigo === '9') porc = 10;
+
+                                        const montoIva = formData.impuesto || 0;
+                                        const valor = redondear2Decimales(montoIva * (porc / 100));
+
+                                        setFormData(prev => ({
+                                          ...prev,
+                                          retencion_iva_codigo: codigo,
+                                          retencion_iva_porcentaje: porc,
+                                          retencion_iva_valor: valor
+                                        }));
+                                      }}
+                                    >
+                                      <option value="">Seleccione Ret. IVA</option>
+                                      <option value="9">10% (Bienes)</option>
+                                      <option value="1">30% (Bienes)</option>
+                                      <option value="2">70% (Servicios)</option>
+                                      <option value="3">100% (Profesionales)</option>
+                                    </select>
+                                  </div>
+                                  <div>
+                                    <label style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>Valor IVA:</label>
+                                    <input
+                                      type="number"
+                                      readOnly
+                                      value={formData.retencion_iva_valor}
+                                      style={{ width: '100%', background: '#f0f9ff' }}
+                                    />
+                                  </div>
+                                </div>
+
+                                <div style={{ textAlign: 'right', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                                  Total a Retener: ${formatearNumero((formData.retencion_renta_valor || 0) + (formData.retencion_iva_valor || 0))}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
               </form>
             )
           }
@@ -1397,6 +1548,7 @@ function Compras({ socket }) {
                     <thead>
                       <tr>
                         <th>No. Comprobante</th>
+                        <th>Estado</th>
                         <th>Proveedor</th>
                         <th>Fecha</th>
                         <th>Total</th>
@@ -1406,7 +1558,7 @@ function Compras({ socket }) {
                     <tbody>
                       {compras.length === 0 ? (
                         <tr>
-                          <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
+                          <td colSpan="6" style={{ textAlign: 'center', padding: '20px' }}>
                             No hay compras registradas
                           </td>
                         </tr>
@@ -1414,6 +1566,13 @@ function Compras({ socket }) {
                         compras.map(compra => (
                           <tr key={compra.id}>
                             <td>{compra.numero_comprobante}</td>
+                            <td>
+                              <span className={`badge-estado ${compra.estado === 'PAGADA' || compra.estado === 'COMPLETADA' ? 'badge-pagada' :
+                                (compra.estado === 'ANULADA' ? 'badge-anulada' : 'badge-pendiente')
+                                }`}>
+                                {compra.estado || 'PENDIENTE'}
+                              </span>
+                            </td>
                             <td>{compra.proveedor_nombre}</td>
                             <td>{new Date(compra.fecha_compra).toLocaleDateString()}</td>
                             <td>${formatearNumero(compra.total)}</td>
@@ -1988,7 +2147,7 @@ function Compras({ socket }) {
               background: 'white', padding: '25px', borderRadius: '12px', width: '90%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h2 style={{ margin: 0, color: '#111827' }}>☁️ Sincronización SRI</h2>
+                <h2 style={{ margin: 0, color: '#111827' }}>☁️ Historial de Sincronización SRI</h2>
                 <button onClick={() => setMostrarModalSRI(false)} style={{ border: 'none', background: 'transparent', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
               </div>
 
@@ -2005,7 +2164,7 @@ function Compras({ socket }) {
                   onClick={consultarSRI}
                   disabled={cargandoSRI}
                   style={{ padding: '9px 20px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 600, cursor: 'pointer', height: '38px', opacity: cargandoSRI ? 0.7 : 1 }}>
-                  {cargandoSRI ? 'Consultando...' : '🔍 Consultar'}
+                  {cargandoSRI ? 'Sincronizando...' : '🔄 Sincronizar'}
                 </button>
               </div>
 
@@ -2021,6 +2180,7 @@ function Compras({ socket }) {
                       <thead style={{ background: '#f9fafb', position: 'sticky', top: 0 }}>
                         <tr>
                           <th style={{ padding: '12px', textAlign: 'center', width: '40px' }}>#</th>
+                          <th style={{ padding: '12px', textAlign: 'left' }}>Estado</th>
                           <th style={{ padding: '12px', textAlign: 'left' }}>Emisor</th>
                           <th style={{ padding: '12px', textAlign: 'left' }}>Fecha</th>
                           <th style={{ padding: '12px', textAlign: 'left' }}>Tipo</th>
@@ -2032,14 +2192,27 @@ function Compras({ socket }) {
                       <tbody>
                         {comprobantesSRI.length > 0 ? comprobantesSRI.map((comp) => {
                           const seleccionado = comprobantesSeleccionados.some(c => c.claveAcceso === comp.claveAcceso)
+                          const procesado = comp.estadoLocal === 'PROCESADO';
                           return (
-                            <tr key={comp.claveAcceso} style={{ borderBottom: '1px solid #e5e7eb', background: seleccionado ? '#eff6ff' : 'white' }}>
+                            <tr key={comp.claveAcceso} style={{ borderBottom: '1px solid #e5e7eb', background: seleccionado ? '#eff6ff' : (procesado ? '#f0fdf4' : 'white') }}>
                               <td style={{ padding: '12px', textAlign: 'center' }}>
-                                <input
-                                  type="checkbox"
-                                  checked={seleccionado}
-                                  onChange={() => toggleSeleccionSRI(comp)}
-                                />
+                                {!procesado && (
+                                  <input
+                                    type="checkbox"
+                                    checked={seleccionado}
+                                    onChange={() => toggleSeleccionSRI(comp)}
+                                  />
+                                )}
+                                {procesado && <span>✓</span>}
+                              </td>
+                              <td style={{ padding: '12px' }}>
+                                <span style={{
+                                  padding: '4px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700,
+                                  background: procesado ? '#dcfce7' : '#fef3c7',
+                                  color: procesado ? '#15803d' : '#b45309'
+                                }}>
+                                  {procesado ? 'PROCESADO' : 'PENDIENTE'}
+                                </span>
                               </td>
                               <td style={{ padding: '12px' }}>
                                 <div style={{ fontWeight: 600 }}>{comp.razonSocialEmisor}</div>

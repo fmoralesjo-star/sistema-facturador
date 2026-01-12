@@ -93,6 +93,10 @@ export class CreateCompraDto {
   @IsNumber()
   @Min(0)
   base_exenta?: number;
+
+  @IsOptional()
+  @IsString()
+  forma_pago?: string;
 }
 
 
