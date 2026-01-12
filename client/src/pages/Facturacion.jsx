@@ -3597,172 +3597,65 @@ Este enlace te permitirá actualizar tu información de contacto.`
         )}
 
         <div className="factura-content">
-          {/* Botones de acción */}
-          <div style={{ marginBottom: '6px', display: 'flex', justifyContent: 'flex-start', gap: '6px', flexWrap: 'wrap', flexShrink: 0 }}>
-            <button
-              className="no-print"
-              onClick={handleNuevaFactura}
-              style={{
-                padding: '2px 8px',
-                cursor: 'pointer',
-                background: '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '3px',
-                fontWeight: 'bold',
-                fontSize: '10px',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                lineHeight: '1.2'
-              }}
-              title="Crear una nueva factura"
-            >
-              ➕ NUEVA FACTURA
-            </button>
+          {/* Barra de Herramientas Unificada (Renglón Azul) */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '8px',
+            background: cabeceraColapsada ? '#f0f9ff' : 'transparent',
+            padding: '4px 10px',
+            borderRadius: cabeceraColapsada ? '6px' : '0',
+            border: cabeceraColapsada ? '1px solid #bae6fd' : 'none',
+            marginBottom: '6px',
+            flexWrap: 'wrap',
+            flexShrink: 0
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <button
+                onClick={() => setCabeceraColapsada(!cabeceraColapsada)}
+                style={{
+                  padding: '2px 8px',
+                  fontSize: '9px',
+                  fontWeight: 'bold',
+                  background: '#f1f5f9',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  color: '#475569',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                {cabeceraColapsada ? '🔽 MOSTRAR DATOS' : '🔼 OCULTAR'}
+              </button>
 
-            <button
-              className="no-print"
-              onClick={() => {
-                if (esProforma) {
-                  // Si ya es proforma, preguntar si quiere volver a factura (limpiar?)
-                  if (window.confirm('¿Desea salir del modo Proforma? Los datos no guardados se perderán.')) {
-                    setEsProforma(false)
-                    // Opcional: limpiar datos
-                  }
-                } else {
-                  setEsProforma(true)
-                }
-              }}
-              style={{
-                padding: '2px 12px',
-                cursor: 'pointer',
-                background: esProforma ? '#dc3545' : '#6f42c1',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                fontWeight: 'bold',
-                fontSize: '10px',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                lineHeight: '1.2'
-              }}
-              title={esProforma ? "Cancelar modo Proforma" : "Crear una nueva cotización o proforma"}
-            >
-              {esProforma ? "✖ CANCELAR PROFORMA" : "📝 COTIZACIÓN / PROFORMA"}
-            </button>
-            <button
-              className="no-print"
-              onClick={handleCierreCaja}
-              style={{
-                padding: '2px 12px',
-                cursor: 'pointer',
-                background: '#28a745',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                fontWeight: 'bold',
-                fontSize: '10px',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                lineHeight: '1.2'
-              }}
-            >
-              💰 CIERRE DE CAJA
-            </button>
-            <button
-              className="no-print"
-              onClick={() => setMostrarBuscarFacturasModal(true)}
-              style={{
-                padding: '2px 12px',
-                cursor: 'pointer',
-                background: '#4f46e5',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                fontWeight: 'bold',
-                fontSize: '10px',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                lineHeight: '1.2'
-              }}
-              title="Buscar y gestionar facturas"
-            >
-              🔍 BUSCAR FACTURAS
-            </button>
-            <button
-              className="no-print"
-              onClick={() => setMostrarCajaChicaModal(true)}
-              style={{
-                padding: '2px 12px',
-                cursor: 'pointer',
-                background: '#fd7e14',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                fontWeight: 'bold',
-                fontSize: '10px',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                lineHeight: '1.2'
-              }}
-              title="Registrar gastos y reposiciones"
-            >
-              💸 CAJA CHICA
-            </button>
-            <button
-              className="no-print"
-              onClick={handleCambiarPuntoVenta}
-              style={{
-                padding: '2px 12px',
-                cursor: 'pointer',
-                background: '#6c757d',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                fontWeight: 'bold',
-                fontSize: '10px',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                lineHeight: '1.2'
-              }}
-              title="Cambiar punto de venta"
-            >
-              🔄 CAMBIAR PUNTO DE VENTA
-            </button>
-          </div>
-
-          {/* Toggle para colapsar la cabecera y ganar espacio */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '4px' }}>
-            <button
-              onClick={() => setCabeceraColapsada(!cabeceraColapsada)}
-              style={{
-                padding: '2px 10px',
-                fontSize: '10px',
-                fontWeight: 'bold',
-                background: '#f1f5f9',
-                border: '1px solid #cbd5e1',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                color: '#475569',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}
-            >
-              {cabeceraColapsada ? '🔽 MOSTRAR DATOS DEL CLIENTE / EMISOR' : '🔼 OCULTAR DATOS PARA GANAR ESPACIO'}
-            </button>
-          </div>
-
-          {cabeceraColapsada && (
-            <div style={{
-              display: 'flex',
-              gap: '10px',
-              background: '#f0f9ff',
-              padding: '4px 10px',
-              borderRadius: '6px',
-              border: '1px solid #bae6fd',
-              fontSize: '11px',
-              marginBottom: '4px',
-              alignItems: 'center'
-            }}>
-              <span style={{ fontWeight: 'bold', color: '#0369a1' }}>CLIENTE:</span>
-              <span style={{ color: '#0c4a6e' }}>{facturaData.clienteNombre || 'Consumidor Final'} ({facturaData.clienteRucCedula || '9999999999999'})</span>
+              {cabeceraColapsada && (
+                <div style={{ fontSize: '11px', whiteSpace: 'nowrap', overflow: 'hidden' }}>
+                  <span style={{ fontWeight: 'bold', color: '#0369a1' }}>👤 CLIENTE: </span>
+                  <span style={{ color: '#0c4a6e' }}>
+                    {facturaData.clienteNombre || 'Consumidor Final'} ({facturaData.clienteRucCedula || '9999999999999'})
+                  </span>
+                </div>
+              )}
             </div>
-          )}
+
+            {/* Grupo de Botones de Acción (Compactos) */}
+            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+              <button onClick={handleNuevaFactura} style={{ padding: '2px 8px', cursor: 'pointer', background: '#007bff', color: 'white', border: 'none', borderRadius: '3px', fontWeight: 'bold', fontSize: '9px' }}>➕ NUEVA</button>
+              <button
+                onClick={() => setEsProforma(!esProforma)}
+                style={{ padding: '2px 8px', cursor: 'pointer', background: esProforma ? '#dc3545' : '#6f42c1', color: 'white', border: 'none', borderRadius: '3px', fontWeight: 'bold', fontSize: '9px' }}
+              >
+                {esProforma ? "✖ CANCELAR PROFORMA" : "📝 COTIZACIÓN"}
+              </button>
+              <button onClick={handleCierreCaja} style={{ padding: '2px 8px', cursor: 'pointer', background: '#28a745', color: 'white', border: 'none', borderRadius: '3px', fontWeight: 'bold', fontSize: '9px' }}>💰 CIERRE</button>
+              <button onClick={() => setMostrarBuscarFacturasModal(true)} style={{ padding: '2px 8px', cursor: 'pointer', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '3px', fontWeight: 'bold', fontSize: '9px' }}>🔍 BUSCAR</button>
+              <button onClick={() => setMostrarCajaChicaModal(true)} style={{ padding: '2px 8px', cursor: 'pointer', background: '#fd7e14', color: 'white', border: 'none', borderRadius: '3px', fontWeight: 'bold', fontSize: '9px' }}>💸 CAJA CHICA</button>
+              <button onClick={handleCambiarPuntoVenta} style={{ padding: '2px 8px', cursor: 'pointer', background: '#6c757d', color: 'white', border: 'none', borderRadius: '3px', fontWeight: 'bold', fontSize: '9px' }}>🔄 PV</button>
+            </div>
+          </div>
 
           {/* Header con Datos del Cliente, Datos de la Factura y Datos del Emisor */}
           {!cabeceraColapsada && (
