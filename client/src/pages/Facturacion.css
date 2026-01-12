@@ -56,8 +56,8 @@ body {
   background: var(--blanco);
   border: 1px solid #d0dae2;
   border-radius: 8px;
-  padding: 4px 8px;
-  /* Reducido padding vertical */
+  padding: 2px 6px;
+  /* Aún más reducido */
   box-sizing: border-box;
   position: relative;
 }
@@ -168,16 +168,14 @@ body {
 }
 
 .titulo-datos {
-  margin: -4px -8px 4px -8px;
-  /* Ajustado margen */
-  font-size: 13px;
-  /* Reducida fuente */
+  margin: -2px -6px 4px -6px;
+  font-size: 11px;
+  /* Fuente más pequeña */
   font-weight: 600;
   color: white;
   text-transform: uppercase;
-  padding: 4px 8px;
-  /* Ajustado padding */
-  width: calc(100% + 16px);
+  padding: 2px 8px;
+  width: calc(100% + 12px);
   display: block;
   background-color: var(--azul-electrico);
   border-radius: 8px 8px 0 0;
@@ -192,35 +190,40 @@ body {
 
 .dato-item {
   display: flex;
-  align-items: flex-start;
-  font-size: 14px;
-  line-height: 1.4;
+  align-items: center;
+  /* Centrado para que ocupe menos verticalmente */
+  font-size: 12px;
+  /* Fuente más pequeña */
+  line-height: 1.2;
 }
 
 .dato-item label {
   font-weight: 600;
   color: var(--azul-oscuro);
-  margin-right: 6px;
-  min-width: 100px;
+  margin-right: 4px;
+  min-width: 90px;
   flex-shrink: 0;
 }
 
 .dato-item span {
   color: #333;
-  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   flex: 1;
 }
 
 .dato-input {
   flex: 1;
-  padding: 4px 6px;
-  font-size: 14px;
+  padding: 2px 4px;
+  font-size: 12px;
   border: 1px solid #d0dae2;
   border-radius: 4px;
   background: var(--blanco);
   color: #333;
   box-sizing: border-box;
   min-width: 0;
+  height: 22px;
 }
 
 .dato-input:focus {
@@ -381,11 +384,12 @@ body {
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-height: 120px;
+  min-height: 80px;
+  /* Reducido para dar espacio al pie */
   border: 1px solid #ddd;
   border-radius: 4px;
   overflow: hidden;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .grid-body {
