@@ -697,13 +697,19 @@ function Compras({ socket }) {
           </button>
           <button
             className={`btn-header ${!mostrarCompras ? 'active' : ''}`}
-            onClick={() => setMostrarCompras(false)}
+            onClick={() => {
+              setMostrarCompras(false)
+              setTabActiva('compras')
+            }}
           >
             Nueva Compra
           </button>
           <button
             className={`btn-header ${mostrarCompras ? 'active' : ''}`}
-            onClick={() => setMostrarCompras(true)}
+            onClick={() => {
+              setMostrarCompras(true)
+              setTabActiva('compras')
+            }}
           >
             Ver Compras
           </button>
