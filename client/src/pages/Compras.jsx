@@ -338,8 +338,9 @@ function Compras({ socket }) {
       }
 
     } catch (error) {
-      console.error(error);
-      alert('Error de conexión con el servicio de consulta.');
+      console.error("Error consulta SRI:", error);
+      const mensaje = error.response?.data?.message || error.message || 'Error desconocido';
+      alert(`Error al consultar SRI: ${mensaje}`);
     } finally {
       setCargandoSRI(false);
     }
