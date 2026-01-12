@@ -4152,70 +4152,62 @@ Este enlace te permitirá actualizar tu información de contacto.`
             minHeight: 0,
             overflow: 'hidden'
           }}>
-            {/* Barra de Búsqueda Horizontal (Ultra Compacta) */}
-            <div style={{
-              display: 'flex',
-              gap: '6px',
-              padding: '4px 8px',
-              background: '#f8fafc',
-              borderRadius: '6px',
-              border: '1px solid #e2e8f0',
-              alignItems: 'center',
-              flexShrink: 0
-            }}>
-              <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <label style={{ fontSize: '10px', fontWeight: 'bold', color: '#64748b', whiteSpace: 'nowrap' }}>🔍 BUSCAR STOCK:</label>
-                <input
-                  type="text"
-                  value={facturaData.claveAcceso || ''}
-                  onChange={(e) => handleFacturaDataChange('claveAcceso', e.target.value)}
-                  style={{ flex: 1, padding: '2px 6px', fontSize: '11px', border: '1px solid #cbd5e1', borderRadius: '4px', height: '24px' }}
-                  placeholder="Código o descripción..."
-                />
-              </div>
-              <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <label style={{ fontSize: '10px', fontWeight: 'bold', color: '#64748b', whiteSpace: 'nowrap' }}>👤 VENDEDOR:</label>
-                <input
-                  type="text"
-                  value={facturaData.vendedor || ''}
-                  onChange={(e) => handleFacturaDataChange('vendedor', e.target.value)}
-                  style={{
-                    flex: 1,
-                    padding: '2px 6px',
-                    fontSize: '11px',
-                    borderRadius: '4px',
-                    height: '24px',
-                    border: !facturaData.vendedor ? '2px solid #ef4444' : '1px solid #cbd5e1',
-                    backgroundColor: !facturaData.vendedor ? '#fef2f2' : 'white'
-                  }}
-                  placeholder="NOMBRE DEL VENDEDOR (OBLIGATORIO)"
-                  required
-                />
-              </div>
-              <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <label style={{ fontSize: '10px', fontWeight: 'bold', color: '#64748b', whiteSpace: 'nowrap' }}>📦 PRODUCTO:</label>
-                <select style={{ flex: 1, padding: '2px', fontSize: '11px', border: '1px solid #cbd5e1', borderRadius: '4px', height: '24px' }}>
-                  <option>Añadir a la lista...</option>
-                </select>
-              </div>
-            </div>
-
             {/* Panel Central - Productos */}
             <div className="panel" style={{ flex: '1', overflow: 'visible', display: 'flex', flexDirection: 'column', minWidth: '0' }}>
-              <h3 style={{ margin: 0, fontSize: '12px', color: 'var(--azul-oscuro)', fontWeight: 'bold', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                Productos
-                <span style={{
-                  backgroundColor: 'var(--azul-electrico)',
-                  color: 'white',
-                  padding: '2px 8px',
-                  borderRadius: '12px',
-                  fontSize: '10px',
-                  fontWeight: 'bold',
-                  minWidth: '24px',
-                  textAlign: 'center'
-                }}>
-                  {items ? items.filter(item => item && (item.descripcion || item.codigoBarras || item.cantidad)).length : 0}
-                </span>
+              <h3 style={{ margin: 0, fontSize: '12px', color: 'var(--azul-oscuro)', fontWeight: 'bold', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '15px', width: '100%' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                  Productos
+                  <span style={{
+                    backgroundColor: 'var(--azul-electrico)',
+                    color: 'white',
+                    padding: '2px 8px',
+                    borderRadius: '12px',
+                    fontSize: '10px',
+                    fontWeight: 'bold',
+                    minWidth: '24px',
+                    textAlign: 'center'
+                  }}>
+                    {items ? items.filter(item => item && (item.descripcion || item.codigoBarras || item.cantidad)).length : 0}
+                  </span>
+                </div>
+
+                <div className="no-print" style={{ display: 'flex', gap: '8px', flex: 1, alignItems: 'center', justifyContent: 'flex-end' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <label style={{ fontSize: '9px', fontWeight: 'bold', color: '#64748b', whiteSpace: 'nowrap' }}>🔍 STOCK:</label>
+                    <input
+                      type="text"
+                      value={facturaData.claveAcceso || ''}
+                      onChange={(e) => handleFacturaDataChange('claveAcceso', e.target.value)}
+                      style={{ width: '120px', padding: '1px 5px', fontSize: '11px', border: '1px solid #cbd5e1', borderRadius: '4px', height: '20px' }}
+                      placeholder="Buscar..."
+                    />
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <label style={{ fontSize: '9px', fontWeight: 'bold', color: '#64748b', whiteSpace: 'nowrap' }}>👤 VENDEDOR:</label>
+                    <input
+                      type="text"
+                      value={facturaData.vendedor || ''}
+                      onChange={(e) => handleFacturaDataChange('vendedor', e.target.value)}
+                      style={{
+                        width: '120px',
+                        padding: '1px 5px',
+                        fontSize: '11px',
+                        borderRadius: '4px',
+                        height: '20px',
+                        border: !facturaData.vendedor ? '2px solid #ef4444' : '1px solid #cbd5e1',
+                        backgroundColor: !facturaData.vendedor ? '#fef2f2' : 'white'
+                      }}
+                      placeholder="Vendedor..."
+                      required
+                    />
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <label style={{ fontSize: '9px', fontWeight: 'bold', color: '#64748b', whiteSpace: 'nowrap' }}>📦 PRODUCTO:</label>
+                    <select style={{ width: '120px', padding: '0 2px', fontSize: '10px', border: '1px solid #cbd5e1', borderRadius: '4px', height: '20px' }}>
+                      <option>Añadir...</option>
+                    </select>
+                  </div>
+                </div>
               </h3>
               <div className="grid-container">
                 {/* Grid Header */}
