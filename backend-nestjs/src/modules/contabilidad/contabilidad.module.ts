@@ -22,6 +22,7 @@ import { Empresa } from '../empresa/entities/empresa.entity';
 import { Factura } from '../facturas/entities/factura.entity';
 import { Compra } from '../compras/entities/compra.entity';
 import { Producto } from '../productos/entities/producto.entity';
+import { PuntoVenta } from '../puntos-venta/entities/punto-venta.entity';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { Producto } from '../productos/entities/producto.entity';
       Factura,
       Compra,
       Producto,
+      PuntoVenta, // Added for KpisService
       // Empresa,
     ]),
     AdministracionTIModule,
