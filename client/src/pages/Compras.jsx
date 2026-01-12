@@ -1430,7 +1430,7 @@ function Compras({ socket }) {
                             <label>Retencion IVA:</label>
                             <span>${formatearNumero(calcularRetencionIVA())}</span>
                           </div>
-                          <div className="total-item total-final">
+                          <div className="total-item total-final" style={{ display: 'block' }}>
                             <div className="total-item">
                               <label>Total:</label>
                               <span>${formatearNumero((formData.base_12 || 0) + (formData.base_0 || 0) + (formData.base_no_objeto || 0) + (formData.base_exenta || 0) + (formData.impuesto || 0) - (formData.retencion_renta_valor || 0) - (formData.retencion_iva_valor || 0))}</span>
@@ -1449,7 +1449,6 @@ function Compras({ socket }) {
                                       value={formData.retencion_renta_codigo}
                                       onChange={(e) => {
                                         const codigo = e.target.value;
-                                        // Simulación de porcentajes por código (esto debería venir de una tabla maestra)
                                         let porc = 0;
                                         if (codigo === '312') porc = 1.75;
                                         if (codigo === '344') porc = 2.75;
@@ -1535,6 +1534,7 @@ function Compras({ socket }) {
                       </div>
                     </div>
                   </div>
+                </div>
               </form>
             )
           }
