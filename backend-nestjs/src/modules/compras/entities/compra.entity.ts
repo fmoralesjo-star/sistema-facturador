@@ -39,6 +39,9 @@ export class Compra {
   @Column({ type: 'date', nullable: true })
   fecha_vencimiento: Date;
 
+  @Column({ length: 4, nullable: true })
+  sustento_tributario: string;
+
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   subtotal: number;
 

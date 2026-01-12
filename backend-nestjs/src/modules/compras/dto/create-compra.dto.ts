@@ -65,6 +65,10 @@ export class CreateCompraDto {
   @IsOptional()
   @IsDateString()
   fecha_vencimiento?: string;
+
+  @IsOptional()
+  @IsString()
+  sustento_tributario?: string;
 }
 
 

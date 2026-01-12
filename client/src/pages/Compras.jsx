@@ -515,6 +515,7 @@ function Compras({ socket }) {
         fecha_vencimiento: formData.fecha_vencimiento,
         proveedor_id: formData.proveedor_id ? parseInt(formData.proveedor_id) : null,
         punto_venta_id: puntoVentaSeleccionado?.id || null,
+        sustento_tributario: formData.sustento_tributario || '01',
         detalles: formData.detalles.map(d => ({
           producto_id: d.producto_id,
           cantidad: d.cantidad,
@@ -1076,6 +1077,25 @@ function Compras({ socket }) {
                         >
                           <option value="Gravada">Gravada</option>
                           <option value="Exenta">Exenta</option>
+                        </select>
+                      </div>
+                      <div className="form-group" style={{ minWidth: '350px' }}>
+                        <label>Sustento Tributario</label>
+                        <select
+                          value={formData.sustento_tributario || '01'}
+                          onChange={(e) => setFormData({ ...formData, sustento_tributario: e.target.value })}
+                          style={{ fontWeight: '500' }}
+                        >
+                          <option value="01">01 - Crédito Tributario para IVA</option>
+                          <option value="02">02 - Costo o Gasto para IR</option>
+                          <option value="03">03 - Activo Fijo - Crédito Tributario IVA</option>
+                          <option value="04">04 - Activo Fijo - Costo o Gasto IR</option>
+                          <option value="05">05 - Liquidación de gastos de viaje</option>
+                          <option value="06">06 - Inventario - Crédito Tributario IVA</option>
+                          <option value="07">07 - Inventario - Costo o Gasto IR</option>
+                          <option value="08">08 - Valor pagado para solicitar Reembolso</option>
+                          <option value="09">09 - Reembolso por Seguros</option>
+                          <option value="10">10 - Otros (Sin derecho a Crédito Tributario)</option>
                         </select>
                       </div>
                       <div className="form-group">
