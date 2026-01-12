@@ -45,6 +45,18 @@ export class Compra {
   @Column({ length: 50, nullable: true, default: 'ADMINISTRACION' })
   centro_costo: string;
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  base_0: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  base_12: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  base_no_objeto: number;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  base_exenta: number;
+
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   subtotal: number;
 

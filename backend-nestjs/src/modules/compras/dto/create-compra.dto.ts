@@ -73,6 +73,26 @@ export class CreateCompraDto {
   @IsOptional()
   @IsString()
   centro_costo?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  base_0?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  base_12?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  base_no_objeto?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  base_exenta?: number;
 }
 
 

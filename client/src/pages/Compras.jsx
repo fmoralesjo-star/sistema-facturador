@@ -517,12 +517,16 @@ function Compras({ socket }) {
         punto_venta_id: puntoVentaSeleccionado?.id || null,
         sustento_tributario: formData.sustento_tributario || '01',
         centro_costo: formData.centro_costo || 'ADMINISTRACION',
+        base_12: formData.base_12 || 0,
+        base_0: formData.base_0 || 0,
+        base_no_objeto: formData.base_no_objeto || 0,
+        base_exenta: formData.base_exenta || 0,
         detalles: formData.detalles.map(d => ({
           producto_id: d.producto_id,
           cantidad: d.cantidad,
           precio_unitario: d.costo_unitario,
         })),
-        impuesto: calcularIVA(),
+        impuesto: formData.impuesto || calcularIVA(),
         observaciones: `Tipo: ${formData.tipo_compra}, Forma Pago: ${formData.forma_pago}, Origen: ${formData.origen}${formData.aplicar_retencion ? `, Retención: ${formData.numero_comprobante_retencion}` : ''}`
       }
 
@@ -1314,14 +1318,58 @@ function Compras({ socket }) {
                         <button type="submit" className="btn-guardar">
                           Guardar
                         </button>
-                        <div className="totales-footer">
+                        <div className="totales-footer" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                           <div className="total-item">
-                            <label>Sub-Total:</label>
-                            <span>${formatearNumero(calcularSubtotal())}</span>
+                            <label>Base 15% (IVA):</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={formData.base_12 || ''}
+                              onChange={(e) => {
+                                const val = parseFloat(e.target.value) || 0;
+                                setFormData(prev => ({
+                                  ...prev,
+                                  base_12: val,
+                                  impuesto: redondear2Decimales(val * 0.15) // Calc automatico IVA 15%
+                                }));
+                              }}
+                              style={{ width: '100px', textAlign: 'right' }}
+                            />
                           </div>
                           <div className="total-item">
-                            <label>IVA:</label>
-                            <span>${formatearNumero(calcularIVA())}</span>
+                            <label>Base 0%:</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={formData.base_0 || ''}
+                              onChange={(e) => setFormData({ ...formData, base_0: parseFloat(e.target.value) || 0 })}
+                              style={{ width: '100px', textAlign: 'right' }}
+                            />
+                          </div>
+                          <div className="total-item">
+                            <label>No Objeto IVA:</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={formData.base_no_objeto || ''}
+                              onChange={(e) => setFormData({ ...formData, base_no_objeto: parseFloat(e.target.value) || 0 })}
+                              style={{ width: '100px', textAlign: 'right' }}
+                            />
+                          </div>
+                          <div className="total-item">
+                            <label>Exento IVA:</label>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={formData.base_exenta || ''}
+                              onChange={(e) => setFormData({ ...formData, base_exenta: parseFloat(e.target.value) || 0 })}
+                              style={{ width: '100px', textAlign: 'right' }}
+                            />
+                          </div>
+
+                          <div className="total-item">
+                            <label>IVA (15%):</label>
+                            <span>${formatearNumero(formData.impuesto || 0)}</span>
                           </div>
                           <div className="total-item">
                             <label>Retencion IVA:</label>
@@ -1329,7 +1377,7 @@ function Compras({ socket }) {
                           </div>
                           <div className="total-item total-final">
                             <label>Total:</label>
-                            <span>${formatearNumero(calcularTotal())}</span>
+                            <span>${formatearNumero((formData.base_12 || 0) + (formData.base_0 || 0) + (formData.base_no_objeto || 0) + (formData.base_exenta || 0) + (formData.impuesto || 0) - calcularRetencionIVA())}</span>
                           </div>
                         </div>
                       </div>
