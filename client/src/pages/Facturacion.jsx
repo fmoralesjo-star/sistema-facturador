@@ -197,8 +197,10 @@ function Facturacion({ socket }) {
     fecha: new Date().toISOString().split('T')[0]
   })
 
-  // Estado para pagos múltiples
+  // Estado para pagos múltiples y visibilidad
   const [listaPagos, setListaPagos] = useState([])
+  const [cabeceraColapsada, setCabeceraColapsada] = useState(true)
+  const [mostrarSeccionPago, setMostrarSeccionPago] = useState(false)
   const [mostrarModalPago, setMostrarModalPago] = useState(false)
   const [tipoPagoActual, setTipoPagoActual] = useState(null)
   const [montoPago, setMontoPago] = useState('')
@@ -3718,527 +3720,568 @@ Este enlace te permitirá actualizar tu información de contacto.`
             </button>
           </div>
 
-          {/* Header con Datos del Cliente, Datos de la Factura y Datos del Emisor */}
-          <div className="header-datos">
-            {/* Datos del Cliente */}
-            <div
-              className={`datos-cliente ${mostrarRegistrarCliente ? 'modo-registro' : ''}`}
+          {/* Toggle para colapsar la cabecera y ganar espacio */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '4px' }}>
+            <button
+              onClick={() => setCabeceraColapsada(!cabeceraColapsada)}
+              style={{
+                padding: '2px 10px',
+                fontSize: '10px',
+                fontWeight: 'bold',
+                background: '#f1f5f9',
+                border: '1px solid #cbd5e1',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                color: '#475569',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <h3 className="titulo-datos" style={{ margin: 0, flex: 1 }}>Datos del Cliente</h3>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const nuevoModoEdicion = !modoEdicionDatosCliente
+              {cabeceraColapsada ? '🔽 MOSTRAR DATOS DEL CLIENTE / EMISOR' : '🔼 OCULTAR DATOS PARA GANAR ESPACIO'}
+            </button>
+          </div>
 
-                    if (nuevoModoEdicion) {
-                      // Al activar edición, guardar los valores originales
-                      setDatosClienteOriginales({
-                        clienteRucCedula: facturaData.clienteRucCedula || '',
-                        clienteNombre: facturaData.clienteNombre || '',
-                        clienteDireccion: facturaData.clienteDireccion || '',
-                        clienteTelefono: facturaData.clienteTelefono || '',
-                        clienteEmail: facturaData.clienteEmail || ''
-                      })
-                    } else {
-                      // Al desactivar edición desde el icono, también revertir cambios
-                      if (datosClienteOriginales) {
-                        setFacturaData(prev => ({
-                          ...prev,
-                          clienteRucCedula: datosClienteOriginales.clienteRucCedula,
-                          clienteNombre: datosClienteOriginales.clienteNombre,
-                          clienteDireccion: datosClienteOriginales.clienteDireccion,
-                          clienteTelefono: datosClienteOriginales.clienteTelefono,
-                          clienteEmail: datosClienteOriginales.clienteEmail
-                        }))
-                        setDatosClienteOriginales(null)
-                      }
-                    }
+          {cabeceraColapsada && (
+            <div style={{
+              display: 'flex',
+              gap: '10px',
+              background: '#f0f9ff',
+              padding: '4px 10px',
+              borderRadius: '6px',
+              border: '1px solid #bae6fd',
+              fontSize: '11px',
+              marginBottom: '4px',
+              alignItems: 'center'
+            }}>
+              <span style={{ fontWeight: 'bold', color: '#0369a1' }}>CLIENTE:</span>
+              <span style={{ color: '#0c4a6e' }}>{facturaData.clienteNombre || 'Consumidor Final'} ({facturaData.clienteRucCedula || '9999999999999'})</span>
+            </div>
+          )}
 
-                    setModoEdicionDatosCliente(nuevoModoEdicion)
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = 'var(--azul-electrico)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = modoEdicionDatosCliente ? 'var(--azul-electrico)' : '#666'
-                  }}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: '4px 8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: modoEdicionDatosCliente ? 'var(--azul-electrico)' : '#666',
-                    fontSize: '14px',
-                    transition: 'color 0.2s',
-                    marginLeft: '8px'
-                  }}
-                  title={modoEdicionDatosCliente ? "Desactivar edición" : "Activar edición"}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                  </svg>
-                </button>
-              </div>
-              {mostrarClienteEncontrado && (
-                <div style={{
-                  marginBottom: '8px',
-                  padding: '6px',
-                  background: '#d4edda',
-                  border: '1px solid #28a745',
-                  borderRadius: '4px',
-                  fontSize: '10px',
-                  color: '#155724',
-                  fontWeight: '600'
-                }}>
-                  ✅ Cliente encontrado
-                </div>
-              )}
-              {mostrarRegistrarCliente && (
-                <div style={{
-                  marginBottom: '8px',
-                  padding: '6px',
-                  background: '#fff3cd',
-                  border: '1px solid #ffc107',
-                  borderRadius: '4px',
-                  fontSize: '10px',
-                  color: '#856404',
-                  fontWeight: '600'
-                }}>
-                  ⚠️ Registre al cliente
-                </div>
-              )}
-              <div className="datos-grid">
-                <div className="dato-item">
-                  <label>RUC/Cédula:</label>
-                  <input
-                    type="text"
-                    value={facturaData.clienteRucCedula || ''}
-                    onChange={(e) => handleFacturaDataChange('clienteRucCedula', e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault()
-                        const valor = facturaData.clienteRucCedula?.trim() || ''
-                        const soloNumeros = valor.replace(/\D/g, '')
-                        if (soloNumeros.length === 10 || soloNumeros.length === 13) {
-                          buscarClientePorRuc(valor)
-                        }
-                      }
-                    }}
-                    placeholder="Ingrese RUC/Cédula"
-                    className="dato-input"
-                    style={{ cursor: 'text' }}
-                  />
-                </div>
-                <div className="dato-item">
-                  <label>Razón Social:</label>
-                  <input
-                    type="text"
-                    value={facturaData.clienteNombre || ''}
-                    onChange={(e) => {
-                      const valorMayusculas = e.target.value.toUpperCase()
-                      handleFacturaDataChange('clienteNombre', valorMayusculas)
-                    }}
-                    placeholder="Ingrese Razón Social"
-                    className="dato-input"
-                    style={{ cursor: modoEdicionDatosCliente ? 'text' : 'not-allowed' }}
-                    readOnly={!modoEdicionDatosCliente}
-                  />
-                </div>
-                <div className="dato-item">
-                  <label>Dirección:</label>
-                  <input
-                    type="text"
-                    value={facturaData.clienteDireccion || ''}
-                    onChange={(e) => {
-                      const valorMayusculas = e.target.value.toUpperCase()
-                      handleFacturaDataChange('clienteDireccion', valorMayusculas)
-                    }}
-                    placeholder="Ingrese Dirección"
-                    className="dato-input"
-                    style={{ cursor: modoEdicionDatosCliente ? 'text' : 'not-allowed' }}
-                    readOnly={!modoEdicionDatosCliente}
-                  />
-                </div>
-                <div className="dato-item">
-                  <label>Teléfono:</label>
-                  <input
-                    type="text"
-                    value={facturaData.clienteTelefono || ''}
-                    onChange={(e) => {
-                      const soloNumeros = e.target.value.replace(/\D/g, '')
-                      handleFacturaDataChange('clienteTelefono', soloNumeros)
-                    }}
-                    placeholder="Ingrese Teléfono"
-                    className="dato-input"
-                    style={{ cursor: modoEdicionDatosCliente ? 'text' : 'not-allowed' }}
-                    readOnly={!modoEdicionDatosCliente}
-                  />
-                </div>
-                <div className="dato-item">
-                  <label>Email:</label>
-                  <input
-                    type="email"
-                    value={facturaData.clienteEmail || ''}
-                    onChange={(e) => {
-                      const valorMinusculas = e.target.value.toLowerCase()
-                      handleFacturaDataChange('clienteEmail', valorMinusculas)
-                    }}
-                    placeholder="Ingrese Email"
-                    className="dato-input"
-                    style={{ cursor: modoEdicionDatosCliente ? 'text' : 'not-allowed' }}
-                    readOnly={!modoEdicionDatosCliente}
-                  />
-                </div>
-              </div>
-              {modoEdicionDatosCliente && (
-                <div style={{
-                  marginTop: '8px',
-                  display: 'flex',
-                  gap: '8px',
-                  width: '100%'
-                }}>
+          {/* Header con Datos del Cliente, Datos de la Factura y Datos del Emisor */}
+          {!cabeceraColapsada && (
+            <div className="header-datos">
+              {/* Datos del Cliente */}
+              <div
+                className={`datos-cliente ${mostrarRegistrarCliente ? 'modo-registro' : ''}`}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <h3 className="titulo-datos" style={{ margin: 0, flex: 1 }}>Datos del Cliente</h3>
                   <button
-                    onClick={async () => {
-                      if (!facturaData.clienteNombre || !facturaData.clienteRucCedula) {
-                        alert('Nombre y RUC/Cédula son requeridos')
-                        return
+                    type="button"
+                    onClick={() => {
+                      const nuevoModoEdicion = !modoEdicionDatosCliente
+
+                      if (nuevoModoEdicion) {
+                        // Al activar edición, guardar los valores originales
+                        setDatosClienteOriginales({
+                          clienteRucCedula: facturaData.clienteRucCedula || '',
+                          clienteNombre: facturaData.clienteNombre || '',
+                          clienteDireccion: facturaData.clienteDireccion || '',
+                          clienteTelefono: facturaData.clienteTelefono || '',
+                          clienteEmail: facturaData.clienteEmail || ''
+                        })
+                      } else {
+                        // Al desactivar edición desde el icono, también revertir cambios
+                        if (datosClienteOriginales) {
+                          setFacturaData(prev => ({
+                            ...prev,
+                            clienteRucCedula: datosClienteOriginales.clienteRucCedula,
+                            clienteNombre: datosClienteOriginales.clienteNombre,
+                            clienteDireccion: datosClienteOriginales.clienteDireccion,
+                            clienteTelefono: datosClienteOriginales.clienteTelefono,
+                            clienteEmail: datosClienteOriginales.clienteEmail
+                          }))
+                          setDatosClienteOriginales(null)
+                        }
                       }
 
-                      setGuardandoCambiosCliente(true)
-                      try {
-                        const soloNumeros = facturaData.clienteRucCedula.replace(/\D/g, '')
-
-                        const datosCliente = {
-                          nombre: facturaData.clienteNombre,
-                          ruc: soloNumeros || facturaData.clienteRucCedula,
-                          direccion: facturaData.clienteDireccion || '',
-                          telefono: facturaData.clienteTelefono || '',
-                          email: facturaData.clienteEmail || '',
-                          esExtranjero: false
-                        }
-
-                        // Si hay clienteId, actualizar. Si no, buscar el cliente por RUC
-                        let idClienteParaActualizar = clienteId
-
-                        if (!idClienteParaActualizar) {
-                          // Buscar el cliente por RUC en la lista local
-                          const clienteExistente = clientes.find(cliente => {
-                            const clienteRuc = cliente.ruc ? cliente.ruc.toString().trim().replace(/\D/g, '') : ''
-                            return clienteRuc === soloNumeros
-                          })
-
-                          if (clienteExistente) {
-                            idClienteParaActualizar = clienteExistente.id
-                            setClienteId(clienteExistente.id)
-                          } else {
-                            alert('No se encontró el cliente. Por favor, primero busque el cliente por RUC/Cédula.')
-                            setGuardandoCambiosCliente(false)
-                            return
+                      setModoEdicionDatosCliente(nuevoModoEdicion)
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = 'var(--azul-electrico)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = modoEdicionDatosCliente ? 'var(--azul-electrico)' : '#666'
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: '4px 8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: modoEdicionDatosCliente ? 'var(--azul-electrico)' : '#666',
+                      fontSize: '14px',
+                      transition: 'color 0.2s',
+                      marginLeft: '8px'
+                    }}
+                    title={modoEdicionDatosCliente ? "Desactivar edición" : "Activar edición"}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                  </button>
+                </div>
+                {mostrarClienteEncontrado && (
+                  <div style={{
+                    marginBottom: '8px',
+                    padding: '6px',
+                    background: '#d4edda',
+                    border: '1px solid #28a745',
+                    borderRadius: '4px',
+                    fontSize: '10px',
+                    color: '#155724',
+                    fontWeight: '600'
+                  }}>
+                    ✅ Cliente encontrado
+                  </div>
+                )}
+                {mostrarRegistrarCliente && (
+                  <div style={{
+                    marginBottom: '8px',
+                    padding: '6px',
+                    background: '#fff3cd',
+                    border: '1px solid #ffc107',
+                    borderRadius: '4px',
+                    fontSize: '10px',
+                    color: '#856404',
+                    fontWeight: '600'
+                  }}>
+                    ⚠️ Registre al cliente
+                  </div>
+                )}
+                <div className="datos-grid">
+                  <div className="dato-item">
+                    <label>RUC/Cédula:</label>
+                    <input
+                      type="text"
+                      value={facturaData.clienteRucCedula || ''}
+                      onChange={(e) => handleFacturaDataChange('clienteRucCedula', e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          const valor = facturaData.clienteRucCedula?.trim() || ''
+                          const soloNumeros = valor.replace(/\D/g, '')
+                          if (soloNumeros.length === 10 || soloNumeros.length === 13) {
+                            buscarClientePorRuc(valor)
                           }
                         }
-
-                        await axios.put(`${API_URL}/clientes/${idClienteParaActualizar}`, datosCliente)
-                        await cargarClientes()
-
-                        setModoEdicionDatosCliente(false)
-                        setDatosClienteOriginales(null)
-                        setMostrarMensajeCambiosGuardados(true)
-
-                        setTimeout(() => {
-                          setMostrarMensajeCambiosGuardados(false)
-                        }, 3000)
-                      } catch (error) {
-                        console.error('Error al guardar cambios:', error)
-                        const errorMessage = error.response?.data?.message || error.message || 'Error desconocido'
-                        alert(`Error al guardar los cambios: ${errorMessage}`)
-                      } finally {
-                        setGuardandoCambiosCliente(false)
-                      }
-                    }}
-                    disabled={guardandoCambiosCliente}
-                    style={{
-                      flex: 1,
-                      padding: '6px',
-                      background: guardandoCambiosCliente ? '#6c757d' : '#28a745',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      fontWeight: 'bold',
-                      fontSize: '11px',
-                      cursor: guardandoCambiosCliente ? 'not-allowed' : 'pointer',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                    }}
-                  >
-                    {guardandoCambiosCliente ? 'Guardando...' : '💾 Guardar Cambios'}
-                  </button>
-                  <button
-                    onClick={() => {
-                      // Revertir los cambios restaurando los valores originales
-                      if (datosClienteOriginales) {
-                        setFacturaData(prev => ({
-                          ...prev,
-                          clienteRucCedula: datosClienteOriginales.clienteRucCedula,
-                          clienteNombre: datosClienteOriginales.clienteNombre,
-                          clienteDireccion: datosClienteOriginales.clienteDireccion,
-                          clienteTelefono: datosClienteOriginales.clienteTelefono,
-                          clienteEmail: datosClienteOriginales.clienteEmail
-                        }))
-                      }
-                      setModoEdicionDatosCliente(false)
-                      setDatosClienteOriginales(null)
-                    }}
-                    disabled={guardandoCambiosCliente}
-                    style={{
-                      flex: 1,
-                      padding: '6px',
-                      background: '#6c757d',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      fontWeight: 'bold',
-                      fontSize: '11px',
-                      cursor: guardandoCambiosCliente ? 'not-allowed' : 'pointer',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                    }}
-                  >
-                    ❌ Cancelar
-                  </button>
-                </div>
-              )}
-              {mostrarMensajeCambiosGuardados && (
-                <div style={{
-                  marginTop: '8px',
-                  padding: '6px',
-                  background: '#d4edda',
-                  border: '1px solid #28a745',
-                  borderRadius: '4px',
-                  fontSize: '10px',
-                  color: '#155724',
-                  fontWeight: '600',
-                  textAlign: 'center'
-                }}>
-                  ✅ Cambios guardados
-                </div>
-              )}
-              {mostrarRegistrarCliente && (
-                <div style={{
-                  marginTop: '8px',
-                  display: 'flex',
-                  gap: '8px',
-                  width: '100%'
-                }}>
-                  <button
-                    onClick={async () => {
-                      if (!facturaData.clienteNombre || !facturaData.clienteRucCedula) {
-                        alert('Nombre y RUC/Cédula son requeridos')
-                        return
-                      }
-
-                      setGuardandoCliente(true)
-                      try {
-                        const soloNumeros = facturaData.clienteRucCedula.replace(/\D/g, '')
-                        const tipoDocumento = detectarTipoDocumento(facturaData.clienteRucCedula)
-
-                        const datosCliente = {
-                          nombre: facturaData.clienteNombre,
-                          ruc: soloNumeros || facturaData.clienteRucCedula,
-                          direccion: facturaData.clienteDireccion || '',
-                          telefono: facturaData.clienteTelefono || '',
-                          email: facturaData.clienteEmail || '',
-                          esExtranjero: false
-                        }
-
-                        const clienteExistente = clientes.find(cliente =>
-                          cliente.ruc && cliente.ruc.toString().trim() === datosCliente.ruc.trim()
-                        )
-
-                        let res
-                        if (clienteExistente) {
-                          res = await axios.put(`${API_URL}/clientes/${clienteExistente.id}`, datosCliente)
-                        } else {
-                          res = await axios.post(`${API_URL}/clientes`, datosCliente)
-                        }
-
-                        await cargarClientes()
-
-                        setClienteId(res.data.id || clienteExistente?.id)
-                        setMostrarRegistrarCliente(false)
-                        setMensajeExito(clienteExistente ? 'Cliente actualizado exitosamente' : 'Cliente guardado exitosamente')
-                        setMostrarMensajeExito(true)
-
-                        setTimeout(() => {
-                          setMostrarMensajeExito(false)
-                        }, 2000)
-                      } catch (error) {
-                        console.error('Error al guardar cliente:', error)
-                        const errorMessage = error.response?.data?.message || error.message || 'Error desconocido'
-                        alert(`Error al guardar el cliente: ${errorMessage}`)
-                      } finally {
-                        setGuardandoCliente(false)
-                      }
-                    }}
-                    disabled={guardandoCliente}
-                    style={{
-                      flex: 1,
-                      padding: '6px',
-                      background: guardandoCliente ? '#6c757d' : 'var(--azul-electrico)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      fontWeight: 'bold',
-                      fontSize: '11px',
-                      cursor: guardandoCliente ? 'not-allowed' : 'pointer',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                    }}
-                  >
-                    {guardandoCliente ? 'Guardando...' : '💾 Guardar Cliente'}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setMostrarRegistrarCliente(false)
-                      setFacturaData(prev => ({
-                        ...prev,
-                        clienteRucCedula: '',
-                        clienteNombre: '',
-                        clienteDireccion: '',
-                        clienteTelefono: '',
-                        clienteEmail: ''
-                      }))
-                    }}
-                    disabled={guardandoCliente}
-                    style={{
-                      flex: 1,
-                      padding: '6px',
-                      background: '#6c757d',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      fontWeight: 'bold',
-                      fontSize: '11px',
-                      cursor: guardandoCliente ? 'not-allowed' : 'pointer',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                    }}
-                  >
-                    ❌ Cancelar
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Datos de la Factura */}
-            <div className="datos-factura">
-              <h3 className="titulo-datos">{esProforma ? "Datos de la Proforma" : "Datos de la Factura"}</h3>
-              <div className="datos-grid">
-                <div className="dato-item">
-                  <label>Número:</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span>{facturaData.numero || '-'}</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setMostrarBuscarFacturaGeneral(true)
                       }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = '#0056b3'
-                        e.currentTarget.style.transform = 'scale(1.05)'
+                      placeholder="Ingrese RUC/Cédula"
+                      className="dato-input"
+                      style={{ cursor: 'text' }}
+                    />
+                  </div>
+                  <div className="dato-item">
+                    <label>Razón Social:</label>
+                    <input
+                      type="text"
+                      value={facturaData.clienteNombre || ''}
+                      onChange={(e) => {
+                        const valorMayusculas = e.target.value.toUpperCase()
+                        handleFacturaDataChange('clienteNombre', valorMayusculas)
                       }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'var(--azul-electrico)'
-                        e.currentTarget.style.transform = 'scale(1)'
+                      placeholder="Ingrese Razón Social"
+                      className="dato-input"
+                      style={{ cursor: modoEdicionDatosCliente ? 'text' : 'not-allowed' }}
+                      readOnly={!modoEdicionDatosCliente}
+                    />
+                  </div>
+                  <div className="dato-item">
+                    <label>Dirección:</label>
+                    <input
+                      type="text"
+                      value={facturaData.clienteDireccion || ''}
+                      onChange={(e) => {
+                        const valorMayusculas = e.target.value.toUpperCase()
+                        handleFacturaDataChange('clienteDireccion', valorMayusculas)
                       }}
-                      style={{
-                        background: 'var(--azul-electrico)',
-                        border: 'none',
-                        cursor: 'pointer',
-                        padding: '6px 12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px',
-                        color: 'white',
-                        fontSize: '11px',
-                        fontWeight: 'bold',
-                        borderRadius: '6px',
-                        transition: 'all 0.2s',
-                        boxShadow: '0 2px 4px rgba(0, 210, 255, 0.3)'
+                      placeholder="Ingrese Dirección"
+                      className="dato-input"
+                      style={{ cursor: modoEdicionDatosCliente ? 'text' : 'not-allowed' }}
+                      readOnly={!modoEdicionDatosCliente}
+                    />
+                  </div>
+                  <div className="dato-item">
+                    <label>Teléfono:</label>
+                    <input
+                      type="text"
+                      value={facturaData.clienteTelefono || ''}
+                      onChange={(e) => {
+                        const soloNumeros = e.target.value.replace(/\D/g, '')
+                        handleFacturaDataChange('clienteTelefono', soloNumeros)
                       }}
-                      title="Buscar factura"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <path d="m21 21-4.35-4.35"></path>
-                      </svg>
-                      BUSCAR FACTURA
-                    </button>
+                      placeholder="Ingrese Teléfono"
+                      className="dato-input"
+                      style={{ cursor: modoEdicionDatosCliente ? 'text' : 'not-allowed' }}
+                      readOnly={!modoEdicionDatosCliente}
+                    />
+                  </div>
+                  <div className="dato-item">
+                    <label>Email:</label>
+                    <input
+                      type="email"
+                      value={facturaData.clienteEmail || ''}
+                      onChange={(e) => {
+                        const valorMinusculas = e.target.value.toLowerCase()
+                        handleFacturaDataChange('clienteEmail', valorMinusculas)
+                      }}
+                      placeholder="Ingrese Email"
+                      className="dato-input"
+                      style={{ cursor: modoEdicionDatosCliente ? 'text' : 'not-allowed' }}
+                      readOnly={!modoEdicionDatosCliente}
+                    />
                   </div>
                 </div>
-                <div className="dato-item">
-                  <label>Fecha:</label>
-                  <span>{facturaData.fecha || '-'}</span>
-                </div>
-                <div className="dato-item">
-                  <label>Establecimiento:</label>
-                  <span>{facturaData.establecimiento || '-'}</span>
-                </div>
-                <div className="dato-item">
-                  <label>Punto de Emisión:</label>
-                  <span>{facturaData.puntoEmision || '-'}</span>
-                </div>
-                <div className="dato-item">
-                  <label>Secuencial:</label>
-                  <span>{facturaData.secuencial || '-'}</span>
-                </div>
-                <div className="dato-item">
-                  <label>Tipo Comprobante:</label>
-                  <span>{facturaData.tipoComprobante === '01' ? 'Factura' : facturaData.tipoComprobante === '04' ? 'Nota de Crédito' : facturaData.tipoComprobante || '-'}</span>
-                </div>
-                <div className="dato-item">
-                  <label>Ambiente:</label>
-                  <span>{facturaData.ambiente === '1' ? 'Producción' : facturaData.ambiente === '2' ? 'Pruebas' : facturaData.ambiente || '-'}</span>
-                </div>
-              </div>
-            </div>
+                {modoEdicionDatosCliente && (
+                  <div style={{
+                    marginTop: '8px',
+                    display: 'flex',
+                    gap: '8px',
+                    width: '100%'
+                  }}>
+                    <button
+                      onClick={async () => {
+                        if (!facturaData.clienteNombre || !facturaData.clienteRucCedula) {
+                          alert('Nombre y RUC/Cédula son requeridos')
+                          return
+                        }
 
-            {/* Datos del Emisor */}
-            <div className="datos-emisor">
-              <h3 className="titulo-datos">Datos del Emisor</h3>
-              <div className="datos-grid">
-                <div className="dato-item">
-                  <label>RUC:</label>
-                  <span>{cleanText(facturaData.emisorRuc) || '-'}</span>
+                        setGuardandoCambiosCliente(true)
+                        try {
+                          const soloNumeros = facturaData.clienteRucCedula.replace(/\D/g, '')
+
+                          const datosCliente = {
+                            nombre: facturaData.clienteNombre,
+                            ruc: soloNumeros || facturaData.clienteRucCedula,
+                            direccion: facturaData.clienteDireccion || '',
+                            telefono: facturaData.clienteTelefono || '',
+                            email: facturaData.clienteEmail || '',
+                            esExtranjero: false
+                          }
+
+                          // Si hay clienteId, actualizar. Si no, buscar el cliente por RUC
+                          let idClienteParaActualizar = clienteId
+
+                          if (!idClienteParaActualizar) {
+                            // Buscar el cliente por RUC en la lista local
+                            const clienteExistente = clientes.find(cliente => {
+                              const clienteRuc = cliente.ruc ? cliente.ruc.toString().trim().replace(/\D/g, '') : ''
+                              return clienteRuc === soloNumeros
+                            })
+
+                            if (clienteExistente) {
+                              idClienteParaActualizar = clienteExistente.id
+                              setClienteId(clienteExistente.id)
+                            } else {
+                              alert('No se encontró el cliente. Por favor, primero busque el cliente por RUC/Cédula.')
+                              setGuardandoCambiosCliente(false)
+                              return
+                            }
+                          }
+
+                          await axios.put(`${API_URL}/clientes/${idClienteParaActualizar}`, datosCliente)
+                          await cargarClientes()
+
+                          setModoEdicionDatosCliente(false)
+                          setDatosClienteOriginales(null)
+                          setMostrarMensajeCambiosGuardados(true)
+
+                          setTimeout(() => {
+                            setMostrarMensajeCambiosGuardados(false)
+                          }, 3000)
+                        } catch (error) {
+                          console.error('Error al guardar cambios:', error)
+                          const errorMessage = error.response?.data?.message || error.message || 'Error desconocido'
+                          alert(`Error al guardar los cambios: ${errorMessage}`)
+                        } finally {
+                          setGuardandoCambiosCliente(false)
+                        }
+                      }}
+                      disabled={guardandoCambiosCliente}
+                      style={{
+                        flex: 1,
+                        padding: '6px',
+                        background: guardandoCambiosCliente ? '#6c757d' : '#28a745',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        fontWeight: 'bold',
+                        fontSize: '11px',
+                        cursor: guardandoCambiosCliente ? 'not-allowed' : 'pointer',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                      }}
+                    >
+                      {guardandoCambiosCliente ? 'Guardando...' : '💾 Guardar Cambios'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        // Revertir los cambios restaurando los valores originales
+                        if (datosClienteOriginales) {
+                          setFacturaData(prev => ({
+                            ...prev,
+                            clienteRucCedula: datosClienteOriginales.clienteRucCedula,
+                            clienteNombre: datosClienteOriginales.clienteNombre,
+                            clienteDireccion: datosClienteOriginales.clienteDireccion,
+                            clienteTelefono: datosClienteOriginales.clienteTelefono,
+                            clienteEmail: datosClienteOriginales.clienteEmail
+                          }))
+                        }
+                        setModoEdicionDatosCliente(false)
+                        setDatosClienteOriginales(null)
+                      }}
+                      disabled={guardandoCambiosCliente}
+                      style={{
+                        flex: 1,
+                        padding: '6px',
+                        background: '#6c757d',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        fontWeight: 'bold',
+                        fontSize: '11px',
+                        cursor: guardandoCambiosCliente ? 'not-allowed' : 'pointer',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                      }}
+                    >
+                      ❌ Cancelar
+                    </button>
+                  </div>
+                )}
+                {mostrarMensajeCambiosGuardados && (
+                  <div style={{
+                    marginTop: '8px',
+                    padding: '6px',
+                    background: '#d4edda',
+                    border: '1px solid #28a745',
+                    borderRadius: '4px',
+                    fontSize: '10px',
+                    color: '#155724',
+                    fontWeight: '600',
+                    textAlign: 'center'
+                  }}>
+                    ✅ Cambios guardados
+                  </div>
+                )}
+                {mostrarRegistrarCliente && (
+                  <div style={{
+                    marginTop: '8px',
+                    display: 'flex',
+                    gap: '8px',
+                    width: '100%'
+                  }}>
+                    <button
+                      onClick={async () => {
+                        if (!facturaData.clienteNombre || !facturaData.clienteRucCedula) {
+                          alert('Nombre y RUC/Cédula son requeridos')
+                          return
+                        }
+
+                        setGuardandoCliente(true)
+                        try {
+                          const soloNumeros = facturaData.clienteRucCedula.replace(/\D/g, '')
+                          const tipoDocumento = detectarTipoDocumento(facturaData.clienteRucCedula)
+
+                          const datosCliente = {
+                            nombre: facturaData.clienteNombre,
+                            ruc: soloNumeros || facturaData.clienteRucCedula,
+                            direccion: facturaData.clienteDireccion || '',
+                            telefono: facturaData.clienteTelefono || '',
+                            email: facturaData.clienteEmail || '',
+                            esExtranjero: false
+                          }
+
+                          const clienteExistente = clientes.find(cliente =>
+                            cliente.ruc && cliente.ruc.toString().trim() === datosCliente.ruc.trim()
+                          )
+
+                          let res
+                          if (clienteExistente) {
+                            res = await axios.put(`${API_URL}/clientes/${clienteExistente.id}`, datosCliente)
+                          } else {
+                            res = await axios.post(`${API_URL}/clientes`, datosCliente)
+                          }
+
+                          await cargarClientes()
+
+                          setClienteId(res.data.id || clienteExistente?.id)
+                          setMostrarRegistrarCliente(false)
+                          setMensajeExito(clienteExistente ? 'Cliente actualizado exitosamente' : 'Cliente guardado exitosamente')
+                          setMostrarMensajeExito(true)
+
+                          setTimeout(() => {
+                            setMostrarMensajeExito(false)
+                          }, 2000)
+                        } catch (error) {
+                          console.error('Error al guardar cliente:', error)
+                          const errorMessage = error.response?.data?.message || error.message || 'Error desconocido'
+                          alert(`Error al guardar el cliente: ${errorMessage}`)
+                        } finally {
+                          setGuardandoCliente(false)
+                        }
+                      }}
+                      disabled={guardandoCliente}
+                      style={{
+                        flex: 1,
+                        padding: '6px',
+                        background: guardandoCliente ? '#6c757d' : 'var(--azul-electrico)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        fontWeight: 'bold',
+                        fontSize: '11px',
+                        cursor: guardandoCliente ? 'not-allowed' : 'pointer',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                      }}
+                    >
+                      {guardandoCliente ? 'Guardando...' : '💾 Guardar Cliente'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setMostrarRegistrarCliente(false)
+                        setFacturaData(prev => ({
+                          ...prev,
+                          clienteRucCedula: '',
+                          clienteNombre: '',
+                          clienteDireccion: '',
+                          clienteTelefono: '',
+                          clienteEmail: ''
+                        }))
+                      }}
+                      disabled={guardandoCliente}
+                      style={{
+                        flex: 1,
+                        padding: '6px',
+                        background: '#6c757d',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        fontWeight: 'bold',
+                        fontSize: '11px',
+                        cursor: guardandoCliente ? 'not-allowed' : 'pointer',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                      }}
+                    >
+                      ❌ Cancelar
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Datos de la Factura */}
+              <div className="datos-factura">
+                <h3 className="titulo-datos">{esProforma ? "Datos de la Proforma" : "Datos de la Factura"}</h3>
+                <div className="datos-grid">
+                  <div className="dato-item">
+                    <label>Número:</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span>{facturaData.numero || '-'}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMostrarBuscarFacturaGeneral(true)
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = '#0056b3'
+                          e.currentTarget.style.transform = 'scale(1.05)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'var(--azul-electrico)'
+                          e.currentTarget.style.transform = 'scale(1)'
+                        }}
+                        style={{
+                          background: 'var(--azul-electrico)',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: '6px 12px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px',
+                          color: 'white',
+                          fontSize: '11px',
+                          fontWeight: 'bold',
+                          borderRadius: '6px',
+                          transition: 'all 0.2s',
+                          boxShadow: '0 2px 4px rgba(0, 210, 255, 0.3)'
+                        }}
+                        title="Buscar factura"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="11" cy="11" r="8"></circle>
+                          <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        BUSCAR FACTURA
+                      </button>
+                    </div>
+                  </div>
+                  <div className="dato-item">
+                    <label>Fecha:</label>
+                    <span>{facturaData.fecha || '-'}</span>
+                  </div>
+                  <div className="dato-item">
+                    <label>Establecimiento:</label>
+                    <span>{facturaData.establecimiento || '-'}</span>
+                  </div>
+                  <div className="dato-item">
+                    <label>Punto de Emisión:</label>
+                    <span>{facturaData.puntoEmision || '-'}</span>
+                  </div>
+                  <div className="dato-item">
+                    <label>Secuencial:</label>
+                    <span>{facturaData.secuencial || '-'}</span>
+                  </div>
+                  <div className="dato-item">
+                    <label>Tipo Comprobante:</label>
+                    <span>{facturaData.tipoComprobante === '01' ? 'Factura' : facturaData.tipoComprobante === '04' ? 'Nota de Crédito' : facturaData.tipoComprobante || '-'}</span>
+                  </div>
+                  <div className="dato-item">
+                    <label>Ambiente:</label>
+                    <span>{facturaData.ambiente === '1' ? 'Producción' : facturaData.ambiente === '2' ? 'Pruebas' : facturaData.ambiente || '-'}</span>
+                  </div>
                 </div>
-                <div className="dato-item">
-                  <label>Razón Social:</label>
-                  <span>{cleanText(facturaData.emisorRazonSocial) || '-'}</span>
-                </div>
-                <div className="dato-item">
-                  <label>Nombre Comercial:</label>
-                  <span>{cleanText(facturaData.emisorNombreComercial) || '-'}</span>
-                </div>
-                <div className="dato-item">
-                  <label>Dirección Matriz:</label>
-                  <span>{cleanText(facturaData.emisorDireccionMatriz) || '-'}</span>
-                </div>
-                <div className="dato-item">
-                  <label>Dirección Establecimiento:</label>
-                  <span>{cleanText(facturaData.emisorDireccionEstablecimiento) || '-'}</span>
-                </div>
-                <div className="dato-item">
-                  <label>Teléfono:</label>
-                  <span>{cleanText(facturaData.emisorTelefono) || '-'}</span>
-                </div>
-                <div className="dato-item">
-                  <label>Email:</label>
-                  <span>{cleanText(facturaData.emisorEmail) || '-'}</span>
+              </div>
+
+              {/* Datos del Emisor */}
+              <div className="datos-emisor">
+                <h3 className="titulo-datos">Datos del Emisor</h3>
+                <div className="datos-grid">
+                  <div className="dato-item">
+                    <label>RUC:</label>
+                    <span>{cleanText(facturaData.emisorRuc) || '-'}</span>
+                  </div>
+                  <div className="dato-item">
+                    <label>Razón Social:</label>
+                    <span>{cleanText(facturaData.emisorRazonSocial) || '-'}</span>
+                  </div>
+                  <div className="dato-item">
+                    <label>Nombre Comercial:</label>
+                    <span>{cleanText(facturaData.emisorNombreComercial) || '-'}</span>
+                  </div>
+                  <div className="dato-item">
+                    <label>Dirección Matriz:</label>
+                    <span>{cleanText(facturaData.emisorDireccionMatriz) || '-'}</span>
+                  </div>
+                  <div className="dato-item">
+                    <label>Dirección Establecimiento:</label>
+                    <span>{cleanText(facturaData.emisorDireccionEstablecimiento) || '-'}</span>
+                  </div>
+                  <div className="dato-item">
+                    <label>Teléfono:</label>
+                    <span>{cleanText(facturaData.emisorTelefono) || '-'}</span>
+                  </div>
+                  <div className="dato-item">
+                    <label>Email:</label>
+                    <span>{cleanText(facturaData.emisorEmail) || '-'}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Layout Lineal - Sin paneles laterales */}
           <div className="factura-body-linear" style={{
@@ -4484,108 +4527,145 @@ Este enlace te permitirá actualizar tu información de contacto.`
               </button>
             </div>
 
-            {/* Sección Inferior: Totales y Pagos (A continuación del grid) */}
+            {/* Sección Inferior: Totales y Pagos */}
             <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              gap: '12px',
-              padding: '6px 0',
-              borderTop: '1px solid #e2e8f0',
+              borderTop: '2px solid #e2e8f0',
+              padding: '8px 0',
               flexShrink: 0
             }}>
-              {/* Parte Izquierda: Total en letras y Lista de Pagos */}
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <div style={{ backgroundColor: '#fff3cd', border: '1px solid #ffc107', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', fontWeight: 'bold', color: '#856404' }}>
-                  SON: {totales.totalLetras}
+              {!mostrarSeccionPago ? (
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <button
+                    onClick={() => setMostrarSeccionPago(true)}
+                    style={{
+                      padding: '10px 30px',
+                      fontSize: '18px',
+                      fontWeight: '900',
+                      background: '#2563eb',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 6px rgba(37, 99, 235, 0.3)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px'
+                    }}
+                  >
+                    <span>💰 PAGAR / FINALIZAR</span>
+                    <span style={{ background: 'rgba(255,255,255,0.2)', padding: '2px 8px', borderRadius: '4px' }}>
+                      ${totales.total.toFixed(2)}
+                    </span>
+                  </button>
                 </div>
-
-                {listaPagos.length > 0 && (
-                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                    {listaPagos.map(pago => (
-                      <div key={pago.id} style={{
-                        backgroundColor: '#f1f5f9',
-                        padding: '2px 8px',
-                        borderRadius: '16px',
-                        fontSize: '11px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        border: '1px solid #cbd5e1'
-                      }}>
-                        <span style={{ fontWeight: 'bold', color: '#1e40af' }}>{pago.tipo === 'TARJETA' ? '💳' : pago.tipo === 'EFECTIVO' ? '💵' : '🏦'} {pago.tipo}:</span>
-                        <span style={{ fontWeight: 'bold' }}>${pago.monto.toFixed(2)}</span>
-                        <button
-                          onClick={() => setListaPagos(listaPagos.filter(p => p.id !== pago.id))}
-                          style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <div style={{ fontSize: '12px', fontWeight: 'bold', color: (totales.total - listaPagos.reduce((a, b) => a + b.monto, 0) - totales.retenciones) > 0.01 ? '#ef4444' : '#10b981' }}>
-                  Saldo Restante: ${(totales.total - listaPagos.reduce((a, b) => a + b.monto, 0) - totales.retenciones).toFixed(2)}
-                </div>
-              </div>
-
-              {/* Parte Derecha: Resumen de Totales y Botones de Pago */}
-              <div style={{ width: '320px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              ) : (
                 <div style={{
-                  backgroundColor: 'white',
-                  padding: '8px 12px',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
-                  border: '1px solid #e2e8f0'
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  gap: '12px'
                 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px', fontSize: '13px' }}>
-                    <span style={{ color: '#64748b' }}>Subtotal:</span>
-                    <span style={{ fontWeight: 'bold' }}>${totales.subtotal.toFixed(2)}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px', fontSize: '13px' }}>
-                    <span style={{ color: '#64748b' }}>IVA ({configuracion.ivaPorcentaje}%):</span>
-                    <span style={{ fontWeight: 'bold' }}>${totales.iva.toFixed(2)}</span>
-                  </div>
-                  {totales.retenciones > 0 && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px', fontSize: '13px', color: '#ef4444' }}>
-                      <span>Retenciones:</span>
-                      <span style={{ fontWeight: 'bold' }}>-${totales.retenciones.toFixed(2)}</span>
+                  {/* Parte Izquierda: Info y Toggle para cerrar */}
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '4px' }}>
+                      <button
+                        onClick={() => setMostrarSeccionPago(false)}
+                        style={{ padding: '2px 8px', fontSize: '10px', background: '#64748b', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                      >
+                        ✕ CERRAR PAGOS
+                      </button>
+                      <div style={{ backgroundColor: '#fff3cd', border: '1px solid #ffc107', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', fontWeight: 'bold', color: '#856404', flex: 1 }}>
+                        SON: {totales.totalLetras}
+                      </div>
                     </div>
-                  )}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', paddingTop: '4px', borderTop: '1px solid #f1f5f9' }}>
-                    <span style={{ fontWeight: '900', fontSize: '16px', color: '#1e293b' }}>TOTAL:</span>
-                    <span style={{ fontWeight: '900', fontSize: '20px', color: '#2563eb' }}>${totales.total.toFixed(2)}</span>
+
+                    {listaPagos.length > 0 && (
+                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                        {listaPagos.map(pago => (
+                          <div key={pago.id} style={{
+                            backgroundColor: '#f1f5f9',
+                            padding: '2px 8px',
+                            borderRadius: '16px',
+                            fontSize: '11px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            border: '1px solid #cbd5e1'
+                          }}>
+                            <span style={{ fontWeight: 'bold', color: '#1e40af' }}>{pago.tipo === 'TARJETA' ? '💳' : pago.tipo === 'EFECTIVO' ? '💵' : '🏦'} {pago.tipo}:</span>
+                            <span style={{ fontWeight: 'bold' }}>${pago.monto.toFixed(2)}</span>
+                            <button
+                              onClick={() => setListaPagos(listaPagos.filter(p => p.id !== pago.id))}
+                              style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div style={{ fontSize: '12px', fontWeight: 'bold', color: (totales.total - listaPagos.reduce((a, b) => a + b.monto, 0) - totales.retenciones) > 0.01 ? '#ef4444' : '#10b981' }}>
+                      Saldo Restante: ${(totales.total - listaPagos.reduce((a, b) => a + b.monto, 0) - totales.retenciones).toFixed(2)}
+                    </div>
+                  </div>
+
+                  {/* Parte Derecha: Resumen de Totales y Botones de Pago */}
+                  <div style={{ width: '320px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <div style={{
+                      backgroundColor: 'white',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+                      border: '1px solid #e2e8f0'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px', fontSize: '13px' }}>
+                        <span style={{ color: '#64748b' }}>Subtotal:</span>
+                        <span style={{ fontWeight: 'bold' }}>${totales.subtotal.toFixed(2)}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px', fontSize: '13px' }}>
+                        <span style={{ color: '#64748b' }}>IVA ({configuracion.ivaPorcentaje}%):</span>
+                        <span style={{ fontWeight: 'bold' }}>${totales.iva.toFixed(2)}</span>
+                      </div>
+                      {totales.retenciones > 0 && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px', fontSize: '13px', color: '#ef4444' }}>
+                          <span>Retenciones:</span>
+                          <span style={{ fontWeight: 'bold' }}>-${totales.retenciones.toFixed(2)}</span>
+                        </div>
+                      )}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', paddingTop: '4px', borderTop: '1px solid #f1f5f9' }}>
+                        <span style={{ fontWeight: '900', fontSize: '16px', color: '#1e293b' }}>TOTAL:</span>
+                        <span style={{ fontWeight: '900', fontSize: '20px', color: '#2563eb' }}>${totales.total.toFixed(2)}</span>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                      <button type="button" onClick={() => seleccionarTipoPago('EFECTIVO')} style={{ flex: 1, padding: '4px', fontSize: '11px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#667eea', color: 'white', cursor: 'pointer' }}>💵 Efectivo</button>
+                      <button type="button" onClick={() => seleccionarTipoPago('TARJETAS')} style={{ flex: 1, padding: '4px', fontSize: '11px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#667eea', color: 'white', cursor: 'pointer' }}>💳 Tarjeta</button>
+                      <button type="button" onClick={() => seleccionarTipoPago('TRANSFERENCIA')} style={{ flex: 1, padding: '4px', fontSize: '11px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#667eea', color: 'white', cursor: 'pointer' }}>🏦 Transf.</button>
+                      <button type="button" onClick={() => { seleccionarTipoPago('RETENCIONES'); setMostrarModalRetencion(true); }} style={{ flex: 1, padding: '4px', fontSize: '11px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#667eea', color: 'white', cursor: 'pointer' }}>📋 Reten.</button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleGuardarFactura(true)}
+                      style={{
+                        padding: '10px',
+                        fontSize: '15px',
+                        fontWeight: '900',
+                        color: '#ffffff',
+                        backgroundColor: '#2563eb',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        width: '100%',
+                        boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)'
+                      }}
+                    >
+                      💾 GUARDAR E IMPRIMIR
+                    </button>
                   </div>
                 </div>
-
-                {/* Botones de Pago Compactos a continuación del Totales */}
-                <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                  <button type="button" onClick={() => seleccionarTipoPago('EFECTIVO')} style={{ flex: 1, padding: '4px', fontSize: '11px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#667eea', color: 'white', cursor: 'pointer' }}>💵 Efectivo</button>
-                  <button type="button" onClick={() => seleccionarTipoPago('TARJETAS')} style={{ flex: 1, padding: '4px', fontSize: '11px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#667eea', color: 'white', cursor: 'pointer' }}>💳 Tarjeta</button>
-                  <button type="button" onClick={() => seleccionarTipoPago('TRANSFERENCIA')} style={{ flex: 1, padding: '4px', fontSize: '11px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#667eea', color: 'white', cursor: 'pointer' }}>🏦 Transf.</button>
-                  <button type="button" onClick={() => { seleccionarTipoPago('RETENCIONES'); setMostrarModalRetencion(true); }} style={{ flex: 1, padding: '4px', fontSize: '11px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#667eea', color: 'white', cursor: 'pointer' }}>📋 Reten.</button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => handleGuardarFactura(true)}
-                  style={{
-                    padding: '8px',
-                    fontSize: '15px',
-                    fontWeight: '900',
-                    color: '#ffffff',
-                    backgroundColor: '#2563eb',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    width: '100%',
-                    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)'
-                  }}
-                >
-                  💾 GUARDAR E IMPRIMIR
-                </button>
-              </div>
+              )}
             </div>
           </div>
 
