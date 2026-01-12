@@ -385,18 +385,18 @@ body {
   flex: 1;
   min-height: 80px;
   /* Reducido para dar espacio al pie */
-  border: 1px solid #ddd;
+  border: 1px solid #000;
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 2px;
 }
 
 .grid-body {
-  flex: 1;
+  height: 128px;
+  /* 32px * 4 filas */
   overflow-y: auto;
-  /* Enable vertical scroll */
   overflow-x: hidden;
-  /* Prevent horizontal scroll on body */
+  background: white;
 }
 
 /* Ensure no other styles conflict */
@@ -409,6 +409,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 10;
+  border-bottom: 1px solid #000;
 }
 
 .grid-header-cell {
@@ -416,7 +417,7 @@ body {
   font-weight: 600;
   text-align: center;
   font-size: 13px;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid #000;
   user-select: none;
   position: relative;
   /* For resizer positioning */
@@ -451,16 +452,21 @@ body {
   display: grid;
   /* grid-template-columns set via inline style in JSX */
   width: 100%;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #000;
+  height: 32px;
+  align-items: center;
 }
 
 .grid-cell {
-  padding: 6px 8px;
+  padding: 4px 8px;
   font-size: 14px;
-  border-right: 1px solid #ddd;
-  min-height: 24px;
+  border-right: 1px solid #000;
+  height: 100%;
+  display: flex;
+  align-items: center;
   cursor: text;
   outline: none;
+  overflow: hidden;
 }
 
 .grid-cell:last-child {

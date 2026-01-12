@@ -4254,99 +4254,116 @@ Este enlace te permitirá actualizar tu información de contacto.`
 
                 {/* Grid Body */}
                 <div className="grid-body">
-                  {items && items.length > 0 ? (
-                    items.map((item, index) => (
-                      <div
-                        key={item.id}
-                        className="grid-row"
-                        style={{
-                          gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.talla}px ${columnWidths.color}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 50px`
-                        }}
-                      >
+                  {Array.from({ length: Math.max(items ? items.length : 0, 4) }).map((_, index) => {
+                    const item = items && items[index];
+                    if (item) {
+                      return (
                         <div
-                          className="grid-cell"
-                          contentEditable
-                          suppressContentEditableWarning
-                          onBlur={(e) => handleItemChange(item.id, 'codigo', e.target.textContent)}
+                          key={item.id}
+                          className="grid-row"
+                          style={{
+                            gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.talla}px ${columnWidths.color}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 50px`
+                          }}
                         >
-                          {item.codigo || ''}
-                        </div>
-                        <div
-                          className="grid-cell"
-                          contentEditable
-                          suppressContentEditableWarning
-                          onBlur={(e) => handleItemChange(item.id, 'descripcion', e.target.textContent)}
-                        >
-                          {item.descripcion || ''}
-                        </div>
-                        <div
-                          className="grid-cell"
-                          contentEditable
-                          suppressContentEditableWarning
-                          onBlur={(e) => handleItemChange(item.id, 'talla', e.target.textContent)}
-                          style={{ fontWeight: 'bold', color: '#1e40af' }}
-                        >
-                          {item.talla || ''}
-                        </div>
-                        <div
-                          className="grid-cell"
-                          contentEditable
-                          suppressContentEditableWarning
-                          onBlur={(e) => handleItemChange(item.id, 'color', e.target.textContent)}
-                          style={{ fontWeight: 'bold', color: '#1e40af' }}
-                        >
-                          {item.color || ''}
-                        </div>
-                        <div
-                          className="grid-cell"
-                          contentEditable
-                          suppressContentEditableWarning
-                          onBlur={(e) => handleItemChange(item.id, 'cantidad', parseFloat(e.target.textContent) || 0)}
-                        >
-                          {item.cantidad || 0}
-                        </div>
-                        <div
-                          className="grid-cell"
-                          contentEditable
-                          suppressContentEditableWarning
-                          onBlur={(e) => handleItemChange(item.id, 'precio', parseFloat(e.target.textContent) || 0)}
-                        >
-                          {item.precio ? item.precio.toFixed(2) : '0.00'}
-                        </div>
-                        <div
-                          className="grid-cell"
-                          contentEditable
-                          suppressContentEditableWarning
-                          onBlur={(e) => handleItemChange(item.id, 'descuento', parseFloat(e.target.textContent) || 0)}
-                        >
-                          {item.descuento || 0}
-                        </div>
-                        <div className="grid-cell grid-cell-readonly">
-                          {item.subtotal ? item.subtotal.toFixed(2) : '0.00'}
-                        </div>
-                        <div className="grid-cell grid-cell-button">
-                          <button
-                            onClick={() => eliminarFila(item.id)}
-                            className="grid-delete-btn"
-                            title="Eliminar"
+                          <div
+                            className="grid-cell"
+                            contentEditable
+                            suppressContentEditableWarning
+                            onBlur={(e) => handleItemChange(item.id, 'codigo', e.target.textContent)}
                           >
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M5.5 5.5C5.77614 5.5 6 5.72386 6 6V12C6 12.2761 5.77614 12.5 5.5 12.5C5.22386 12.5 5 12.2761 5 12V6C5 5.72386 5.22386 5.5 5.5 5.5Z" fill="currentColor" />
-                              <path d="M8 5.5C8.27614 5.5 8.5 5.72386 8.5 6V12C8.5 12.2761 8.27614 12.5 8 12.5C7.72386 12.5 7.5 12.2761 7.5 12V6C7.5 5.72386 7.72386 5.5 8 5.5Z" fill="currentColor" />
-                              <path d="M10.5 6C10.5 5.72386 10.7239 5.5 11 5.5C11.2761 5.5 11.5 5.72386 11.5 6V12C11.5 12.2761 11.2761 12.5 11 12.5C10.7239 12.5 10.5 12.2761 10.5 12V6Z" fill="currentColor" />
-                              <path fillRule="evenodd" clipRule="evenodd" d="M10.5 1.5C10.5 1.22386 10.7239 1 11 1H12C12.2761 1 12.5 1.22386 12.5 1.5V2H14C14.2761 2 14.5 2.22386 14.5 2.5C14.5 2.77614 14.2761 3 14 3H13.5V13.5C13.5 14.3284 12.8284 15 12 15H4C3.17157 15 2.5 14.3284 2.5 13.5V3H2C1.72386 3 1.5 2.77614 1.5 2.5C1.5 2.22386 1.72386 2 2 2H3.5V1.5C3.5 1.22386 3.72386 1 4 1H5C5.27614 1 5.5 1.22386 5.5 1.5V2H10.5V1.5ZM4 3V13.5H12V3H4Z" fill="currentColor" />
-                            </svg>
-                          </button>
+                            {item.codigo || ''}
+                          </div>
+                          <div
+                            className="grid-cell"
+                            contentEditable
+                            suppressContentEditableWarning
+                            onBlur={(e) => handleItemChange(item.id, 'descripcion', e.target.textContent)}
+                          >
+                            {item.descripcion || ''}
+                          </div>
+                          <div
+                            className="grid-cell"
+                            contentEditable
+                            suppressContentEditableWarning
+                            onBlur={(e) => handleItemChange(item.id, 'talla', e.target.textContent)}
+                            style={{ fontWeight: 'bold', color: '#1e40af' }}
+                          >
+                            {item.talla || ''}
+                          </div>
+                          <div
+                            className="grid-cell"
+                            contentEditable
+                            suppressContentEditableWarning
+                            onBlur={(e) => handleItemChange(item.id, 'color', e.target.textContent)}
+                            style={{ fontWeight: 'bold', color: '#1e40af' }}
+                          >
+                            {item.color || ''}
+                          </div>
+                          <div
+                            className="grid-cell"
+                            contentEditable
+                            suppressContentEditableWarning
+                            onBlur={(e) => handleItemChange(item.id, 'cantidad', parseFloat(e.target.textContent) || 0)}
+                          >
+                            {item.cantidad || 0}
+                          </div>
+                          <div
+                            className="grid-cell"
+                            contentEditable
+                            suppressContentEditableWarning
+                            onBlur={(e) => handleItemChange(item.id, 'precio', parseFloat(e.target.textContent) || 0)}
+                          >
+                            {item.precio ? item.precio.toFixed(2) : '0.00'}
+                          </div>
+                          <div
+                            className="grid-cell"
+                            contentEditable
+                            suppressContentEditableWarning
+                            onBlur={(e) => handleItemChange(item.id, 'descuento', parseFloat(e.target.textContent) || 0)}
+                          >
+                            {item.descuento || 0}
+                          </div>
+                          <div className="grid-cell grid-cell-readonly">
+                            {item.subtotal ? item.subtotal.toFixed(2) : '0.00'}
+                          </div>
+                          <div className="grid-cell grid-cell-button">
+                            <button
+                              onClick={() => eliminarFila(item.id)}
+                              className="grid-delete-btn"
+                              title="Eliminar"
+                            >
+                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5.5 5.5C5.77614 5.5 6 5.72386 6 6V12C6 12.2761 5.77614 12.5 5.5 12.5C5.22386 12.5 5 12.2761 5 12V6C5 5.72386 5.22386 5.5 5.5 5.5Z" fill="currentColor" />
+                                <path d="M8 5.5C8.27614 5.5 8.5 5.72386 8.5 6V12C8.5 12.2761 8.27614 12.5 8 12.5C7.72386 12.5 7.5 12.2761 7.5 12V6C7.5 5.72386 7.72386 5.5 8 5.5Z" fill="currentColor" />
+                                <path d="M10.5 6C10.5 5.72386 10.7239 5.5 11 5.5C11.2761 5.5 11.5 5.72386 11.5 6V12C11.5 12.2761 11.2761 12.5 11 12.5C10.7239 12.5 10.5 12.2761 10.5 12V6Z" fill="currentColor" />
+                                <path fillRule="evenodd" clipRule="evenodd" d="M10.5 1.5C10.5 1.22386 10.7239 1 11 1H12C12.2761 1 12.5 1.22386 12.5 1.5V2H14C14.2761 2 14.5 2.22386 14.5 2.5C14.5 2.77614 14.2761 3 14 3H13.5V13.5C13.5 14.3284 12.8284 15 12 15H4C3.17157 15 2.5 14.3284 2.5 13.5V3H2C1.72386 3 1.5 2.77614 1.5 2.5C1.5 2.22386 1.72386 2 2 2H3.5V1.5C3.5 1.22386 3.72386 1 4 1H5C5.27614 1 5.5 1.22386 5.5 1.5V2H10.5V1.5ZM4 3V13.5H12V3H4Z" fill="currentColor" />
+                              </svg>
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="grid-row">
-                      <div className="grid-cell" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '20px', color: '#999' }}>
-                        No hay productos
-                      </div>
-                    </div>
-                  )}
+                      );
+                    } else {
+                      return (
+                        <div
+                          key={`empty-${index}`}
+                          className="grid-row"
+                          style={{
+                            gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.talla}px ${columnWidths.color}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 50px`
+                          }}
+                        >
+                          <div className="grid-cell"></div>
+                          <div className="grid-cell"></div>
+                          <div className="grid-cell"></div>
+                          <div className="grid-cell"></div>
+                          <div className="grid-cell"></div>
+                          <div className="grid-cell"></div>
+                          <div className="grid-cell"></div>
+                          <div className="grid-cell grid-cell-readonly"></div>
+                          <div className="grid-cell grid-cell-button"></div>
+                        </div>
+                      );
+                    }
+                  })}
                 </div>
               </div>
               <button
