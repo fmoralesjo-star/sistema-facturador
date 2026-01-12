@@ -8,6 +8,7 @@ import BuscarFacturasModal from '../components/BuscarFacturasModal'
 import CajaChicaModal from '../components/CajaChicaModal'
 
 function Facturacion({ socket }) {
+  // DEPLOY TRIGGER: 2026-01-12 12:05
   const navigate = useNavigate()
   const { currentUser } = useAuth()
 
