@@ -2,7 +2,7 @@
 # exit on error
 set -o errexit
 
-echo "🚀 Iniciando Build en Render..."
+echo "🚀 Iniciando Build en Render... (FIX V2 - NO RECURSION)"
 
 # 1. Instalar dependencias del Backend
 echo "📦 Instalando dependencias del Backend..."
