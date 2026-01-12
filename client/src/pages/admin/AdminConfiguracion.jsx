@@ -43,7 +43,8 @@ const AdminConfiguracion = ({ configuracion, puntosVenta = [], onSave, loading }
             const promises = localPuntosVenta.map(pv =>
                 axios.patch(`${API_URL}/puntos-venta/${pv.id}`, {
                     secuencia_factura: parseInt(pv.secuencia_factura),
-                    secuencia_nota_credito: parseInt(pv.secuencia_nota_credito)
+                    secuencia_nota_credito: parseInt(pv.secuencia_nota_credito),
+                    establecimiento_id: pv.establecimiento_id ? parseInt(pv.establecimiento_id) : (pv.establecimiento?.id || null)
                 })
             )
             await Promise.all(promises)
@@ -475,7 +476,19 @@ const AdminConfiguracion = ({ configuracion, puntosVenta = [], onSave, loading }
                                 {localPuntosVenta.map((pv, index) => (
                                     <tr key={pv.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
                                         <td style={{ padding: '10px' }}>
-                                            {pv.establecimiento ? `${pv.establecimiento.codigo} - ${pv.establecimiento.nombre_comercial || ''}` : 'Sin Asignar'}
+                                            <select
+                                                className="data-input"
+                                                value={pv.establecimiento?.id || pv.establecimiento_id || ''}
+                                                onChange={(e) => handlePuntoChange(index, 'establecimiento_id', e.target.value)}
+                                                style={{ width: '100%', padding: '5px', fontSize: '0.9em' }}
+                                            >
+                                                <option value="">-- Sin Asignar --</option>
+                                                {establecimientos.map(est => (
+                                                    <option key={est.id} value={est.id}>
+                                                        {est.codigo} - {est.nombre_comercial || 'Matriz'}
+                                                    </option>
+                                                ))}
+                                            </select>
                                         </td>
                                         <td style={{ padding: '10px' }}>
                                             <strong>{pv.codigo}</strong><br />

@@ -58,9 +58,11 @@ function PuntosVenta() {
             // Preparar datos para el envío
             const payload = { ...formData };
 
-            // Asegurar que establecimiento_id sea número si existe
-            if (payload.establecimiento_id) {
+            // Asegurar que establecimiento_id sea número o null
+            if (payload.establecimiento_id && payload.establecimiento_id !== '') {
                 payload.establecimiento_id = parseInt(payload.establecimiento_id);
+            } else {
+                payload.establecimiento_id = null;
             }
 
             if (modoEdicion) {
