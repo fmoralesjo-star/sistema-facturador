@@ -37,7 +37,8 @@ export class PuntosVentaService {
         try {
             return await this.puntoVentaRepository.find({
                 order: { nombre: 'ASC' },
-                where: { activo: true }
+                where: { activo: true },
+                relations: ['establecimiento']
             });
         } catch (error) {
             console.error('Error en findAll puntos de venta:', error);
@@ -50,7 +51,10 @@ export class PuntosVentaService {
     }
 
     async findOne(id: number) {
-        const puntoVenta = await this.puntoVentaRepository.findOne({ where: { id } });
+        const puntoVenta = await this.puntoVentaRepository.findOne({
+            where: { id },
+            relations: ['establecimiento']
+        });
         if (!puntoVenta) {
             throw new NotFoundException(`Punto de Venta con ID ${id} no encontrado`);
         }
