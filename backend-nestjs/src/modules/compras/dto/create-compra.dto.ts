@@ -61,6 +61,10 @@ export class CreateCompraDto {
   @IsOptional()
   @IsNumber()
   punto_venta_id?: number;
+
+  @IsOptional()
+  @IsDateString()
+  fecha_vencimiento?: string;
 }
 
 

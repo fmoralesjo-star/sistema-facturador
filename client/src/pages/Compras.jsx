@@ -454,6 +454,7 @@ function Compras({ socket }) {
         numero: formData.numero_comprobante,
         autorizacion: formData.autorizacion, // Enviar al backend
         fecha: formData.fecha_compra,
+        fecha_vencimiento: formData.fecha_vencimiento,
         proveedor_id: formData.proveedor_id ? parseInt(formData.proveedor_id) : null,
         punto_venta_id: puntoVentaSeleccionado?.id || null,
         detalles: formData.detalles.map(d => ({
@@ -845,7 +846,18 @@ function Compras({ socket }) {
                       <input
                         type="date"
                         value={formData.fecha_compra}
-                        onChange={(e) => setFormData({ ...formData, fecha_compra: e.target.value })}
+                        onChange={(e) => {
+                          const nuevaFecha = e.target.value;
+                          const plazo = formData.plazo || '0';
+                          const fechaBase = new Date(nuevaFecha);
+                          fechaBase.setDate(fechaBase.getDate() + parseInt(plazo)); // Recalcular vencimiento al cambiar fecha compra
+
+                          setFormData({
+                            ...formData,
+                            fecha_compra: nuevaFecha,
+                            fecha_vencimiento: fechaBase.toISOString().split('T')[0]
+                          });
+                        }}
                         required
                       />
                     </div>
@@ -859,11 +871,43 @@ function Compras({ socket }) {
                       />
                     </div>
                     <div className="form-group">
+                      <label>Términos de Pago</label>
+                      <select
+                        value={formData.plazo || '0'}
+                        onChange={(e) => {
+                          const plazo = e.target.value;
+                          const fechaBase = new Date(formData.fecha_compra);
+                          // Sumar días (ojo con zona horaria, simple cálculo de días)
+                          fechaBase.setDate(fechaBase.getDate() + parseInt(plazo) + 1); // +1 corrección por timezone local
+
+                          setFormData({
+                            ...formData,
+                            plazo: plazo,
+                            forma_pago: plazo === '0' ? 'Contado' : 'Crédito',
+                            fecha_vencimiento: fechaBase.toISOString().split('T')[0]
+                          });
+                        }}
+                        style={{ fontWeight: 'bold', color: formData.plazo !== '0' ? '#d97706' : '#059669' }}
+                      >
+                        <option value="0">Contado (Inmediato)</option>
+                        <option value="15">Crédito 15 días</option>
+                        <option value="30">Crédito 30 días</option>
+                        <option value="45">Crédito 45 días</option>
+                        <option value="60">Crédito 60 días</option>
+                        <option value="90">Crédito 90 días</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
                       <label>Fecha de Vencto.</label>
                       <input
                         type="date"
                         value={formData.fecha_vencimiento}
                         onChange={(e) => setFormData({ ...formData, fecha_vencimiento: e.target.value })}
+                        style={{
+                          backgroundColor: formData.plazo !== '0' ? '#fffbeb' : '#f0fdf4',
+                          borderColor: formData.plazo !== '0' ? '#f59e0b' : '#22c55e'
+                        }}
+                        required
                       />
                     </div>
                   </div>
