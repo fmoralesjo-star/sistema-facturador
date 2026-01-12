@@ -4240,21 +4240,37 @@ Este enlace te permitirá actualizar tu información de contacto.`
             </div>
           </div>
 
-          {/* Grid Layout Principal */}
-          <div className="grid-layout" style={{ display: 'flex', gap: '8px', flex: 1, minHeight: 0, overflow: 'hidden' }}>
-
-            {/* Panel Lateral Izquierdo - Compacto */}
-            <div className="panel" style={{ width: '180px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '4px', padding: '4px' }}>
-              <div className="input-group">
-                <label>BUSCAR STOCK</label>
+          {/* Layout Lineal - Sin paneles laterales */}
+          <div className="factura-body-linear" style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            flex: 1,
+            minHeight: 0,
+            overflow: 'hidden'
+          }}>
+            {/* Barra de Búsqueda Horizontal (Compacta) */}
+            <div style={{
+              display: 'flex',
+              gap: '10px',
+              padding: '8px',
+              background: '#f8fafc',
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0',
+              alignItems: 'center'
+            }}>
+              <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', whiteSpace: 'nowrap' }}>🔍 BUSCAR STOCK:</label>
                 <input
                   type="text"
                   value={facturaData.claveAcceso || ''}
                   onChange={(e) => handleFacturaDataChange('claveAcceso', e.target.value)}
+                  style={{ flex: 1, padding: '4px 8px', fontSize: '12px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
+                  placeholder="Código o descripción..."
                 />
               </div>
-              <div className="input-group">
-                <label>Cliente / Razón Social</label>
+              <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', whiteSpace: 'nowrap' }}>👤 CLIENTE:</label>
                 <select
                   value={facturaData.clienteRucCedula || ''}
                   onChange={(e) => {
@@ -4271,6 +4287,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
                       setClienteId(clienteSeleccionado.id)
                     }
                   }}
+                  style={{ flex: 1, padding: '4px', fontSize: '12px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
                 >
                   <option value="">Seleccione Cliente...</option>
                   {clientes.map(cliente => (
@@ -4280,9 +4297,9 @@ Este enlace te permitirá actualizar tu información de contacto.`
                   ))}
                 </select>
               </div>
-              <div className="input-group">
-                <label>Productos / Servicios</label>
-                <select>
+              <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', whiteSpace: 'nowrap' }}>📦 PRODUCTO:</label>
+                <select style={{ flex: 1, padding: '4px', fontSize: '12px', border: '1px solid #cbd5e1', borderRadius: '4px' }}>
                   <option>Añadir a la lista...</option>
                 </select>
               </div>
@@ -4449,14 +4466,14 @@ Este enlace te permitirá actualizar tu información de contacto.`
                 onClick={agregarFila}
                 style={{
                   marginTop: '4px',
-                  padding: '4px 8px',
+                  padding: '4px 12px',
                   cursor: 'pointer',
                   background: 'var(--azul-electrico)',
                   color: 'white',
                   border: 'none',
                   borderRadius: '4px',
                   fontWeight: 'bold',
-                  fontSize: '10px',
+                  fontSize: '11px',
                   alignSelf: 'flex-start',
                   flexShrink: 0,
                   boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
@@ -4466,77 +4483,106 @@ Este enlace te permitirá actualizar tu información de contacto.`
               </button>
             </div>
 
+            {/* Sección Inferior: Totales y Pagos (A continuación del grid) */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              gap: '20px',
+              padding: '10px 0',
+              borderTop: '1px solid #e2e8f0'
+            }}>
+              {/* Parte Izquierda: Total en letras y Lista de Pagos */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ backgroundColor: '#fff3cd', border: '1px solid #ffc107', borderRadius: '4px', padding: '6px 12px', fontSize: '13px', fontWeight: 'bold', color: '#856404' }}>
+                  SON: {totales.totalLetras}
+                </div>
 
-
-            {/* Panel Totales (Reubicado) - Compacto */}
-            <div className="panel" style={{ width: '250px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '4px', padding: '4px' }}>
-              <div style={{
-                backgroundColor: 'white',
-                padding: '8px',
-                borderRadius: '8px',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                border: '1px solid #e5e7eb',
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'flex-start',
-                minHeight: 0
-              }}>
-                <h3 style={{
-                  margin: '0 0 10px 0',
-                  fontSize: '14px',
-                  color: '#111827',
-                  fontWeight: '700',
-                  borderBottom: '2px solid #f3f4f6',
-                  paddingBottom: '8px',
-                  textAlign: 'left'
-                }}>
-                  Resumen de Pago
-                </h3>
-
-                <div className="totales-list" style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '16px',
-                  ...(esNotaCredito ? { backgroundColor: '#fee2e2', border: '1px solid #dc2626', borderRadius: '4px', padding: '8px' } : {})
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px' }}>
-                    <span style={{ color: '#6b7280', fontWeight: '500' }}>Subtotal</span>
-                    <span id="subtotal" style={{ fontWeight: '600', color: '#111827' }}>
-                      ${totales.subtotal.toFixed(2)}
-                    </span>
+                {listaPagos.length > 0 && (
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {listaPagos.map(pago => (
+                      <div key={pago.id} style={{
+                        backgroundColor: '#f1f5f9',
+                        padding: '4px 10px',
+                        borderRadius: '20px',
+                        fontSize: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        border: '1px solid #cbd5e1'
+                      }}>
+                        <span style={{ fontWeight: 'bold', color: '#1e40af' }}>{pago.tipo === 'TARJETA' ? '💳' : pago.tipo === 'EFECTIVO' ? '💵' : '🏦'} {pago.tipo}:</span>
+                        <span style={{ fontWeight: 'bold' }}>${pago.monto.toFixed(2)}</span>
+                        <button
+                          onClick={() => setListaPagos(listaPagos.filter(p => p.id !== pago.id))}
+                          style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px' }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
                   </div>
+                )}
+                <div style={{ fontSize: '14px', fontWeight: 'bold', color: (totales.total - listaPagos.reduce((a, b) => a + b.monto, 0) - totales.retenciones) > 0.01 ? '#ef4444' : '#10b981' }}>
+                  Saldo Restante: ${(totales.total - listaPagos.reduce((a, b) => a + b.monto, 0) - totales.retenciones).toFixed(2)}
+                </div>
+              </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px' }}>
-                    <span style={{ color: '#6b7280', fontWeight: '500' }}>IVA ({configuracion.ivaPorcentaje}%)</span>
-                    <span id="iva" style={{ fontWeight: '600', color: '#111827' }}>
-                      ${totales.iva.toFixed(2)}
-                    </span>
+              {/* Parte Derecha: Resumen de Totales y Botones de Pago */}
+              <div style={{ width: '350px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{
+                  backgroundColor: 'white',
+                  padding: '12px',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                  border: '1px solid #e2e8f0'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '14px' }}>
+                    <span style={{ color: '#64748b' }}>Subtotal:</span>
+                    <span style={{ fontWeight: 'bold' }}>${totales.subtotal.toFixed(2)}</span>
                   </div>
-
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '14px' }}>
+                    <span style={{ color: '#64748b' }}>IVA ({configuracion.ivaPorcentaje}%):</span>
+                    <span style={{ fontWeight: 'bold' }}>${totales.iva.toFixed(2)}</span>
+                  </div>
                   {totales.retenciones > 0 && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px' }}>
-                      <span style={{ color: '#dc2626', fontWeight: '500' }}>Retenciones</span>
-                      <span style={{ fontWeight: '600', color: '#dc2626' }}>
-                        -${totales.retenciones.toFixed(2)}
-                      </span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '14px', color: '#ef4444' }}>
+                      <span>Retenciones:</span>
+                      <span style={{ fontWeight: 'bold' }}>-${totales.retenciones.toFixed(2)}</span>
                     </div>
                   )}
-
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginTop: '8px',
-                    paddingTop: '16px',
-                    borderTop: '2px dashed #e5e7eb'
-                  }}>
-                    <span style={{ color: '#111827', fontWeight: '700', fontSize: '16px' }}>TOTAL</span>
-                    <span id="totalFinal" style={{ color: '#2563eb', fontWeight: '800', fontSize: '24px' }}>
-                      ${totales.total.toFixed(2)}
-                    </span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', paddingTop: '6px', borderTop: '2px solid #f1f5f9' }}>
+                    <span style={{ fontWeight: '900', fontSize: '18px', color: '#1e293b' }}>TOTAL:</span>
+                    <span style={{ fontWeight: '900', fontSize: '24px', color: '#2563eb' }}>${totales.total.toFixed(2)}</span>
                   </div>
                 </div>
+
+                {/* Botones de Pago Compactos a continuación del Totales */}
+                <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                  <button type="button" onClick={() => seleccionarTipoPago('EFECTIVO')} style={{ flex: 1, padding: '6px', fontSize: '12px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#667eea', color: 'white', cursor: 'pointer' }}>💵 Efectivo</button>
+                  <button type="button" onClick={() => seleccionarTipoPago('TARJETAS')} style={{ flex: 1, padding: '6px', fontSize: '12px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#667eea', color: 'white', cursor: 'pointer' }}>💳 Tarjeta</button>
+                  <button type="button" onClick={() => seleccionarTipoPago('TRANSFERENCIA')} style={{ flex: 1, padding: '6px', fontSize: '12px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#667eea', color: 'white', cursor: 'pointer' }}>🏦 Transf.</button>
+                  <button type="button" onClick={() => { seleccionarTipoPago('RETENCIONES'); setMostrarModalRetencion(true); }} style={{ flex: 1, padding: '6px', fontSize: '12px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#667eea', color: 'white', cursor: 'pointer' }}>📋 Reten.</button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleGuardarFactura(true)}
+                  style={{
+                    padding: '12px',
+                    fontSize: '16px',
+                    fontWeight: '900',
+                    color: '#ffffff',
+                    backgroundColor: '#2563eb',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    width: '100%',
+                    boxShadow: '0 4px 10px rgba(37, 99, 235, 0.4)'
+                  }}
+                >
+                  💾 GUARDAR E IMPRIMIR
+                </button>
               </div>
             </div>
           </div>
@@ -6047,365 +6093,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
           </div>
         </div>
 
-        {/* Footer con totales - VISIBLE (Nuevo diseño) */}
-        <footer className="footer-visible" style={{
-          backgroundColor: '#ffffff',
-          borderTop: '1px solid #e5e7eb',
-          boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
-          padding: '4px 15px',
-          marginTop: 'auto',
-          position: 'relative',
-          zIndex: 50,
-          flexShrink: 0
-        }}>
-          <div className="footer-content-wrapper" style={{
-            display: 'flex',
-            gap: '20px',
-            alignItems: 'flex-start',
-            justifyContent: 'space-between'
-          }}>
-            <div style={{ flex: '1', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <div className="letras-container" id="totalLetras" style={{ backgroundColor: '#fff3cd', border: '1px solid #ffc107', borderRadius: '4px', padding: '4px 8px', fontSize: '12px' }}>
-                {totales.totalLetras}
-              </div>
 
-              {/* Lista de Pagos Agregados */}
-              {listaPagos.length > 0 && (
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
-                  {listaPagos.map(pago => (
-                    <div key={pago.id} style={{
-                      backgroundColor: '#e0e7ff',
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      fontSize: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      border: '1px solid #c7d2fe'
-                    }}>
-                      <span style={{ fontWeight: 'bold' }}>{pago.tipo === 'TARJETA' ? '💳' : pago.tipo === 'EFECTIVO' ? '💵' : '🏦'} {pago.tipo}:</span>
-                      <span>${pago.monto.toFixed(2)}</span>
-                      <button
-                        onClick={() => setListaPagos(listaPagos.filter(p => p.id !== pago.id))}
-                        style={{ border: 'none', background: 'transparent', color: 'red', cursor: 'pointer', fontWeight: 'bold', marginLeft: '4px' }}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                  <div style={{
-                    padding: '4px 8px',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    color: (totales.total - listaPagos.reduce((a, b) => a + b.monto, 0) - totales.retenciones) > 0.01 ? 'red' : 'green'
-                  }}>
-                    Restante: ${(totales.total - listaPagos.reduce((a, b) => a + b.monto, 0) - totales.retenciones).toFixed(2)}
-                  </div>
-                </div>
-              )}
-
-              {/* Botones de Pago / Acciones Proforma */}
-              <div style={{
-                display: 'flex',
-                gap: '8px',
-                flexWrap: 'wrap',
-                alignItems: 'center',
-                padding: '8px',
-                backgroundColor: esProforma ? '#f3e8ff' : '#eff6ff',
-                borderRadius: '6px',
-                border: esProforma ? '1px solid #d8b4fe' : '1px solid #bfdbfe'
-              }}>
-                {esProforma ? (
-                  <>
-                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#6b21a8', marginRight: '4px' }}>ACCIONES PROFORMA:</span>
-                    <button
-                      type="button"
-                      onClick={handleGuardarProforma}
-                      className="no-print"
-                      style={{
-                        padding: '8px 20px',
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        color: '#ffffff',
-                        backgroundColor: '#9333ea',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px'
-                      }}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#7e22ce'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = '#9333ea'}
-                    >
-                      💾 GUARDAR PROFORMA
-                    </button>
-                  </>
-                ) : (
-                  <>
-
-                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#1e40af', marginRight: '4px' }}>PAGO:</span>
-                    <button
-                      type="button"
-                      onClick={() => seleccionarTipoPago('TARJETAS')}
-                      className="no-print"
-                      style={{
-                        padding: '6px 12px',
-                        fontSize: '14px',
-                        fontWeight: 'bold',
-                        color: '#ffffff',
-                        backgroundColor: facturaData.metodoPago === 'TARJETA' ? '#10b981' : '#667eea',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (facturaData.metodoPago !== 'TARJETA') {
-                          e.target.style.backgroundColor = '#5568d3'
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (facturaData.metodoPago !== 'TARJETA') {
-                          e.target.style.backgroundColor = '#667eea'
-                        }
-                      }}
-                      title="Pago con Tarjeta"
-                    >
-                      💳 Tarjetas
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => seleccionarTipoPago('EFECTIVO')}
-                      className="no-print"
-                      style={{
-                        padding: '6px 12px',
-                        fontSize: '14px',
-                        fontWeight: 'bold',
-                        color: '#ffffff',
-                        backgroundColor: facturaData.metodoPago === 'EFECTIVO' ? '#10b981' : '#667eea',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (facturaData.metodoPago !== 'EFECTIVO') {
-                          e.target.style.backgroundColor = '#5568d3'
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (facturaData.metodoPago !== 'EFECTIVO') {
-                          e.target.style.backgroundColor = '#667eea'
-                        }
-                      }}
-                      title="Pago en Efectivo"
-                    >
-                      💵 Efectivo
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        seleccionarTipoPago('RETENCIONES')
-                        setMostrarModalRetencion(true)
-                      }}
-                      className="no-print"
-                      style={{
-                        padding: '6px 12px',
-                        fontSize: '14px',
-                        fontWeight: 'bold',
-                        color: '#ffffff',
-                        backgroundColor: facturaData.metodoPago === 'RETENCION' ? '#10b981' : '#667eea',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (facturaData.metodoPago !== 'RETENCION') {
-                          e.target.style.backgroundColor = '#5568d3'
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (facturaData.metodoPago !== 'RETENCION') {
-                          e.target.style.backgroundColor = '#667eea'
-                        }
-                      }}
-                      title="Retenciones"
-                    >
-                      📋 Retenciones
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => seleccionarTipoPago('TRANSFERENCIA')}
-                      className="no-print"
-                      style={{
-                        padding: '6px 12px',
-                        fontSize: '14px',
-                        fontWeight: 'bold',
-                        color: '#ffffff',
-                        backgroundColor: facturaData.metodoPago === 'TRANSFERENCIA' ? '#10b981' : '#667eea',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (facturaData.metodoPago !== 'TRANSFERENCIA') {
-                          e.target.style.backgroundColor = '#5568d3'
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (facturaData.metodoPago !== 'TRANSFERENCIA') {
-                          e.target.style.backgroundColor = '#667eea'
-                        }
-                      }}
-                      title="Transferencia"
-                    >
-                      🏦 Transferencia
-                    </button>
-                    <button
-                      type="button"
-                      onClick={generarLinkPago}
-                      disabled={generandoLinkPago}
-                      className="no-print"
-                      style={{
-                        padding: '6px 12px',
-                        fontSize: '14px',
-                        fontWeight: 'bold',
-                        color: '#ffffff',
-                        backgroundColor: generandoLinkPago ? '#9ca3af' : '#f59e0b',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: generandoLinkPago ? 'not-allowed' : 'pointer',
-                        transition: 'all 0.2s',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        opacity: generandoLinkPago ? 0.6 : 1
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!generandoLinkPago) {
-                          e.target.style.backgroundColor = '#d97706'
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!generandoLinkPago) {
-                          e.target.style.backgroundColor = '#f59e0b'
-                        }
-                      }}
-                      title="Generar Link de Pago"
-                    >
-                      {generandoLinkPago ? '⏳ Generando...' : '🔗 Link de Pago'}
-                    </button>
-                    {mostrarLinkPago && linkPago && (
-                      <div style={{
-                        padding: '2px 4px',
-                        backgroundColor: '#d1fae5',
-                        border: '1px solid #10b981',
-                        borderRadius: '3px',
-                        fontSize: '8px',
-                        color: '#065f46',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '2px',
-                        maxWidth: '150px'
-                      }}>
-                        <input
-                          type="text"
-                          value={linkPago}
-                          readOnly
-                          style={{
-                            flex: 1,
-                            padding: '1px 2px',
-                            fontSize: '8px',
-                            border: '1px solid #10b981',
-                            borderRadius: '2px',
-                            backgroundColor: '#ffffff',
-                            color: '#065f46',
-                            width: '100px'
-                          }}
-                          onClick={(e) => e.target.select()}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            navigator.clipboard.writeText(linkPago)
-                            alert('Link copiado')
-                          }}
-                          style={{
-                            padding: '1px 2px',
-                            fontSize: '8px',
-                            backgroundColor: '#10b981',
-                            color: '#ffffff',
-                            border: 'none',
-                            borderRadius: '2px',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          📋
-                        </button>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => handleGuardarFactura(true)}
-                className="no-print"
-                style={{
-                  marginTop: '0px',
-                  marginBottom: '10px',
-                  padding: '8px 16px',
-                  fontSize: '14px',
-                  fontWeight: 'bold',
-                  color: '#ffffff',
-                  backgroundColor: '#2563eb',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  width: '100%'
-                }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
-                title="Guardar y Firmar Factura"
-              >
-                💾 GUARDAR E IMPRIMIR
-              </button>
-
-
-            </div>
-
-
-          </div>
-        </footer>
 
         {/* Sección Contabilidad */}
         <div className="seccion-sri">
