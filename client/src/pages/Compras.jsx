@@ -299,6 +299,53 @@ function Compras({ socket }) {
     }
   }
 
+  // Función para consultar RUC manual (Botón Consultar)
+  const handleConsultarRuc = async () => {
+    const ruc = proveedorSeleccionado.codigo;
+    if (!ruc) return alert('Ingrese un RUC o Cédula');
+
+    setCargandoSRI(true);
+    try {
+      // 1. Buscar Localmente Primero (Exhaustivo)
+      const local = proveedores.find(p => p.codigo === ruc || p.identificacion === ruc);
+      if (local) {
+        setProveedorSeleccionado(local);
+        setFormData(prev => ({ ...prev, proveedor_id: local.id }));
+        alert('Proveedor encontrado en base de datos local.');
+        setCargandoSRI(false);
+        return;
+      }
+
+      // 2. Si no esta local, intentar "External API" (Simulado/Backend Mock)
+      // En un caso real llamaríamos a `${API_URL}/sri/contribuyente/${ruc}`
+      // Aquí simulamos una respuesta positiva para demo UX
+      await new Promise(r => setTimeout(r, 800)); // Simular network latency
+
+      // Lógica simple de simulación para validar UX
+      if (ruc.length === 13 && ruc.endsWith('001')) {
+        const nuevoProv = {
+          codigo: ruc,
+          nombre: `PROVEEDOR NUEVO S.A. (Simulado)`,
+          direccion: 'AV. AMAZONAS Y NACIONES UNIDAS',
+          numero_registro: 'Contribuyente Especial',
+          nit: '',
+          origen: 'Local',
+          identificacion: ruc
+        };
+        setProveedorSeleccionado(nuevoProv);
+        alert('Datos obtenidos del SRI (Simulación). Verifique y guarde.');
+      } else {
+        alert('No se encontraron datos automáticos para este documento. Ingrese manualmente.');
+      }
+
+    } catch (error) {
+      console.error(error);
+      alert('Error de conexión con el servicio de consulta.');
+    } finally {
+      setCargandoSRI(false);
+    }
+  }
+
   const cargarCompras = async () => {
     try {
       const res = await axios.get(`${API_URL}/compras`)
@@ -915,19 +962,47 @@ function Compras({ socket }) {
                   <div className="proveedor-section">
                     <div className="form-row-proveedor">
                       <div className="form-group">
-                        <label>Cód. del proveedor</label>
-                        <div className="input-with-icon">
-                          <input
-                            type="text"
-                            value={proveedorSeleccionado.codigo}
-                            onChange={(e) => {
-                              setProveedorSeleccionado({ ...proveedorSeleccionado, codigo: e.target.value })
-                              if (e.target.value) {
-                                buscarProveedor(e.target.value)
-                              }
+                        <label>Cód. del proveedor (RUC/Cédula)</label>
+                        <div style={{ display: 'flex', gap: '5px' }}>
+                          <div className="input-with-icon" style={{ flex: 1 }}>
+                            <input
+                              type="text"
+                              value={proveedorSeleccionado.codigo}
+                              onChange={(e) => {
+                                setProveedorSeleccionado({ ...proveedorSeleccionado, codigo: e.target.value })
+                                if (e.target.value) {
+                                  buscarProveedor(e.target.value)
+                                }
+                              }}
+                              placeholder="Ingrese RUC o Cédula"
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  handleConsultarRuc();
+                                }
+                              }}
+                            />
+                            <span className="icon-search">🔍</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={handleConsultarRuc}
+                            className="btn-consultar-ruc"
+                            title="Consultar en Base de Datos Local y SRI"
+                            disabled={cargandoSRI}
+                            style={{
+                              backgroundColor: '#3b82f6',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              padding: '0 10px',
+                              cursor: 'pointer',
+                              fontWeight: 'bold',
+                              fontSize: '0.8rem'
                             }}
-                          />
-                          <span className="icon-search">🔍</span>
+                          >
+                            {cargandoSRI ? '...' : 'CONSULTAR'}
+                          </button>
                         </div>
                       </div>
                       <div className="form-group">
