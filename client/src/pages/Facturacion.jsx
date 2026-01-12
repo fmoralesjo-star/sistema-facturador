@@ -2082,20 +2082,23 @@ Este enlace te permitirá actualizar tu información de contacto.`
         <div style={{
           backgroundColor: esProforma ? '#9333ea' : esNotaCredito ? '#dc2626' : '#2563eb', // Morado, Rojo, Azul
           color: 'white',
-          padding: '12px',
-          textAlign: 'center',
+          padding: '12px 20px',
+          textAlign: 'right',
           fontWeight: '900',
-          fontSize: '18px',
-          letterSpacing: '2px',
+          fontSize: '16px',
+          letterSpacing: '1px',
           textTransform: 'uppercase',
           boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
           display: 'flex',
-          justifyContent: 'center',
+          justifyContent: 'flex-end',
           alignItems: 'center',
           gap: '10px',
-          position: 'relative'
+          position: 'relative',
+          height: '45px', // Altura fija para mayor orden
+          boxSizing: 'border-box'
         }}>
           <div style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', display: 'flex', gap: '8px', alignItems: 'center', zIndex: 10 }}>
+            {/* Botón Inicio */}
             <button
               type="button"
               onClick={() => navigate('/')}
@@ -2106,7 +2109,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
                 color: 'white',
                 border: '1px solid rgba(255, 255, 255, 0.4)',
                 borderRadius: '6px',
-                padding: '4px 12px',
+                padding: '4px 10px',
                 fontSize: '11px',
                 cursor: 'pointer',
                 fontWeight: 'bold',
@@ -2121,29 +2124,43 @@ Este enlace te permitirá actualizar tu información de contacto.`
               🏠 INICIO
             </button>
 
-            {/* Botones de Acción en Franja Azul */}
+            {/* Botones de Acción */}
             <div className="no-print" style={{ display: 'flex', gap: '4px', borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '8px' }}>
-              <button onClick={handleNuevaFactura} style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '10px', cursor: 'pointer' }}>➕ NUEVA</button>
+              <button onClick={handleNuevaFactura} style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}>➕ NUEVA</button>
               <button
                 onClick={() => setEsProforma(!esProforma)}
-                style={{ padding: '4px 10px', background: esProforma ? '#dc2626' : 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '10px', cursor: 'pointer' }}
+                style={{ padding: '4px 8px', background: esProforma ? '#dc2626' : 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}
               >
                 {esProforma ? "✖ CANCELAR" : "📝 COTIZAR"}
               </button>
-              <button onClick={handleCierreCaja} style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '10px', cursor: 'pointer' }}>💰 CIERRE</button>
-              <button onClick={() => setMostrarBuscarFacturasModal(true)} style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '10px', cursor: 'pointer' }}>🔍 BUSCAR</button>
-              <button onClick={() => setMostrarCajaChicaModal(true)} style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '10px', cursor: 'pointer' }}>💸 GASTOS</button>
-              <button onClick={handleCambiarPuntoVenta} style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '10px', cursor: 'pointer' }}>🔄 PV</button>
+              <button
+                onClick={() => {
+                  const nuevoTipo = facturaData.tipoComprobante === '04' ? '01' : '04';
+                  handleFacturaDataChange('tipoComprobante', nuevoTipo);
+                  if (nuevoTipo === '04' && facturaData.clienteRucCedula) {
+                    buscarFacturasCliente();
+                  }
+                }}
+                style={{ padding: '4px 8px', background: facturaData.tipoComprobante === '04' ? '#dc2626' : 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}
+              >
+                {facturaData.tipoComprobante === '04' ? "✖ CANCELAR NC" : "📑 NOTA CRÉDITO"}
+              </button>
+              <button onClick={handleCierreCaja} style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}>💰 CIERRE</button>
+              <button onClick={() => setMostrarBuscarFacturasModal(true)} style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}>🔍 BUSCAR</button>
+              <button onClick={() => setMostrarCajaChicaModal(true)} style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}>💸 GASTOS</button>
+              <button onClick={handleCambiarPuntoVenta} style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}>🔄 PV</button>
             </div>
           </div>
 
-          {esProforma ? (
-            <>📝 MODO: COTIZACIÓN / PROFORMA</>
-          ) : esNotaCredito ? (
-            <>📑 MODO: NOTA DE CRÉDITO</>
-          ) : (
-            <>📄 MODO: FACTURACIÓN ELECTRÓNICA</>
-          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            {esProforma ? (
+              <>📝 COTIZACIÓN</>
+            ) : esNotaCredito ? (
+              <>📑 NOTA DE CRÉDITO</>
+            ) : (
+              <>📄 FACTURACIÓN ELECTRÓNICA</>
+            )}
+          </div>
         </div>
         {/* Modal de confirmación para nueva factura */}
         {mostrarConfirmarNuevaFactura && (
