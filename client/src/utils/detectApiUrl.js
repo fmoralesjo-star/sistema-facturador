@@ -4,6 +4,7 @@
 // URL del backend en Cloud Run (producción)
 // URL del backend en Render (producción)
 const RENDER_BACKEND_URL = 'https://sistema-facturador-ln63.onrender.com/api';
+const RENDER_BACKEND_ALT = 'https://sistema-facturador.onrender.com/api';
 
 export function detectApiUrl() {
   // 1. PRIORIDAD MÁXIMA: Variable de entorno configurada
@@ -40,6 +41,10 @@ export function detectApiUrl() {
     // Si no, avisar que falta configuración
     console.warn('⚠️ Desplegado en Render pero VITE_API_URL no configurada');
     console.warn('   Usando Render Backend como fallback:', prodUrl);
+    // Intento de usar la URL alternativa si estamos en el dominio alternativo (auto-detect)
+    if (currentHost.includes('sistema-facturador.onrender.com')) {
+      return RENDER_BACKEND_ALT;
+    }
   }
 
   console.log('🌐 Modo producción detectado, usando:', prodUrl);
