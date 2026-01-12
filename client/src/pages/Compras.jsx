@@ -516,6 +516,7 @@ function Compras({ socket }) {
         proveedor_id: formData.proveedor_id ? parseInt(formData.proveedor_id) : null,
         punto_venta_id: puntoVentaSeleccionado?.id || null,
         sustento_tributario: formData.sustento_tributario || '01',
+        centro_costo: formData.centro_costo || 'ADMINISTRACION',
         detalles: formData.detalles.map(d => ({
           producto_id: d.producto_id,
           cantidad: d.cantidad,
@@ -1099,6 +1100,19 @@ function Compras({ socket }) {
                         </select>
                       </div>
                       <div className="form-group">
+                        <label>Centro de Costo</label>
+                        <select
+                          value={formData.centro_costo || 'ADMINISTRACION'}
+                          onChange={(e) => setFormData({ ...formData, centro_costo: e.target.value })}
+                        >
+                          <option value="ADMINISTRACION">Administración</option>
+                          <option value="VENTAS">Ventas / Comercial</option>
+                          <option value="PRODUCCION">Producción / Operativo</option>
+                          <option value="FINANCIERO">Financiero</option>
+                          <option value="OTROS">Otros</option>
+                        </select>
+                      </div>
+                      <div className="form-group">
                         <label>Forma de pago</label>
                         <select
                           value={formData.forma_pago}
@@ -1381,109 +1395,522 @@ function Compras({ socket }) {
             )
           }
         </>
-      )}
+      )
+      }
 
       {/* Tab Retenciones */}
-      {tabActiva === 'retenciones' && (
-        <div className="retenciones-container">
-          <div style={{ marginBottom: '20px' }}>
-            <h2 style={{ marginBottom: '15px' }}>📋 Comprobantes de Retención Emitidos</h2>
+      {
+        tabActiva === 'retenciones' && (
+          <div className="retenciones-container">
+            <div style={{ marginBottom: '20px' }}>
+              <h2 style={{ marginBottom: '15px' }}>📋 Comprobantes de Retención Emitidos</h2>
 
-            {/* Filtros */}
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '15px', flexWrap: 'wrap' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Desde:</label>
-                <input
-                  type="date"
-                  value={filtroFechaDesde}
-                  onChange={(e) => setFiltroFechaDesde(e.target.value)}
-                  style={{ padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
-                />
+              {/* Filtros */}
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '15px', flexWrap: 'wrap' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Desde:</label>
+                  <input
+                    type="date"
+                    value={filtroFechaDesde}
+                    onChange={(e) => setFiltroFechaDesde(e.target.value)}
+                    style={{ padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Hasta:</label>
+                  <input
+                    type="date"
+                    value={filtroFechaHasta}
+                    onChange={(e) => setFiltroFechaHasta(e.target.value)}
+                    style={{ padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Estado:</label>
+                  <select
+                    value={filtroEstado}
+                    onChange={(e) => setFiltroEstado(e.target.value)}
+                    style={{ padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
+                  >
+                    <option value="">Todos</option>
+                    <option value="AUTORIZADA">Autorizadas</option>
+                    <option value="PENDIENTE">Pendientes</option>
+                    <option value="ANULADA">Anuladas</option>
+                  </select>
+                </div>
               </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Hasta:</label>
-                <input
-                  type="date"
-                  value={filtroFechaHasta}
-                  onChange={(e) => setFiltroFechaHasta(e.target.value)}
-                  style={{ padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Estado:</label>
-                <select
-                  value={filtroEstado}
-                  onChange={(e) => setFiltroEstado(e.target.value)}
-                  style={{ padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
-                >
-                  <option value="">Todos</option>
-                  <option value="AUTORIZADA">Autorizadas</option>
-                  <option value="PENDIENTE">Pendientes</option>
-                  <option value="ANULADA">Anuladas</option>
-                </select>
+
+              {/* Tabla de Retenciones */}
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', background: 'white' }}>
+                  <thead>
+                    <tr style={{ background: '#f9fafb' }}>
+                      <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Fecha</th>
+                      <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Número</th>
+                      <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Proveedor</th>
+                      <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Total Retenido</th>
+                      <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Estado</th>
+                      <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {retenciones.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
+                          No hay retenciones registradas
+                        </td>
+                      </tr>
+                    ) : (
+                      retenciones.map((ret) => (
+                        <tr key={ret.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                          <td style={{ padding: '12px' }}>{ret.fecha_emision?.split('T')[0]}</td>
+                          <td style={{ padding: '12px' }}>
+                            {ret.establecimiento}-{ret.punto_emision}-{ret.secuencial}
+                          </td>
+                          <td style={{ padding: '12px' }}>{ret.compra?.proveedor?.razon_social || 'N/A'}</td>
+                          <td style={{ padding: '12px' }}>{formatearMoneda(calcularTotalRetenido(ret))}</td>
+                          <td style={{ padding: '12px' }}>
+                            <span style={{
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              fontSize: '0.85rem',
+                              fontWeight: 500,
+                              background: ret.estado === 'AUTORIZADA' ? '#d1fae5' : ret.estado === 'ANULADA' ? '#fee2e2' : '#fef3c7',
+                              color: ret.estado === 'AUTORIZADA' ? '#065f46' : ret.estado === 'ANULADA' ? '#991b1b' : '#92400e'
+                            }}>
+                              {ret.estado}
+                            </span>
+                          </td>
+                          <td style={{ padding: '12px' }}>
+                            <div style={{ display: 'flex', gap: '5px' }}>
+                              <button
+                                onClick={() => verDetalleRetencion(ret)}
+                                style={{ padding: '5px 10px', fontSize: '0.85rem', cursor: 'pointer' }}
+                                title="Ver detalle"
+                              >
+                                👁️
+                              </button>
+                              <button
+                                onClick={() => descargarPDFRetencion(ret.id)}
+                                style={{ padding: '5px 10px', fontSize: '0.85rem', cursor: 'pointer' }}
+                                title="Descargar PDF"
+                              >
+                                🖨️
+                              </button>
+                              {ret.estado === 'AUTORIZADA' && (
+                                <button
+                                  onClick={() => anularRetencion(ret.id)}
+                                  style={{ padding: '5px 10px', fontSize: '0.85rem', cursor: 'pointer', background: '#fee2e2', color: '#991b1b' }}
+                                  title="Anular"
+                                >
+                                  ❌
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
+          </div>
+        )
+      }
 
-            {/* Tabla de Retenciones */}
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', background: 'white' }}>
+      {/* Modal Detalle Retención */}
+      {
+        mostrarDetalleRetencion && retencionSeleccionada && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}>
+            <div style={{
+              background: 'white',
+              borderRadius: '8px',
+              maxWidth: '800px',
+              maxHeight: '90vh',
+              overflow: 'auto',
+              padding: '20px'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                <h3>Detalle de Retención #{retencionSeleccionada.secuencial}</h3>
+                <button
+                  onClick={() => setMostrarDetalleRetencion(false)}
+                  style={{ background: '#ef4444', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  ✕ Cerrar
+                </button>
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <h4>Información General</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div><strong>Fecha Emisión:</strong> {retencionSeleccionada.fecha_emision?.split('T')[0]}</div>
+                  <div><strong>Estado:</strong> {retencionSeleccionada.estado}</div>
+                  <div><strong>Autorización:</strong> {retencionSeleccionada.numero_autorizacion || 'Pendiente'}</div>
+                  <div><strong>Proveedor:</strong> {retencionSeleccionada.compra?.proveedor?.razon_social}</div>
+                </div>
+              </div>
+
+              <div>
+                <h4>Detalle de Impuestos Retenidos</h4>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: '#f9fafb' }}>
+                      <th style={{ padding: '10px', textAlign: 'left' }}>Impuesto</th>
+                      <th style={{ padding: '10px', textAlign: 'left' }}>Código</th>
+                      <th style={{ padding: '10px', textAlign: 'right' }}>Base</th>
+                      <th style={{ padding: '10px', textAlign: 'right' }}>%</th>
+                      <th style={{ padding: '10px', textAlign: 'right' }}>Valor</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {retencionSeleccionada.detalles?.map((det, idx) => (
+                      <tr key={idx} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                        <td style={{ padding: '10px' }}>{det.codigo_impuesto === '1' ? 'Renta' : 'IVA'}</td>
+                        <td style={{ padding: '10px' }}>{det.codigo_retencion}</td>
+                        <td style={{ padding: '10px', textAlign: 'right' }}>{formatearMoneda(det.base_imponible)}</td>
+                        <td style={{ padding: '10px', textAlign: 'right' }}>{det.porcentaje_retener}%</td>
+                        <td style={{ padding: '10px', textAlign: 'right' }}>{formatearMoneda(det.valor_retenido)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr style={{ fontWeight: 'bold', background: '#f9fafb' }}>
+                      <td colSpan="4" style={{ padding: '10px', textAlign: 'right' }}>Total Retenido:</td>
+                      <td style={{ padding: '10px', textAlign: 'right' }}>{formatearMoneda(calcularTotalRetenido(retencionSeleccionada))}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <button
+                  onClick={() => descargarPDFRetencion(retencionSeleccionada.id)}
+                  style={{ padding: '10px 20px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  🖨️ Imprimir PDF
+                </button>
+                {retencionSeleccionada.estado === 'AUTORIZADA' && (
+                  <button
+                    onClick={() => anularRetencion(retencionSeleccionada.id)}
+                    style={{ padding: '10px 20px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                  >
+                    ❌ Anular Retención
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {/* Tab Liquidaciones de Compra */}
+      {
+        tabActiva === 'liquidaciones' && (
+          <div className="liquidaciones-container" style={{ padding: '20px' }}>
+            <h2 style={{ marginBottom: '20px' }}>📝 Emisión de Liquidación de Compra</h2>
+            <p style={{ color: '#6b7280', marginBottom: '20px' }}>
+              Para compras a personas naturales sin obligación de emitir comprobantes (artesanos, servicios ocasionales, agricultores)
+            </p>
+
+            <form onSubmit={handleSubmitLiquidacion} style={{ background: 'white', padding: '20px', borderRadius: '8px', marginBottom: '40px' }}>
+              {/* Datos del Proveedor */}
+              <div style={{ marginBottom: '30px' }}>
+                <h3 style={{ marginBottom: '15px', color: '#111827' }}>Datos del Proveedor (Persona Natural)</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Cédula / Identificación *</label>
+                    <input
+                      type="text"
+                      value={formLiquidacion.proveedor_identificacion}
+                      onChange={(e) => setFormLiquidacion({ ...formLiquidacion, proveedor_identificacion: e.target.value })}
+                      placeholder="1234567890"
+                      required
+                      style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Nombre Completo *</label>
+                    <input
+                      type="text"
+                      value={formLiquidacion.proveedor_nombre}
+                      onChange={(e) => setFormLiquidacion({ ...formLiquidacion, proveedor_nombre: e.target.value })}
+                      placeholder="Juan Pérez"
+                      required
+                      style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Dirección</label>
+                    <input
+                      type="text"
+                      value={formLiquidacion.proveedor_direccion}
+                      onChange={(e) => setFormLiquidacion({ ...formLiquidacion, proveedor_direccion: e.target.value })}
+                      placeholder="Calle Principal"
+                      style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Teléfono</label>
+                    <input
+                      type="text"
+                      value={formLiquidacion.proveedor_telefono}
+                      onChange={(e) => setFormLiquidacion({ ...formLiquidacion, proveedor_telefono: e.target.value })}
+                      placeholder="0987654321"
+                      style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Email</label>
+                    <input
+                      type="email"
+                      value={formLiquidacion.proveedor_email}
+                      onChange={(e) => setFormLiquidacion({ ...formLiquidacion, proveedor_email: e.target.value })}
+                      placeholder="correo@ejemplo.com"
+                      style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Fecha Emisión *</label>
+                    <input
+                      type="date"
+                      value={formLiquidacion.fecha_emision}
+                      onChange={(e) => setFormLiquidacion({ ...formLiquidacion, fecha_emision: e.target.value })}
+                      required
+                      style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Detalle de la Compra */}
+              <div style={{ marginBottom: '30px' }}>
+                <h3 style={{ marginBottom: '15px', color: '#111827' }}>Detalle de la Compra</h3>
+                <div style={{ marginBottom: '15px' }}>
+                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Concepto / Descripción *</label>
+                  <textarea
+                    rows="3"
+                    value={formLiquidacion.concepto}
+                    onChange={(e) => setFormLiquidacion({ ...formLiquidacion, concepto: e.target.value })}
+                    placeholder="Ej: Compra de productos agrícolas, Servicio de plomería, Trabajo artesanal, etc."
+                    required
+                    style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
+                  />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Subtotal Gravado 0%</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={formLiquidacion.subtotal_0}
+                      onChange={(e) => calcularTotalesLiquidacion('subtotal_0', parseFloat(e.target.value) || 0)}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Subtotal Gravado 12%</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={formLiquidacion.subtotal_12}
+                      onChange={(e) => calcularTotalesLiquidacion('subtotal_12', parseFloat(e.target.value) || 0)}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>IVA 12%</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={formLiquidacion.iva.toFixed(2)}
+                      readOnly
+                      style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px', background: '#f3f4f6' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500, color: '#059669' }}>Total</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={formLiquidacion.total.toFixed(2)}
+                      readOnly
+                      style={{ width: '100%', padding: '8px', border: '2px solid #059669', borderRadius: '4px', background: '#d1fae5', fontWeight: 'bold', fontSize: '1.1rem' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Retenciones (Opcional) */}
+              <div style={{ marginBottom: '30px', background: '#fef3c7', padding: '15px', borderRadius: '8px' }}>
+                <h3 style={{ marginBottom: '15px', color: '#92400e' }}>Retenciones (Opcional)</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Código Retención Renta</label>
+                    <select
+                      value={formLiquidacion.codigo_retencion_renta}
+                      onChange={(e) => setFormLiquidacion({ ...formLiquidacion, codigo_retencion_renta: e.target.value })}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
+                    >
+                      <option value="">Sin retención</option>
+                      <option value="303">303 - 1% Honorarios profesionales</option>
+                      <option value="304">304 - 2% Servicios</option>
+                      <option value="307">307 - 8% Arrendamiento inmuebles</option>
+                      <option value="319">319 - 1% Publicidad</option>
+                      <option value="320">320 - 1% Transporte privado</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Valor Retención Renta</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={formLiquidacion.retencion_renta}
+                      onChange={(e) => setFormLiquidacion({ ...formLiquidacion, retencion_renta: parseFloat(e.target.value) || 0 })}
+                      style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Observaciones */}
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Observaciones</label>
+                <textarea
+                  rows="2"
+                  value={formLiquidacion.observaciones}
+                  onChange={(e) => setFormLiquidacion({ ...formLiquidacion, observaciones: e.target.value })}
+                  placeholder="Notas adicionales..."
+                  style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                style={{
+                  padding: '12px 30px',
+                  background: '#3b82f6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+              >
+                Emitir Liquidación de Compra
+              </button>
+            </form>
+
+            {/* Listado de Liquidaciones Emitidas */}
+            <div style={{ background: 'white', padding: '20px', borderRadius: '8px' }}>
+              <h3 style={{ marginBottom: '20px' }}>Liquidaciones Emitidas</h3>
+
+              {/* Filtros */}
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '15px', flexWrap: 'wrap' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Desde:</label>
+                  <input
+                    type="date"
+                    value={filtroFechaDesde}
+                    onChange={(e) => setFiltroFechaDesde(e.target.value)}
+                    style={{ padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Hasta:</label>
+                  <input
+                    type="date"
+                    value={filtroFechaHasta}
+                    onChange={(e) => setFiltroFechaHasta(e.target.value)}
+                    style={{ padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Estado:</label>
+                  <select
+                    value={filtroEstado}
+                    onChange={(e) => setFiltroEstado(e.target.value)}
+                    style={{ padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
+                  >
+                    <option value="">Todos</option>
+                    <option value="PENDIENTE">Pendientes</option>
+                    <option value="AUTORIZADA">Autorizadas</option>
+                    <option value="ANULADA">Anuladas</option>
+                  </select>
+                </div>
+              </div>
+
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ background: '#f9fafb' }}>
                     <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Fecha</th>
                     <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Número</th>
                     <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Proveedor</th>
-                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Total Retenido</th>
+                    <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Concepto</th>
+                    <th style={{ padding: '12px', textAlign: 'right', borderBottom: '2px solid #e5e7eb' }}>Total</th>
                     <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Estado</th>
                     <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {retenciones.length === 0 ? (
+                  {liquidaciones.length === 0 ? (
                     <tr>
-                      <td colSpan="6" style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
-                        No hay retenciones registradas
+                      <td colSpan="7" style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
+                        No hay liquidaciones registradas
                       </td>
                     </tr>
                   ) : (
-                    retenciones.map((ret) => (
-                      <tr key={ret.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                        <td style={{ padding: '12px' }}>{ret.fecha_emision?.split('T')[0]}</td>
+                    liquidaciones.map((liq) => (
+                      <tr key={liq.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                        <td style={{ padding: '12px' }}>{liq.fecha_emision?.split('T')[0]}</td>
                         <td style={{ padding: '12px' }}>
-                          {ret.establecimiento}-{ret.punto_emision}-{ret.secuencial}
+                          {liq.establecimiento}-{liq.punto_emision}-{liq.secuencial}
                         </td>
-                        <td style={{ padding: '12px' }}>{ret.compra?.proveedor?.razon_social || 'N/A'}</td>
-                        <td style={{ padding: '12px' }}>{formatearMoneda(calcularTotalRetenido(ret))}</td>
+                        <td style={{ padding: '12px' }}>{liq.proveedor_nombre}</td>
+                        <td style={{ padding: '12px', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {liq.concepto}
+                        </td>
+                        <td style={{ padding: '12px', textAlign: 'right', fontWeight: 600 }}>
+                          {formatearMoneda(liq.total)}
+                        </td>
                         <td style={{ padding: '12px' }}>
                           <span style={{
                             padding: '4px 8px',
                             borderRadius: '4px',
                             fontSize: '0.85rem',
                             fontWeight: 500,
-                            background: ret.estado === 'AUTORIZADA' ? '#d1fae5' : ret.estado === 'ANULADA' ? '#fee2e2' : '#fef3c7',
-                            color: ret.estado === 'AUTORIZADA' ? '#065f46' : ret.estado === 'ANULADA' ? '#991b1b' : '#92400e'
+                            background: liq.estado === 'AUTORIZADA' ? '#d1fae5' : liq.estado === 'ANULADA' ? '#fee2e2' : '#fef3c7',
+                            color: liq.estado === 'AUTORIZADA' ? '#065f46' : liq.estado === 'ANULADA' ? '#991b1b' : '#92400e'
                           }}>
-                            {ret.estado}
+                            {liq.estado}
                           </span>
                         </td>
                         <td style={{ padding: '12px' }}>
                           <div style={{ display: 'flex', gap: '5px' }}>
                             <button
-                              onClick={() => verDetalleRetencion(ret)}
+                              onClick={() => alert('Detalle en desarrollo')}
                               style={{ padding: '5px 10px', fontSize: '0.85rem', cursor: 'pointer' }}
                               title="Ver detalle"
                             >
                               👁️
                             </button>
-                            <button
-                              onClick={() => descargarPDFRetencion(ret.id)}
-                              style={{ padding: '5px 10px', fontSize: '0.85rem', cursor: 'pointer' }}
-                              title="Descargar PDF"
-                            >
-                              🖨️
-                            </button>
-                            {ret.estado === 'AUTORIZADA' && (
+                            {liq.estado !== 'ANULADA' && (
                               <button
-                                onClick={() => anularRetencion(ret.id)}
+                                onClick={() => anularLiquidacion(liq.id)}
                                 style={{ padding: '5px 10px', fontSize: '0.85rem', cursor: 'pointer', background: '#fee2e2', color: '#991b1b' }}
                                 title="Anular"
                               >
@@ -1499,682 +1926,280 @@ function Compras({ socket }) {
               </table>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
-      {/* Modal Detalle Retención */}
-      {mostrarDetalleRetencion && retencionSeleccionada && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            background: 'white',
-            borderRadius: '8px',
-            maxWidth: '800px',
-            maxHeight: '90vh',
-            overflow: 'auto',
-            padding: '20px'
+      {/* Modal Sincronización SRI */}
+      {
+        mostrarModalSRI && (
+          <div className="modal-overlay" style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-              <h3>Detalle de Retención #{retencionSeleccionada.secuencial}</h3>
-              <button
-                onClick={() => setMostrarDetalleRetencion(false)}
-                style={{ background: '#ef4444', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}
-              >
-                ✕ Cerrar
-              </button>
-            </div>
-
-            <div style={{ marginBottom: '20px' }}>
-              <h4>Información General</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <div><strong>Fecha Emisión:</strong> {retencionSeleccionada.fecha_emision?.split('T')[0]}</div>
-                <div><strong>Estado:</strong> {retencionSeleccionada.estado}</div>
-                <div><strong>Autorización:</strong> {retencionSeleccionada.numero_autorizacion || 'Pendiente'}</div>
-                <div><strong>Proveedor:</strong> {retencionSeleccionada.compra?.proveedor?.razon_social}</div>
+            <div className="modal-content" style={{
+              background: 'white', padding: '25px', borderRadius: '12px', width: '90%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h2 style={{ margin: 0, color: '#111827' }}>☁️ Sincronización SRI</h2>
+                <button onClick={() => setMostrarModalSRI(false)} style={{ border: 'none', background: 'transparent', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
               </div>
-            </div>
 
-            <div>
-              <h4>Detalle de Impuestos Retenidos</h4>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ background: '#f9fafb' }}>
-                    <th style={{ padding: '10px', textAlign: 'left' }}>Impuesto</th>
-                    <th style={{ padding: '10px', textAlign: 'left' }}>Código</th>
-                    <th style={{ padding: '10px', textAlign: 'right' }}>Base</th>
-                    <th style={{ padding: '10px', textAlign: 'right' }}>%</th>
-                    <th style={{ padding: '10px', textAlign: 'right' }}>Valor</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {retencionSeleccionada.detalles?.map((det, idx) => (
-                    <tr key={idx} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                      <td style={{ padding: '10px' }}>{det.codigo_impuesto === '1' ? 'Renta' : 'IVA'}</td>
-                      <td style={{ padding: '10px' }}>{det.codigo_retencion}</td>
-                      <td style={{ padding: '10px', textAlign: 'right' }}>{formatearMoneda(det.base_imponible)}</td>
-                      <td style={{ padding: '10px', textAlign: 'right' }}>{det.porcentaje_retener}%</td>
-                      <td style={{ padding: '10px', textAlign: 'right' }}>{formatearMoneda(det.valor_retenido)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-                <tfoot>
-                  <tr style={{ fontWeight: 'bold', background: '#f9fafb' }}>
-                    <td colSpan="4" style={{ padding: '10px', textAlign: 'right' }}>Total Retenido:</td>
-                    <td style={{ padding: '10px', textAlign: 'right' }}>{formatearMoneda(calcularTotalRetenido(retencionSeleccionada))}</td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-              <button
-                onClick={() => descargarPDFRetencion(retencionSeleccionada.id)}
-                style={{ padding: '10px 20px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-              >
-                🖨️ Imprimir PDF
-              </button>
-              {retencionSeleccionada.estado === 'AUTORIZADA' && (
+              <div style={{ display: 'flex', gap: '15px', alignItems: 'end', marginBottom: '20px', background: '#f3f4f6', padding: '15px', borderRadius: '8px' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500, fontSize: '0.9rem' }}>Desde:</label>
+                  <input type="date" value={fechaInicioSRI} onChange={e => setFechaInicioSRI(e.target.value)} style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500, fontSize: '0.9rem' }}>Hasta:</label>
+                  <input type="date" value={fechaFinSRI} onChange={e => setFechaFinSRI(e.target.value)} style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }} />
+                </div>
                 <button
-                  onClick={() => anularRetencion(retencionSeleccionada.id)}
-                  style={{ padding: '10px 20px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                >
-                  ❌ Anular Retención
+                  onClick={consultarSRI}
+                  disabled={cargandoSRI}
+                  style={{ padding: '9px 20px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 600, cursor: 'pointer', height: '38px', opacity: cargandoSRI ? 0.7 : 1 }}>
+                  {cargandoSRI ? 'Consultando...' : '🔍 Consultar'}
                 </button>
+              </div>
+
+              {cargandoSRI ? (
+                <div style={{ textAlign: 'center', padding: '40px' }}>
+                  <div className="spinner" style={{ border: '4px solid #f3f3f3', borderTop: '4px solid #3b82f6', borderRadius: '50%', width: '40px', height: '40px', animation: 'spin 1s linear infinite', margin: '0 auto 15px' }}></div>
+                  <p>Conectando con SRI...</p>
+                </div>
+              ) : (
+                <>
+                  <div style={{ maxHeight: '400px', overflowY: 'auto', border: '1px solid #e5e7eb', borderRadius: '8px' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+                      <thead style={{ background: '#f9fafb', position: 'sticky', top: 0 }}>
+                        <tr>
+                          <th style={{ padding: '12px', textAlign: 'center', width: '40px' }}>#</th>
+                          <th style={{ padding: '12px', textAlign: 'left' }}>Emisor</th>
+                          <th style={{ padding: '12px', textAlign: 'left' }}>Fecha</th>
+                          <th style={{ padding: '12px', textAlign: 'left' }}>Tipo</th>
+                          <th style={{ padding: '12px', textAlign: 'left' }}>Comprobante</th>
+                          <th style={{ padding: '12px', textAlign: 'right' }}>Total</th>
+                          <th style={{ padding: '12px', textAlign: 'center' }}>XML</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {comprobantesSRI.length > 0 ? comprobantesSRI.map((comp) => {
+                          const seleccionado = comprobantesSeleccionados.some(c => c.claveAcceso === comp.claveAcceso)
+                          return (
+                            <tr key={comp.claveAcceso} style={{ borderBottom: '1px solid #e5e7eb', background: seleccionado ? '#eff6ff' : 'white' }}>
+                              <td style={{ padding: '12px', textAlign: 'center' }}>
+                                <input
+                                  type="checkbox"
+                                  checked={seleccionado}
+                                  onChange={() => toggleSeleccionSRI(comp)}
+                                />
+                              </td>
+                              <td style={{ padding: '12px' }}>
+                                <div style={{ fontWeight: 600 }}>{comp.razonSocialEmisor}</div>
+                                <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>{comp.rucEmisor}</div>
+                              </td>
+                              <td style={{ padding: '12px' }}>{comp.fechaEmision}</td>
+                              <td style={{ padding: '12px' }}>
+                                <span style={{ padding: '2px 8px', borderRadius: '10px', background: '#e5e7eb', fontSize: '0.8rem', fontWeight: 500 }}>
+                                  {comp.tipoComprobante}
+                                </span>
+                              </td>
+                              <td style={{ padding: '12px' }}>
+                                {comp.serie}-{comp.numeroComprobante.split('-')[2]}
+                                <div style={{ fontSize: '0.75rem', color: '#9ca3af', fontFamily: 'monospace' }} title={comp.claveAcceso}>
+                                  {comp.claveAcceso.substring(0, 10)}...
+                                </div>
+                              </td>
+                              <td style={{ padding: '12px', textAlign: 'right', fontWeight: 600 }}>${comp.importeTotal}</td>
+                              <td style={{ padding: '12px', textAlign: 'center' }}>
+                                <a href={comp.xmlUrl} target="_blank" rel="noreferrer" title="Ver XML" style={{ textDecoration: 'none' }}>📄</a>
+                              </td>
+                            </tr>
+                          )
+                        }) : (
+                          <tr>
+                            <td colSpan="7" style={{ textAlign: 'center', padding: '30px', color: '#6b7280' }}>
+                              No se encontraron comprobantes en el rango seleccionado.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e5e7eb', paddingTop: '20px' }}>
+                    <div style={{ color: '#6b7280' }}>
+                      {comprobantesSeleccionados.length} comprobantes seleccionados
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <button
+                        onClick={() => setMostrarModalSRI(false)}
+                        style={{ padding: '10px 20px', border: '1px solid #d1d5db', background: 'white', borderRadius: '6px', cursor: 'pointer' }}
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        onClick={importarSeleccionadosSRI}
+                        disabled={comprobantesSeleccionados.length === 0}
+                        style={{
+                          padding: '10px 20px',
+                          background: comprobantesSeleccionados.length > 0 ? '#10b981' : '#d1d5db',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          fontWeight: 600,
+                          cursor: comprobantesSeleccionados.length > 0 ? 'pointer' : 'not-allowed',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}
+                      >
+                        📥 Importar Seleccionados
+                      </button>
+                    </div>
+                  </div>
+                </>
               )}
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Tab Liquidaciones de Compra */}
-      {tabActiva === 'liquidaciones' && (
-        <div className="liquidaciones-container" style={{ padding: '20px' }}>
-          <h2 style={{ marginBottom: '20px' }}>📝 Emisión de Liquidación de Compra</h2>
-          <p style={{ color: '#6b7280', marginBottom: '20px' }}>
-            Para compras a personas naturales sin obligación de emitir comprobantes (artesanos, servicios ocasionales, agricultores)
-          </p>
-
-          <form onSubmit={handleSubmitLiquidacion} style={{ background: 'white', padding: '20px', borderRadius: '8px', marginBottom: '40px' }}>
-            {/* Datos del Proveedor */}
-            <div style={{ marginBottom: '30px' }}>
-              <h3 style={{ marginBottom: '15px', color: '#111827' }}>Datos del Proveedor (Persona Natural)</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Cédula / Identificación *</label>
-                  <input
-                    type="text"
-                    value={formLiquidacion.proveedor_identificacion}
-                    onChange={(e) => setFormLiquidacion({ ...formLiquidacion, proveedor_identificacion: e.target.value })}
-                    placeholder="1234567890"
-                    required
-                    style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Nombre Completo *</label>
-                  <input
-                    type="text"
-                    value={formLiquidacion.proveedor_nombre}
-                    onChange={(e) => setFormLiquidacion({ ...formLiquidacion, proveedor_nombre: e.target.value })}
-                    placeholder="Juan Pérez"
-                    required
-                    style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Dirección</label>
-                  <input
-                    type="text"
-                    value={formLiquidacion.proveedor_direccion}
-                    onChange={(e) => setFormLiquidacion({ ...formLiquidacion, proveedor_direccion: e.target.value })}
-                    placeholder="Calle Principal"
-                    style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Teléfono</label>
-                  <input
-                    type="text"
-                    value={formLiquidacion.proveedor_telefono}
-                    onChange={(e) => setFormLiquidacion({ ...formLiquidacion, proveedor_telefono: e.target.value })}
-                    placeholder="0987654321"
-                    style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Email</label>
-                  <input
-                    type="email"
-                    value={formLiquidacion.proveedor_email}
-                    onChange={(e) => setFormLiquidacion({ ...formLiquidacion, proveedor_email: e.target.value })}
-                    placeholder="correo@ejemplo.com"
-                    style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Fecha Emisión *</label>
-                  <input
-                    type="date"
-                    value={formLiquidacion.fecha_emision}
-                    onChange={(e) => setFormLiquidacion({ ...formLiquidacion, fecha_emision: e.target.value })}
-                    required
-                    style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Detalle de la Compra */}
-            <div style={{ marginBottom: '30px' }}>
-              <h3 style={{ marginBottom: '15px', color: '#111827' }}>Detalle de la Compra</h3>
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Concepto / Descripción *</label>
-                <textarea
-                  rows="3"
-                  value={formLiquidacion.concepto}
-                  onChange={(e) => setFormLiquidacion({ ...formLiquidacion, concepto: e.target.value })}
-                  placeholder="Ej: Compra de productos agrícolas, Servicio de plomería, Trabajo artesanal, etc."
-                  required
-                  style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
-                />
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Subtotal Gravado 0%</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formLiquidacion.subtotal_0}
-                    onChange={(e) => calcularTotalesLiquidacion('subtotal_0', parseFloat(e.target.value) || 0)}
-                    style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Subtotal Gravado 12%</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formLiquidacion.subtotal_12}
-                    onChange={(e) => calcularTotalesLiquidacion('subtotal_12', parseFloat(e.target.value) || 0)}
-                    style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>IVA 12%</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formLiquidacion.iva.toFixed(2)}
-                    readOnly
-                    style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px', background: '#f3f4f6' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500, color: '#059669' }}>Total</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formLiquidacion.total.toFixed(2)}
-                    readOnly
-                    style={{ width: '100%', padding: '8px', border: '2px solid #059669', borderRadius: '4px', background: '#d1fae5', fontWeight: 'bold', fontSize: '1.1rem' }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Retenciones (Opcional) */}
-            <div style={{ marginBottom: '30px', background: '#fef3c7', padding: '15px', borderRadius: '8px' }}>
-              <h3 style={{ marginBottom: '15px', color: '#92400e' }}>Retenciones (Opcional)</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Código Retención Renta</label>
-                  <select
-                    value={formLiquidacion.codigo_retencion_renta}
-                    onChange={(e) => setFormLiquidacion({ ...formLiquidacion, codigo_retencion_renta: e.target.value })}
-                    style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
-                  >
-                    <option value="">Sin retención</option>
-                    <option value="303">303 - 1% Honorarios profesionales</option>
-                    <option value="304">304 - 2% Servicios</option>
-                    <option value="307">307 - 8% Arrendamiento inmuebles</option>
-                    <option value="319">319 - 1% Publicidad</option>
-                    <option value="320">320 - 1% Transporte privado</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Valor Retención Renta</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={formLiquidacion.retencion_renta}
-                    onChange={(e) => setFormLiquidacion({ ...formLiquidacion, retencion_renta: parseFloat(e.target.value) || 0 })}
-                    style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Observaciones */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500 }}>Observaciones</label>
-              <textarea
-                rows="2"
-                value={formLiquidacion.observaciones}
-                onChange={(e) => setFormLiquidacion({ ...formLiquidacion, observaciones: e.target.value })}
-                placeholder="Notas adicionales..."
-                style={{ width: '100%', padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
-              />
-            </div>
-
-            <button
-              type="submit"
-              style={{
-                padding: '12px 30px',
-                background: '#3b82f6',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '1rem',
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
-            >
-              Emitir Liquidación de Compra
-            </button>
-          </form>
-
-          {/* Listado de Liquidaciones Emitidas */}
-          <div style={{ background: 'white', padding: '20px', borderRadius: '8px' }}>
-            <h3 style={{ marginBottom: '20px' }}>Liquidaciones Emitidas</h3>
-
-            {/* Filtros */}
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '15px', flexWrap: 'wrap' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Desde:</label>
-                <input
-                  type="date"
-                  value={filtroFechaDesde}
-                  onChange={(e) => setFiltroFechaDesde(e.target.value)}
-                  style={{ padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Hasta:</label>
-                <input
-                  type="date"
-                  value={filtroFechaHasta}
-                  onChange={(e) => setFiltroFechaHasta(e.target.value)}
-                  style={{ padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9rem' }}>Estado:</label>
-                <select
-                  value={filtroEstado}
-                  onChange={(e) => setFiltroEstado(e.target.value)}
-                  style={{ padding: '8px', borderRadius: '4px', border: '1px solid #d1d5db' }}
-                >
-                  <option value="">Todos</option>
-                  <option value="PENDIENTE">Pendientes</option>
-                  <option value="AUTORIZADA">Autorizadas</option>
-                  <option value="ANULADA">Anuladas</option>
-                </select>
-              </div>
-            </div>
-
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ background: '#f9fafb' }}>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Fecha</th>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Número</th>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Proveedor</th>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Concepto</th>
-                  <th style={{ padding: '12px', textAlign: 'right', borderBottom: '2px solid #e5e7eb' }}>Total</th>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Estado</th>
-                  <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {liquidaciones.length === 0 ? (
-                  <tr>
-                    <td colSpan="7" style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
-                      No hay liquidaciones registradas
-                    </td>
-                  </tr>
-                ) : (
-                  liquidaciones.map((liq) => (
-                    <tr key={liq.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                      <td style={{ padding: '12px' }}>{liq.fecha_emision?.split('T')[0]}</td>
-                      <td style={{ padding: '12px' }}>
-                        {liq.establecimiento}-{liq.punto_emision}-{liq.secuencial}
-                      </td>
-                      <td style={{ padding: '12px' }}>{liq.proveedor_nombre}</td>
-                      <td style={{ padding: '12px', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {liq.concepto}
-                      </td>
-                      <td style={{ padding: '12px', textAlign: 'right', fontWeight: 600 }}>
-                        {formatearMoneda(liq.total)}
-                      </td>
-                      <td style={{ padding: '12px' }}>
-                        <span style={{
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                          fontSize: '0.85rem',
-                          fontWeight: 500,
-                          background: liq.estado === 'AUTORIZADA' ? '#d1fae5' : liq.estado === 'ANULADA' ? '#fee2e2' : '#fef3c7',
-                          color: liq.estado === 'AUTORIZADA' ? '#065f46' : liq.estado === 'ANULADA' ? '#991b1b' : '#92400e'
-                        }}>
-                          {liq.estado}
-                        </span>
-                      </td>
-                      <td style={{ padding: '12px' }}>
-                        <div style={{ display: 'flex', gap: '5px' }}>
-                          <button
-                            onClick={() => alert('Detalle en desarrollo')}
-                            style={{ padding: '5px 10px', fontSize: '0.85rem', cursor: 'pointer' }}
-                            title="Ver detalle"
-                          >
-                            👁️
-                          </button>
-                          {liq.estado !== 'ANULADA' && (
-                            <button
-                              onClick={() => anularLiquidacion(liq.id)}
-                              style={{ padding: '5px 10px', fontSize: '0.85rem', cursor: 'pointer', background: '#fee2e2', color: '#991b1b' }}
-                              title="Anular"
-                            >
-                              ❌
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Modal Sincronización SRI */}
-      {mostrarModalSRI && (
-        <div className="modal-overlay" style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
-        }}>
-          <div className="modal-content" style={{
-            background: 'white', padding: '25px', borderRadius: '12px', width: '90%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto'
+      {
+        mostrarModalSRI && (
+          <div className="modal-overlay" style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0, color: '#111827' }}>☁️ Sincronización SRI</h2>
-              <button onClick={() => setMostrarModalSRI(false)} style={{ border: 'none', background: 'transparent', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
-            </div>
+            <div className="modal-content" style={{
+              background: 'white', padding: '25px', borderRadius: '12px', width: '90%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h2 style={{ margin: 0, color: '#111827' }}>☁️ Sincronización SRI</h2>
+                <button onClick={() => setMostrarModalSRI(false)} style={{ border: 'none', background: 'transparent', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
+              </div>
 
-            <div style={{ display: 'flex', gap: '15px', alignItems: 'end', marginBottom: '20px', background: '#f3f4f6', padding: '15px', borderRadius: '8px' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500, fontSize: '0.9rem' }}>Desde:</label>
-                <input type="date" value={fechaInicioSRI} onChange={e => setFechaInicioSRI(e.target.value)} style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }} />
+              <div style={{ display: 'flex', gap: '15px', alignItems: 'end', marginBottom: '20px', background: '#f3f4f6', padding: '15px', borderRadius: '8px' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500, fontSize: '0.9rem' }}>Desde:</label>
+                  <input type="date" value={fechaInicioSRI} onChange={e => setFechaInicioSRI(e.target.value)} style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500, fontSize: '0.9rem' }}>Hasta:</label>
+                  <input type="date" value={fechaFinSRI} onChange={e => setFechaFinSRI(e.target.value)} style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }} />
+                </div>
+                <button
+                  onClick={consultarSRI}
+                  disabled={cargandoSRI}
+                  style={{ padding: '9px 20px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 600, cursor: 'pointer', height: '38px', opacity: cargandoSRI ? 0.7 : 1 }}>
+                  {cargandoSRI ? 'Consultando...' : '🔍 Consultar'}
+                </button>
               </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500, fontSize: '0.9rem' }}>Hasta:</label>
-                <input type="date" value={fechaFinSRI} onChange={e => setFechaFinSRI(e.target.value)} style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }} />
-              </div>
-              <button
-                onClick={consultarSRI}
-                disabled={cargandoSRI}
-                style={{ padding: '9px 20px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 600, cursor: 'pointer', height: '38px', opacity: cargandoSRI ? 0.7 : 1 }}>
-                {cargandoSRI ? 'Consultando...' : '🔍 Consultar'}
-              </button>
-            </div>
 
-            {cargandoSRI ? (
-              <div style={{ textAlign: 'center', padding: '40px' }}>
-                <div className="spinner" style={{ border: '4px solid #f3f3f3', borderTop: '4px solid #3b82f6', borderRadius: '50%', width: '40px', height: '40px', animation: 'spin 1s linear infinite', margin: '0 auto 15px' }}></div>
-                <p>Conectando con SRI...</p>
-              </div>
-            ) : (
-              <>
-                <div style={{ maxHeight: '400px', overflowY: 'auto', border: '1px solid #e5e7eb', borderRadius: '8px' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
-                    <thead style={{ background: '#f9fafb', position: 'sticky', top: 0 }}>
-                      <tr>
-                        <th style={{ padding: '12px', textAlign: 'center', width: '40px' }}>#</th>
-                        <th style={{ padding: '12px', textAlign: 'left' }}>Emisor</th>
-                        <th style={{ padding: '12px', textAlign: 'left' }}>Fecha</th>
-                        <th style={{ padding: '12px', textAlign: 'left' }}>Tipo</th>
-                        <th style={{ padding: '12px', textAlign: 'left' }}>Comprobante</th>
-                        <th style={{ padding: '12px', textAlign: 'right' }}>Total</th>
-                        <th style={{ padding: '12px', textAlign: 'center' }}>XML</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {comprobantesSRI.length > 0 ? comprobantesSRI.map((comp) => {
-                        const seleccionado = comprobantesSeleccionados.some(c => c.claveAcceso === comp.claveAcceso)
-                        return (
-                          <tr key={comp.claveAcceso} style={{ borderBottom: '1px solid #e5e7eb', background: seleccionado ? '#eff6ff' : 'white' }}>
-                            <td style={{ padding: '12px', textAlign: 'center' }}>
-                              <input
-                                type="checkbox"
-                                checked={seleccionado}
-                                onChange={() => toggleSeleccionSRI(comp)}
-                              />
-                            </td>
-                            <td style={{ padding: '12px' }}>
-                              <div style={{ fontWeight: 600 }}>{comp.razonSocialEmisor}</div>
-                              <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>{comp.rucEmisor}</div>
-                            </td>
-                            <td style={{ padding: '12px' }}>{comp.fechaEmision}</td>
-                            <td style={{ padding: '12px' }}>
-                              <span style={{ padding: '2px 8px', borderRadius: '10px', background: '#e5e7eb', fontSize: '0.8rem', fontWeight: 500 }}>
-                                {comp.tipoComprobante}
-                              </span>
-                            </td>
-                            <td style={{ padding: '12px' }}>
-                              {comp.serie}-{comp.numeroComprobante.split('-')[2]}
-                              <div style={{ fontSize: '0.75rem', color: '#9ca3af', fontFamily: 'monospace' }} title={comp.claveAcceso}>
-                                {comp.claveAcceso.substring(0, 10)}...
-                              </div>
-                            </td>
-                            <td style={{ padding: '12px', textAlign: 'right', fontWeight: 600 }}>${comp.importeTotal}</td>
-                            <td style={{ padding: '12px', textAlign: 'center' }}>
-                              <a href={comp.xmlUrl} target="_blank" rel="noreferrer" title="Ver XML" style={{ textDecoration: 'none' }}>📄</a>
+              {cargandoSRI ? (
+                <div style={{ textAlign: 'center', padding: '40px' }}>
+                  <div className="spinner" style={{ border: '4px solid #f3f3f3', borderTop: '4px solid #3b82f6', borderRadius: '50%', width: '40px', height: '40px', animation: 'spin 1s linear infinite', margin: '0 auto 15px' }}></div>
+                  <p>Conectando con SRI...</p>
+                </div>
+              ) : (
+                <>
+                  <div style={{ maxHeight: '400px', overflowY: 'auto', border: '1px solid #e5e7eb', borderRadius: '8px' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+                      <thead style={{ background: '#f9fafb', position: 'sticky', top: 0 }}>
+                        <tr>
+                          <th style={{ padding: '12px', textAlign: 'center', width: '40px' }}>#</th>
+                          <th style={{ padding: '12px', textAlign: 'left' }}>Emisor</th>
+                          <th style={{ padding: '12px', textAlign: 'left' }}>Fecha</th>
+                          <th style={{ padding: '12px', textAlign: 'left' }}>Tipo</th>
+                          <th style={{ padding: '12px', textAlign: 'left' }}>Comprobante</th>
+                          <th style={{ padding: '12px', textAlign: 'right' }}>Total</th>
+                          <th style={{ padding: '12px', textAlign: 'center' }}>XML</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {comprobantesSRI.length > 0 ? comprobantesSRI.map((comp) => {
+                          const seleccionado = comprobantesSeleccionados.some(c => c.claveAcceso === comp.claveAcceso)
+                          return (
+                            <tr key={comp.claveAcceso} style={{ borderBottom: '1px solid #e5e7eb', background: seleccionado ? '#eff6ff' : 'white' }}>
+                              <td style={{ padding: '12px', textAlign: 'center' }}>
+                                <input
+                                  type="checkbox"
+                                  checked={seleccionado}
+                                  onChange={() => toggleSeleccionSRI(comp)}
+                                />
+                              </td>
+                              <td style={{ padding: '12px' }}>
+                                <div style={{ fontWeight: 600 }}>{comp.razonSocialEmisor}</div>
+                                <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>{comp.rucEmisor}</div>
+                              </td>
+                              <td style={{ padding: '12px' }}>{comp.fechaEmision}</td>
+                              <td style={{ padding: '12px' }}>
+                                <span style={{ padding: '2px 8px', borderRadius: '10px', background: '#e5e7eb', fontSize: '0.8rem', fontWeight: 500 }}>
+                                  {comp.tipoComprobante}
+                                </span>
+                              </td>
+                              <td style={{ padding: '12px' }}>
+                                {comp.serie}-{comp.numeroComprobante.split('-')[2]}
+                                <div style={{ fontSize: '0.75rem', color: '#9ca3af', fontFamily: 'monospace' }} title={comp.claveAcceso}>
+                                  {comp.claveAcceso.substring(0, 10)}...
+                                </div>
+                              </td>
+                              <td style={{ padding: '12px', textAlign: 'right', fontWeight: 600 }}>${comp.importeTotal}</td>
+                              <td style={{ padding: '12px', textAlign: 'center' }}>
+                                <a href={comp.xmlUrl} target="_blank" rel="noreferrer" title="Ver XML" style={{ textDecoration: 'none' }}>📄</a>
+                              </td>
+                            </tr>
+                          )
+                        }) : (
+                          <tr>
+                            <td colSpan="7" style={{ textAlign: 'center', padding: '30px', color: '#6b7280' }}>
+                              No se encontraron comprobantes en el rango seleccionado.
                             </td>
                           </tr>
-                        )
-                      }) : (
-                        <tr>
-                          <td colSpan="7" style={{ textAlign: 'center', padding: '30px', color: '#6b7280' }}>
-                            No se encontraron comprobantes en el rango seleccionado.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e5e7eb', paddingTop: '20px' }}>
-                  <div style={{ color: '#6b7280' }}>
-                    {comprobantesSeleccionados.length} comprobantes seleccionados
+                        )}
+                      </tbody>
+                    </table>
                   </div>
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <button
-                      onClick={() => setMostrarModalSRI(false)}
-                      style={{ padding: '10px 20px', border: '1px solid #d1d5db', background: 'white', borderRadius: '6px', cursor: 'pointer' }}
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      onClick={importarSeleccionadosSRI}
-                      disabled={comprobantesSeleccionados.length === 0}
-                      style={{
-                        padding: '10px 20px',
-                        background: comprobantesSeleccionados.length > 0 ? '#10b981' : '#d1d5db',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        fontWeight: 600,
-                        cursor: comprobantesSeleccionados.length > 0 ? 'pointer' : 'not-allowed',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px'
-                      }}
-                    >
-                      📥 Importar Seleccionados
-                    </button>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
 
-      {/* Modal Sincronización SRI */}
-      {mostrarModalSRI && (
-        <div className="modal-overlay" style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
-        }}>
-          <div className="modal-content" style={{
-            background: 'white', padding: '25px', borderRadius: '12px', width: '90%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0, color: '#111827' }}>☁️ Sincronización SRI</h2>
-              <button onClick={() => setMostrarModalSRI(false)} style={{ border: 'none', background: 'transparent', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
+                  <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e5e7eb', paddingTop: '20px' }}>
+                    <div style={{ color: '#6b7280' }}>
+                      {comprobantesSeleccionados.length} comprobantes seleccionados
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <button
+                        onClick={() => setMostrarModalSRI(false)}
+                        style={{ padding: '10px 20px', border: '1px solid #d1d5db', background: 'white', borderRadius: '6px', cursor: 'pointer' }}
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        onClick={importarSeleccionadosSRI}
+                        disabled={comprobantesSeleccionados.length === 0}
+                        style={{
+                          padding: '10px 20px',
+                          background: comprobantesSeleccionados.length > 0 ? '#10b981' : '#d1d5db',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          fontWeight: 600,
+                          cursor: comprobantesSeleccionados.length > 0 ? 'pointer' : 'not-allowed',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}
+                      >
+                        📥 Importar Seleccionados
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
-
-            <div style={{ display: 'flex', gap: '15px', alignItems: 'end', marginBottom: '20px', background: '#f3f4f6', padding: '15px', borderRadius: '8px' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500, fontSize: '0.9rem' }}>Desde:</label>
-                <input type="date" value={fechaInicioSRI} onChange={e => setFechaInicioSRI(e.target.value)} style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }} />
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 500, fontSize: '0.9rem' }}>Hasta:</label>
-                <input type="date" value={fechaFinSRI} onChange={e => setFechaFinSRI(e.target.value)} style={{ padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }} />
-              </div>
-              <button
-                onClick={consultarSRI}
-                disabled={cargandoSRI}
-                style={{ padding: '9px 20px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 600, cursor: 'pointer', height: '38px', opacity: cargandoSRI ? 0.7 : 1 }}>
-                {cargandoSRI ? 'Consultando...' : '🔍 Consultar'}
-              </button>
-            </div>
-
-            {cargandoSRI ? (
-              <div style={{ textAlign: 'center', padding: '40px' }}>
-                <div className="spinner" style={{ border: '4px solid #f3f3f3', borderTop: '4px solid #3b82f6', borderRadius: '50%', width: '40px', height: '40px', animation: 'spin 1s linear infinite', margin: '0 auto 15px' }}></div>
-                <p>Conectando con SRI...</p>
-              </div>
-            ) : (
-              <>
-                <div style={{ maxHeight: '400px', overflowY: 'auto', border: '1px solid #e5e7eb', borderRadius: '8px' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
-                    <thead style={{ background: '#f9fafb', position: 'sticky', top: 0 }}>
-                      <tr>
-                        <th style={{ padding: '12px', textAlign: 'center', width: '40px' }}>#</th>
-                        <th style={{ padding: '12px', textAlign: 'left' }}>Emisor</th>
-                        <th style={{ padding: '12px', textAlign: 'left' }}>Fecha</th>
-                        <th style={{ padding: '12px', textAlign: 'left' }}>Tipo</th>
-                        <th style={{ padding: '12px', textAlign: 'left' }}>Comprobante</th>
-                        <th style={{ padding: '12px', textAlign: 'right' }}>Total</th>
-                        <th style={{ padding: '12px', textAlign: 'center' }}>XML</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {comprobantesSRI.length > 0 ? comprobantesSRI.map((comp) => {
-                        const seleccionado = comprobantesSeleccionados.some(c => c.claveAcceso === comp.claveAcceso)
-                        return (
-                          <tr key={comp.claveAcceso} style={{ borderBottom: '1px solid #e5e7eb', background: seleccionado ? '#eff6ff' : 'white' }}>
-                            <td style={{ padding: '12px', textAlign: 'center' }}>
-                              <input
-                                type="checkbox"
-                                checked={seleccionado}
-                                onChange={() => toggleSeleccionSRI(comp)}
-                              />
-                            </td>
-                            <td style={{ padding: '12px' }}>
-                              <div style={{ fontWeight: 600 }}>{comp.razonSocialEmisor}</div>
-                              <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>{comp.rucEmisor}</div>
-                            </td>
-                            <td style={{ padding: '12px' }}>{comp.fechaEmision}</td>
-                            <td style={{ padding: '12px' }}>
-                              <span style={{ padding: '2px 8px', borderRadius: '10px', background: '#e5e7eb', fontSize: '0.8rem', fontWeight: 500 }}>
-                                {comp.tipoComprobante}
-                              </span>
-                            </td>
-                            <td style={{ padding: '12px' }}>
-                              {comp.serie}-{comp.numeroComprobante.split('-')[2]}
-                              <div style={{ fontSize: '0.75rem', color: '#9ca3af', fontFamily: 'monospace' }} title={comp.claveAcceso}>
-                                {comp.claveAcceso.substring(0, 10)}...
-                              </div>
-                            </td>
-                            <td style={{ padding: '12px', textAlign: 'right', fontWeight: 600 }}>${comp.importeTotal}</td>
-                            <td style={{ padding: '12px', textAlign: 'center' }}>
-                              <a href={comp.xmlUrl} target="_blank" rel="noreferrer" title="Ver XML" style={{ textDecoration: 'none' }}>📄</a>
-                            </td>
-                          </tr>
-                        )
-                      }) : (
-                        <tr>
-                          <td colSpan="7" style={{ textAlign: 'center', padding: '30px', color: '#6b7280' }}>
-                            No se encontraron comprobantes en el rango seleccionado.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e5e7eb', paddingTop: '20px' }}>
-                  <div style={{ color: '#6b7280' }}>
-                    {comprobantesSeleccionados.length} comprobantes seleccionados
-                  </div>
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <button
-                      onClick={() => setMostrarModalSRI(false)}
-                      style={{ padding: '10px 20px', border: '1px solid #d1d5db', background: 'white', borderRadius: '6px', cursor: 'pointer' }}
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      onClick={importarSeleccionadosSRI}
-                      disabled={comprobantesSeleccionados.length === 0}
-                      style={{
-                        padding: '10px 20px',
-                        background: comprobantesSeleccionados.length > 0 ? '#10b981' : '#d1d5db',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        fontWeight: 600,
-                        cursor: comprobantesSeleccionados.length > 0 ? 'pointer' : 'not-allowed',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px'
-                      }}
-                    >
-                      📥 Importar Seleccionados
-                    </button>
-                  </div>
-                </div>
-              </>
-            )}
           </div>
-        </div>
-      )}
+        )
+      }
 
-    </div>
+    </div >
   )
 }
 

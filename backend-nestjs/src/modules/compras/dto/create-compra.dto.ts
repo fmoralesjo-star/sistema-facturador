@@ -69,6 +69,10 @@ export class CreateCompraDto {
   @IsOptional()
   @IsString()
   sustento_tributario?: string;
+
+  @IsOptional()
+  @IsString()
+  centro_costo?: string;
 }
 
 

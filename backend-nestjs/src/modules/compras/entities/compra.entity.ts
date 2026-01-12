@@ -42,6 +42,9 @@ export class Compra {
   @Column({ length: 4, nullable: true })
   sustento_tributario: string;
 
+  @Column({ length: 50, nullable: true, default: 'ADMINISTRACION' })
+  centro_costo: string;
+
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   subtotal: number;
 
