@@ -4241,10 +4241,10 @@ Este enlace te permitirá actualizar tu información de contacto.`
           </div>
 
           {/* Grid Layout Principal */}
-          <div className="grid-layout" style={{ display: 'flex', gap: '15px', alignItems: 'stretch' }}>
+          <div className="grid-layout" style={{ display: 'flex', gap: '8px', flex: 1, minHeight: 0, overflow: 'hidden' }}>
 
-            {/* Panel Lateral Izquierdo */}
-            <div className="panel" style={{ width: '280px', flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
+            {/* Panel Lateral Izquierdo - Compacto */}
+            <div className="panel" style={{ width: '180px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '4px', padding: '4px' }}>
               <div className="input-group">
                 <label>BUSCAR STOCK</label>
                 <input
@@ -4448,17 +4448,17 @@ Este enlace te permitirá actualizar tu información de contacto.`
               <button
                 onClick={agregarFila}
                 style={{
-                  marginTop: '8px',
-                  padding: '6px 12px',
+                  marginTop: '4px',
+                  padding: '4px 8px',
                   cursor: 'pointer',
                   background: 'var(--azul-electrico)',
                   color: 'white',
                   border: 'none',
                   borderRadius: '4px',
                   fontWeight: 'bold',
-                  fontSize: '11px',
+                  fontSize: '10px',
                   alignSelf: 'flex-start',
-                  flexShrink: 0, /* No encoger el botón */
+                  flexShrink: 0,
                   boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
                 }}
               >
@@ -4468,26 +4468,27 @@ Este enlace te permitirá actualizar tu información de contacto.`
 
 
 
-            {/* Panel Totales (Reubicado) */}
-            <div className="panel" style={{ width: '300px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {/* Panel Totales (Reubicado) - Compacto */}
+            <div className="panel" style={{ width: '250px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '4px', padding: '4px' }}>
               <div style={{
                 backgroundColor: 'white',
-                padding: '15px',
+                padding: '8px',
                 borderRadius: '8px',
                 boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
                 border: '1px solid #e5e7eb',
-                minHeight: '200px',
+                flex: 1,
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'flex-start'
+                justifyContent: 'flex-start',
+                minHeight: 0
               }}>
                 <h3 style={{
-                  margin: '0 0 20px 0',
-                  fontSize: '16px',
+                  margin: '0 0 10px 0',
+                  fontSize: '14px',
                   color: '#111827',
                   fontWeight: '700',
                   borderBottom: '2px solid #f3f4f6',
-                  paddingBottom: '12px',
+                  paddingBottom: '8px',
                   textAlign: 'left'
                 }}>
                   Resumen de Pago
@@ -6051,10 +6052,11 @@ Este enlace te permitirá actualizar tu información de contacto.`
           backgroundColor: '#ffffff',
           borderTop: '1px solid #e5e7eb',
           boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
-          padding: '10px 20px',
+          padding: '4px 15px',
           marginTop: 'auto',
-          position: 'relative', /* Ensure z-index works */
-          zIndex: 50 /* Above potential overlays */
+          position: 'relative',
+          zIndex: 50,
+          flexShrink: 0
         }}>
           <div className="footer-content-wrapper" style={{
             display: 'flex',

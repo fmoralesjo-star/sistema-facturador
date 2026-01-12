@@ -28,8 +28,8 @@ body {
 .header-datos {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 6px;
+  margin-bottom: 6px;
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -56,7 +56,8 @@ body {
   background: var(--blanco);
   border: 1px solid #d0dae2;
   border-radius: 8px;
-  padding: 8px;
+  padding: 4px 8px;
+  /* Reducido padding vertical */
   box-sizing: border-box;
   position: relative;
 }
@@ -167,12 +168,15 @@ body {
 }
 
 .titulo-datos {
-  margin: -8px -8px 8px -8px;
-  font-size: 15px;
+  margin: -4px -8px 4px -8px;
+  /* Ajustado margen */
+  font-size: 13px;
+  /* Reducida fuente */
   font-weight: 600;
   color: white;
   text-transform: uppercase;
-  padding: 6px 8px;
+  padding: 4px 8px;
+  /* Ajustado padding */
   width: calc(100% + 16px);
   display: block;
   background-color: var(--azul-electrico);
@@ -250,10 +254,9 @@ body {
   gap: 10px;
   flex: 1;
   min-height: 0;
-  overflow-x: hidden;
-  overflow-y: visible;
-  align-items: start;
-  grid-auto-rows: min-content;
+  overflow: hidden !important;
+  /* Forzado sin scroll externo */
+  align-items: stretch;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -378,17 +381,11 @@ body {
   display: flex;
   flex-direction: column;
   flex: 1;
-  /* Ocupa el espacio disponible en el panel padre */
-  min-height: 0;
-  /* CRÍTICO: Permite que el contenedor se encoja para activar el scroll */
-  height: 200px;
-  /* Altura ajustable para garantizar que entre en cualquier pantalla */
-  min-height: 200px;
-  max-height: 400px;
+  min-height: 120px;
   border: 1px solid #ddd;
   border-radius: 4px;
   overflow: hidden;
-  margin-bottom: 0;
+  margin-bottom: 4px;
 }
 
 .grid-body {
@@ -860,12 +857,11 @@ footer.footer-banner {
 /* Ocultar barras de desplazamiento */
 .factura-container,
 .factura-content {
-  scrollbar-width: thin !important;
+  scrollbar-width: none !important;
   /* Firefox */
-  -ms-overflow-style: auto !important;
+  -ms-overflow-style: none !important;
   /* IE y Edge */
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
+  overflow: hidden !important;
 }
 
 /* El grid layout puede tener overflow visible para que el panel de totales no se corte */
