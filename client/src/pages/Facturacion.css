@@ -31,10 +31,6 @@ body {
   gap: 6px;
   margin-bottom: 4px;
   flex-shrink: 0;
-  max-height: 120px;
-  /* Limitamos la altura de la cabecera */
-  overflow-y: auto;
-  /* Permitimos scroll interno si es necesario */
 }
 
 .datos-cliente,
