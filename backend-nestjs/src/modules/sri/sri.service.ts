@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Factura } from '../facturas/entities/factura.entity';
 import { NotaCredito } from '../notas-credito/entities/nota-credito.entity';
