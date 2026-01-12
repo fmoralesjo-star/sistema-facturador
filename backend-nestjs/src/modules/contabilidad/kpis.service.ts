@@ -341,18 +341,35 @@ export class KpisService {
         };
     }
 
-    async obtenerVentasPorVendedor(periodo: string) {
-        const { fechaInicio, fechaFin } = this.obtenerFechasPeriodo(periodo);
+    async obtenerVentasPorVendedor(periodo: string, fechaInicioStr?: string, fechaFinStr?: string, puntoVentaId?: number, productoId?: number) {
+        let { fechaInicio, fechaFin } = this.obtenerFechasPeriodo(periodo);
+        if (fechaInicioStr && fechaFinStr) {
+            fechaInicio = new Date(fechaInicioStr);
+            fechaFin = new Date(fechaFinStr);
+            fechaFin.setHours(23, 59, 59, 999);
+        }
 
-        const resultados = await this.facturaRepository
+        const query = this.facturaRepository
             .createQueryBuilder('factura')
-            .leftJoinAndSelect('factura.vendedor', 'vendedor') // Using 'vendedor' relation (mapped to Empleado)
-            .select('vendedor.nombres', 'nombre_vendedor')
+            .leftJoinAndSelect('factura.vendedor', 'vendedor')
+            .select('vendedor.id', 'vendedor_id') // Added ID
+            .addSelect('vendedor.nombres', 'nombre_vendedor')
             .addSelect('vendedor.apellidos', 'apellido_vendedor')
-            .addSelect('COUNT(factura.id)', 'cantidad_facturas')
+            .addSelect('COUNT(DISTINCT factura.id)', 'cantidad_facturas')
             .addSelect('SUM(factura.total)', 'total_vendido')
             .where('factura.fecha BETWEEN :fechaInicio AND :fechaFin', { fechaInicio, fechaFin })
-            .andWhere('factura.estado = :estado', { estado: 'AUTORIZADA' })
+            .andWhere('factura.estado = :estado', { estado: 'AUTORIZADA' });
+
+        if (puntoVentaId) {
+            query.andWhere('factura.punto_venta_id = :puntoVentaId', { puntoVentaId });
+        }
+
+        if (productoId) {
+            query.innerJoin('factura.detalles', 'detalle')
+                .andWhere('detalle.producto_id = :productoId', { productoId });
+        }
+
+        const resultados = await query
             .groupBy('vendedor.id')
             .addGroupBy('vendedor.nombres')
             .addGroupBy('vendedor.apellidos')
@@ -360,39 +377,48 @@ export class KpisService {
             .getRawMany();
 
         return resultados.map(r => ({
+            id: r.vendedor_id,
             vendedor: r.nombre_vendedor ? `${r.nombre_vendedor} ${r.apellido_vendedor || ''}`.trim() : 'Sin Asignar',
             cantidad: parseInt(r.cantidad_facturas),
             total: parseFloat(parseFloat(r.total_vendido || '0').toFixed(2))
         }));
     }
 
-    async obtenerVentasPorLocal(periodo: string) {
-        const { fechaInicio, fechaFin } = this.obtenerFechasPeriodo(periodo);
+    async obtenerVentasPorLocal(periodo: string, fechaInicioStr?: string, fechaFinStr?: string, vendedorId?: number, productoId?: number) {
+        let { fechaInicio, fechaFin } = this.obtenerFechasPeriodo(periodo);
+        if (fechaInicioStr && fechaFinStr) {
+            fechaInicio = new Date(fechaInicioStr);
+            fechaFin = new Date(fechaFinStr);
+            fechaFin.setHours(23, 59, 59, 999);
+        }
 
-        // Since Factura has punto_venta_id but maybe no direct relation in entity, 
-        // we group by ID and then could map if we want, or join if we fixed entity.
-        // But cleaner is to just select from Factura and Join PuntoVenta manually if needed
-        // or just use the ID if we are lazy. But for Dashboard we need Names.
-
-        // Let's try to join via ID manually by subquery or just map later.
-        // Actually, let's query PuntosVenta and their sales.
-
-        const resultados = await this.facturaRepository
+        const query = this.facturaRepository
             .createQueryBuilder('factura')
             .select('factura.punto_venta_id', 'punto_venta_id')
-            .addSelect('COUNT(factura.id)', 'cantidad_facturas')
+            .addSelect('COUNT(DISTINCT factura.id)', 'cantidad_facturas')
             .addSelect('SUM(factura.total)', 'total_vendido')
             .where('factura.fecha BETWEEN :fechaInicio AND :fechaFin', { fechaInicio, fechaFin })
-            .andWhere('factura.estado = :estado', { estado: 'AUTORIZADA' })
+            .andWhere('factura.estado = :estado', { estado: 'AUTORIZADA' });
+
+        if (vendedorId) {
+            query.andWhere('factura.vendedor_id = :vendedorId', { vendedorId });
+        }
+
+        if (productoId) {
+            query.innerJoin('factura.detalles', 'detalle')
+                .andWhere('detalle.producto_id = :productoId', { productoId });
+        }
+
+        const resultados = await query
             .groupBy('factura.punto_venta_id')
             .getRawMany();
 
-        // Get names for Puntos de Venta
         const puntosVenta = await this.puntoVentaRepository.find();
 
         return resultados.map(r => {
             const pv = puntosVenta.find(p => p.id === parseInt(r.punto_venta_id));
             return {
+                id: parseInt(r.punto_venta_id),
                 local: pv ? pv.nombre : `Local ID ${r.punto_venta_id}`,
                 cantidad: parseInt(r.cantidad_facturas),
                 total: parseFloat(parseFloat(r.total_vendido || '0').toFixed(2))
@@ -400,17 +426,36 @@ export class KpisService {
         }).sort((a, b) => b.total - a.total);
     }
 
-    async obtenerResumenVentas(periodo: string) {
-        const { fechaInicio, fechaFin } = this.obtenerFechasPeriodo(periodo);
+    async obtenerResumenVentas(periodo: string, fechaInicioStr?: string, fechaFinStr?: string, vendedorId?: number, puntoVentaId?: number, productoId?: number) {
+        let { fechaInicio, fechaFin } = this.obtenerFechasPeriodo(periodo);
+        if (fechaInicioStr && fechaFinStr) {
+            fechaInicio = new Date(fechaInicioStr);
+            fechaFin = new Date(fechaFinStr);
+            fechaFin.setHours(23, 59, 59, 999);
+        }
 
-        const datos = await this.facturaRepository
+        const query = this.facturaRepository
             .createQueryBuilder('factura')
-            .select('COUNT(factura.id)', 'cantidad')
+            .select('COUNT(DISTINCT factura.id)', 'cantidad')
             .addSelect('SUM(factura.total)', 'total_ventas')
             .addSelect('AVG(factura.total)', 'ticket_promedio')
             .where('factura.fecha BETWEEN :fechaInicio AND :fechaFin', { fechaInicio, fechaFin })
-            .andWhere('factura.estado = :estado', { estado: 'AUTORIZADA' })
-            .getRawOne();
+            .andWhere('factura.estado = :estado', { estado: 'AUTORIZADA' });
+
+        if (vendedorId) {
+            query.andWhere('factura.vendedor_id = :vendedorId', { vendedorId });
+        }
+
+        if (puntoVentaId) {
+            query.andWhere('factura.punto_venta_id = :puntoVentaId', { puntoVentaId });
+        }
+
+        if (productoId) {
+            query.innerJoin('factura.detalles', 'detalle')
+                .andWhere('detalle.producto_id = :productoId', { productoId });
+        }
+
+        const datos = await query.getRawOne();
 
         return {
             totalVentas: parseFloat(datos?.total_ventas || '0'),

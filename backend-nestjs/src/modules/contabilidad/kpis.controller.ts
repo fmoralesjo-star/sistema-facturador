@@ -57,17 +57,36 @@ export class KpisController {
     }
 
     @Get('ventas/vendedores')
-    async getVentasPorVendedor(@Query('periodo') periodo: string = 'mes') {
-        return this.kpisService.obtenerVentasPorVendedor(periodo);
+    async getVentasPorVendedor(
+        @Query('periodo') periodo: string = 'mes',
+        @Query('fechaInicio') fechaInicio?: string,
+        @Query('fechaFin') fechaFin?: string,
+        @Query('puntoVentaId') puntoVentaId?: number,
+        @Query('productoId') productoId?: number
+    ) {
+        return this.kpisService.obtenerVentasPorVendedor(periodo, fechaInicio, fechaFin, puntoVentaId, productoId);
     }
 
     @Get('ventas/locales')
-    async getVentasPorLocal(@Query('periodo') periodo: string = 'mes') {
-        return this.kpisService.obtenerVentasPorLocal(periodo);
+    async getVentasPorLocal(
+        @Query('periodo') periodo: string = 'mes',
+        @Query('fechaInicio') fechaInicio?: string,
+        @Query('fechaFin') fechaFin?: string,
+        @Query('vendedorId') vendedorId?: number,
+        @Query('productoId') productoId?: number
+    ) {
+        return this.kpisService.obtenerVentasPorLocal(periodo, fechaInicio, fechaFin, vendedorId, productoId);
     }
 
     @Get('ventas/resumen')
-    async getResumenVentas(@Query('periodo') periodo: string = 'mes') {
-        return this.kpisService.obtenerResumenVentas(periodo);
+    async getResumenVentas(
+        @Query('periodo') periodo: string = 'mes',
+        @Query('fechaInicio') fechaInicio?: string,
+        @Query('fechaFin') fechaFin?: string,
+        @Query('vendedorId') vendedorId?: number,
+        @Query('puntoVentaId') puntoVentaId?: number,
+        @Query('productoId') productoId?: number
+    ) {
+        return this.kpisService.obtenerResumenVentas(periodo, fechaInicio, fechaFin, vendedorId, puntoVentaId, productoId);
     }
 }
