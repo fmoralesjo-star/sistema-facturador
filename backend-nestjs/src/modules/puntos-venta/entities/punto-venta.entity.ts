@@ -4,20 +4,24 @@ import {
     PrimaryGeneratedColumn,
     CreateDateColumn,
     UpdateDateColumn,
-    OneToMany
+    OneToMany,
+    ManyToOne,
+    JoinColumn
 } from 'typeorm';
 import { ProductoPuntoVenta } from '../../inventario/entities/producto-punto-venta.entity';
+import { Establecimiento } from '../../empresa/entities/establecimiento.entity';
 
 @Entity('puntos_venta')
 export class PuntoVenta {
     @PrimaryGeneratedColumn()
     id: number;
 
-    // Nota: La columna establecimiento_id no existe en la tabla actual
-    // Se comenta esta relación hasta que se agregue la columna
-    // @ManyToOne(() => Establecimiento, (establecimiento) => establecimiento.puntosEmision, { nullable: true })
-    // @JoinColumn({ name: 'establecimiento_id' })
-    // establecimiento: Establecimiento;
+    @ManyToOne(() => Establecimiento, (establecimiento) => establecimiento.puntosEmision, { nullable: true })
+    @JoinColumn({ name: 'establecimiento_id' })
+    establecimiento: Establecimiento;
+
+    @Column({ nullable: true })
+    establecimiento_id: number;
 
     @Column({ length: 100 })
     nombre: string;

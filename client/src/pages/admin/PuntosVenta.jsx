@@ -23,9 +23,21 @@ function PuntosVenta() {
         activo: true
     });
 
+    const [establecimientos, setEstablecimientos] = useState([]);
+
     useEffect(() => {
         cargarPuntosVenta();
+        cargarEstablecimientos();
     }, []);
+
+    const cargarEstablecimientos = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/establecimientos`);
+            setEstablecimientos(response.data);
+        } catch (error) {
+            console.error('Error al cargar establecimientos:', error);
+        }
+    };
 
     const cargarPuntosVenta = async () => {
         setLoading(true);
@@ -45,7 +57,11 @@ function PuntosVenta() {
         try {
             // Preparar datos para el envío
             const payload = { ...formData };
-            // Asegurar tipos correctos si es necesario, aunque el binding de react suele mantener strings
+
+            // Asegurar que establecimiento_id sea número si existe
+            if (payload.establecimiento_id) {
+                payload.establecimiento_id = parseInt(payload.establecimiento_id);
+            }
 
             if (modoEdicion) {
                 // Removemos id del payload si va en la URL, aunque no estorba
@@ -74,7 +90,10 @@ function PuntosVenta() {
     };
 
     const handleEditar = (punto) => {
-        setFormData(punto);
+        setFormData({
+            ...punto,
+            establecimiento_id: punto.establecimiento?.id || punto.establecimiento_id || ''
+        });
         setModoEdicion(true);
         setMostrarFormulario(true);
     };
@@ -102,7 +121,8 @@ function PuntosVenta() {
             observaciones: '',
             tipo: 'TIENDA',
             es_principal: false,
-            activo: true
+            activo: true,
+            establecimiento_id: ''
         });
         setModoEdicion(false);
     };
@@ -185,6 +205,22 @@ function PuntosVenta() {
                     <div className="modal-content">
                         <h2>{modoEdicion ? 'Editar' : 'Nuevo'} Punto de Venta</h2>
                         <form onSubmit={(e) => e.preventDefault()}>
+                            <div className="form-group" style={{ marginBottom: '15px' }}>
+                                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#0e7490' }}>🏛️ Establecimiento SRI (Tributario)</label>
+                                <select
+                                    value={formData.establecimiento_id}
+                                    onChange={(e) => setFormData({ ...formData, establecimiento_id: e.target.value })}
+                                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #0e7490', background: '#ecfeff' }}
+                                >
+                                    <option value="">-- Seleccione Establecimiento --</option>
+                                    {establecimientos.map(est => (
+                                        <option key={est.id} value={est.id}>
+                                            {est.codigo} - {est.nombre_comercial || 'Matriz'} ({est.direccion})
+                                        </option>
+                                    ))}
+                                </select>
+                                <small style={{ color: '#666' }}>Vincule este punto físico con su estructura legal del SRI.</small>
+                            </div>
                             <div className="form-group">
                                 <label>Nombre *</label>
                                 <input

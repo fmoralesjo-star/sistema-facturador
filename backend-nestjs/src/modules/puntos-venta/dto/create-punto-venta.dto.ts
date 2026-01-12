@@ -43,4 +43,7 @@ export class CreatePuntoVentaDto {
     @IsBoolean()
     @IsOptional()
     activo?: boolean;
+
+    @IsOptional()
+    establecimiento_id?: number;
 }

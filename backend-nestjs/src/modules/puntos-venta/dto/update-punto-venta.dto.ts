@@ -27,4 +27,7 @@ export class UpdatePuntoVentaDto {
 
     @IsOptional()
     secuencia_nota_credito?: number;
+
+    @IsOptional()
+    establecimiento_id?: number;
 }

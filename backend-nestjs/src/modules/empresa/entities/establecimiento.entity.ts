@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { PuntoVenta } from '../../puntos-venta/entities/punto-venta.entity';
 
 @Entity('establecimientos')
 export class Establecimiento {
@@ -17,9 +18,8 @@ export class Establecimiento {
     @Column({ default: true })
     activo: boolean;
 
-    // Nota: Relación comentada porque la columna establecimiento_id no existe en puntos_venta
-    // @OneToMany(() => PuntoVenta, (punto) => punto.establecimiento)
-    // puntosEmision: PuntoVenta[];
+    @OneToMany(() => PuntoVenta, (punto) => punto.establecimiento)
+    puntosEmision: PuntoVenta[];
 
     @CreateDateColumn()
     created_at: Date;
