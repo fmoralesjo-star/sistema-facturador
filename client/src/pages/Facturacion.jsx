@@ -2095,41 +2095,47 @@ Este enlace te permitirá actualizar tu información de contacto.`
           gap: '10px',
           position: 'relative'
         }}>
-          <button
-            type="button"
-            onClick={() => navigate('/')}
-            className="no-print"
-            title="Ir al Inicio"
-            style={{
-              position: 'absolute',
-              left: '10px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              color: 'white',
-              border: '1px solid rgba(255, 255, 255, 0.4)',
-              borderRadius: '6px',
-              padding: '6px 15px',
-              fontSize: '12px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              transition: 'all 0.2s',
-              zIndex: 10,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '5px'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.4)'
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1)'
-            }}
-          >
-            🏠 INICIO
-          </button>
+          <div style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', display: 'flex', gap: '8px', alignItems: 'center', zIndex: 10 }}>
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="no-print"
+              title="Ir al Inicio"
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                color: 'white',
+                border: '1px solid rgba(255, 255, 255, 0.4)',
+                borderRadius: '6px',
+                padding: '4px 12px',
+                fontSize: '11px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                transition: 'all 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.4)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
+            >
+              🏠 INICIO
+            </button>
+
+            {/* Botones de Acción en Franja Azul */}
+            <div className="no-print" style={{ display: 'flex', gap: '4px', borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '8px' }}>
+              <button onClick={handleNuevaFactura} style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '10px', cursor: 'pointer' }}>➕ NUEVA</button>
+              <button
+                onClick={() => setEsProforma(!esProforma)}
+                style={{ padding: '4px 10px', background: esProforma ? '#dc2626' : 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '10px', cursor: 'pointer' }}
+              >
+                {esProforma ? "✖ CANCELAR" : "📝 COTIZAR"}
+              </button>
+              <button onClick={handleCierreCaja} style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '10px', cursor: 'pointer' }}>💰 CIERRE</button>
+              <button onClick={() => setMostrarBuscarFacturasModal(true)} style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '10px', cursor: 'pointer' }}>🔍 BUSCAR</button>
+              <button onClick={() => setMostrarCajaChicaModal(true)} style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '10px', cursor: 'pointer' }}>💸 GASTOS</button>
+              <button onClick={handleCambiarPuntoVenta} style={{ padding: '4px 10px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '10px', cursor: 'pointer' }}>🔄 PV</button>
+            </div>
+          </div>
 
           {esProforma ? (
             <>📝 MODO: COTIZACIÓN / PROFORMA</>
@@ -3597,23 +3603,21 @@ Este enlace te permitirá actualizar tu información de contacto.`
         )}
 
         <div className="factura-content">
-          {/* Barra de Herramientas Unificada (Renglón Azul) */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '8px',
-            background: cabeceraColapsada ? '#f0f9ff' : 'transparent',
-            padding: '4px 10px',
-            borderRadius: cabeceraColapsada ? '6px' : '0',
-            border: cabeceraColapsada ? '1px solid #bae6fd' : 'none',
-            marginBottom: '6px',
-            flexWrap: 'wrap',
-            flexShrink: 0
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Resumen de Cliente (Solo si está colapsado para ahorrar espacio) */}
+          {cabeceraColapsada ? (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              background: '#f0f9ff',
+              padding: '4px 12px',
+              borderRadius: '6px',
+              border: '1px solid #bae6fd',
+              marginBottom: '6px',
+              flexShrink: 0
+            }}>
               <button
-                onClick={() => setCabeceraColapsada(!cabeceraColapsada)}
+                onClick={() => setCabeceraColapsada(false)}
                 style={{
                   padding: '2px 8px',
                   fontSize: '9px',
@@ -3622,40 +3626,37 @@ Este enlace te permitirá actualizar tu información de contacto.`
                   border: '1px solid #cbd5e1',
                   borderRadius: '4px',
                   cursor: 'pointer',
-                  color: '#475569',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px'
+                  color: '#475569'
                 }}
               >
-                {cabeceraColapsada ? '🔽 MOSTRAR DATOS' : '🔼 OCULTAR'}
+                🔽 MOSTRAR DATOS COMPLETOS
               </button>
-
-              {cabeceraColapsada && (
-                <div style={{ fontSize: '11px', whiteSpace: 'nowrap', overflow: 'hidden' }}>
-                  <span style={{ fontWeight: 'bold', color: '#0369a1' }}>👤 CLIENTE: </span>
-                  <span style={{ color: '#0c4a6e' }}>
-                    {facturaData.clienteNombre || 'Consumidor Final'} ({facturaData.clienteRucCedula || '9999999999999'})
-                  </span>
-                </div>
-              )}
+              <div style={{ fontSize: '11px' }}>
+                <span style={{ fontWeight: 'bold', color: '#0369a1' }}>👤 CLIENTE: </span>
+                <span style={{ color: '#0c4a6e' }}>
+                  {facturaData.clienteNombre || 'Consumidor Final'} ({facturaData.clienteRucCedula || '9999999999999'})
+                </span>
+              </div>
             </div>
-
-            {/* Grupo de Botones de Acción (Compactos) */}
-            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-              <button onClick={handleNuevaFactura} style={{ padding: '2px 8px', cursor: 'pointer', background: '#007bff', color: 'white', border: 'none', borderRadius: '3px', fontWeight: 'bold', fontSize: '9px' }}>➕ NUEVA</button>
+          ) : (
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '6px' }}>
               <button
-                onClick={() => setEsProforma(!esProforma)}
-                style={{ padding: '2px 8px', cursor: 'pointer', background: esProforma ? '#dc3545' : '#6f42c1', color: 'white', border: 'none', borderRadius: '3px', fontWeight: 'bold', fontSize: '9px' }}
+                onClick={() => setCabeceraColapsada(true)}
+                style={{
+                  padding: '2px 12px',
+                  fontSize: '9px',
+                  fontWeight: 'bold',
+                  background: '#f1f5f9',
+                  border: '1px solid #cbd5e1',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  color: '#475569'
+                }}
               >
-                {esProforma ? "✖ CANCELAR PROFORMA" : "📝 COTIZACIÓN"}
+                🔼 OCULTAR DATOS PARA GANAR ESPACIO
               </button>
-              <button onClick={handleCierreCaja} style={{ padding: '2px 8px', cursor: 'pointer', background: '#28a745', color: 'white', border: 'none', borderRadius: '3px', fontWeight: 'bold', fontSize: '9px' }}>💰 CIERRE</button>
-              <button onClick={() => setMostrarBuscarFacturasModal(true)} style={{ padding: '2px 8px', cursor: 'pointer', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '3px', fontWeight: 'bold', fontSize: '9px' }}>🔍 BUSCAR</button>
-              <button onClick={() => setMostrarCajaChicaModal(true)} style={{ padding: '2px 8px', cursor: 'pointer', background: '#fd7e14', color: 'white', border: 'none', borderRadius: '3px', fontWeight: 'bold', fontSize: '9px' }}>💸 CAJA CHICA</button>
-              <button onClick={handleCambiarPuntoVenta} style={{ padding: '2px 8px', cursor: 'pointer', background: '#6c757d', color: 'white', border: 'none', borderRadius: '3px', fontWeight: 'bold', fontSize: '9px' }}>🔄 PV</button>
             </div>
-          </div>
+          )}
 
           {/* Header con Datos del Cliente, Datos de la Factura y Datos del Emisor */}
           {!cabeceraColapsada && (
