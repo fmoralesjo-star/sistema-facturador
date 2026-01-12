@@ -35,12 +35,33 @@ export const parsearNumero = (texto) => {
   return isNaN(num) ? 0 : redondear4Decimales(num)
 }
 
+// Función helper para formatear números de comprobante (001-001-000000001)
+export const formatearComprobante = (valor) => {
+  if (!valor) return ''
+  // Eliminar todo lo que no sea número
+  let numeros = valor.replace(/\D/g, '')
 
+  // Limitar a los dígitos máximos permitidos (3 + 3 + 9 = 15 dígitos)
+  numeros = numeros.slice(0, 15)
 
+  if (numeros.length === 0) return ''
 
+  let resultado = ''
 
+  // Primer bloque (Establecimiento - 3 dígitos)
+  if (numeros.length > 0) {
+    resultado = numeros.slice(0, 3)
+  }
 
+  // Segundo bloque (Punto Emisión - 3 dígitos)
+  if (numeros.length > 3) {
+    resultado += '-' + numeros.slice(3, 6)
+  }
 
+  // Tercer bloque (Secuencial - 9 dígitos)
+  if (numeros.length > 6) {
+    resultado += '-' + numeros.slice(6, 15)
+  }
 
-
-
+  return resultado
+}

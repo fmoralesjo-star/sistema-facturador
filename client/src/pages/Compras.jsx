@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import './Compras.css'
 
 import { API_URL } from '../config/api'
-import { redondear4Decimales, redondear2Decimales, formatearNumero, formatearMoneda, parsearNumero } from '../utils/formateo'
+import { redondear4Decimales, redondear2Decimales, formatearNumero, formatearMoneda, parsearNumero, formatearComprobante } from '../utils/formateo'
 import CajaChicaModal from '../components/CajaChicaModal'
 
 function Compras({ socket }) {
@@ -782,7 +782,9 @@ function Compras({ socket }) {
                       <input
                         type="text"
                         value={formData.numero_comprobante}
-                        onChange={(e) => setFormData({ ...formData, numero_comprobante: e.target.value })}
+                        onChange={(e) => setFormData({ ...formData, numero_comprobante: formatearComprobante(e.target.value) })}
+                        placeholder="001-001-000000001"
+                        maxLength="17"
                         required
                       />
                     </div>
