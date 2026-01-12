@@ -316,26 +316,25 @@ function Compras({ socket }) {
         return;
       }
 
-      // 2. Si no esta local, intentar "External API" (Simulado/Backend Mock)
-      // En un caso real llamaríamos a `${API_URL}/sri/contribuyente/${ruc}`
-      // Aquí simulamos una respuesta positiva para demo UX
-      await new Promise(r => setTimeout(r, 800)); // Simular network latency
+      // 2. Si no esta local, intentar "External API" (API Real backend -> SRI)
+      const res = await axios.get(`${API_URL}/sri/contribuyente/${ruc}`);
 
-      // Lógica simple de simulación para validar UX
-      if (ruc.length === 13 && ruc.endsWith('001')) {
+      if (res.data) {
+        const contribuyente = res.data;
         const nuevoProv = {
           codigo: ruc,
-          nombre: `PROVEEDOR NUEVO S.A. (Simulado)`,
-          direccion: 'AV. AMAZONAS Y NACIONES UNIDAS',
-          numero_registro: 'Contribuyente Especial',
+          nombre: contribuyente.nombre || contribuyente.razonSocial,
+          direccion: contribuyente.direccion || 'Dirección obtenida del SRI',
+          numero_registro: contribuyente.clase || '', // Contribuyente Especial, etc
           nit: '',
           origen: 'Local',
-          identificacion: ruc
+          identificacion: ruc,
+          es_nuevo: true // Flag para saber que vino del SRI
         };
         setProveedorSeleccionado(nuevoProv);
-        alert('Datos obtenidos del SRI (Simulación). Verifique y guarde.');
+        alert(`Datos encontrados en SRI: ${nuevoProv.nombre}`);
       } else {
-        alert('No se encontraron datos automáticos para este documento. Ingrese manualmente.');
+        alert('No se encontraron datos en el SRI para este RUC.');
       }
 
     } catch (error) {

@@ -284,5 +284,40 @@ export class SriService {
     // Formato simple parecido a clave real
     return `${fechaStr}${tipo}${ruc}1${random}123456781`;
   }
+  async consultarContribuyente(ruc: string): Promise<any> {
+    try {
+      // Endpoint público del SRI para consulta de datos básicos (Catastro)
+      const url = `https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/obtenerPorNumerosRuc?numerosRuc=${ruc}`;
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        // Fallback or specific error handling
+        throw new Error(`SRI API error: ${response.statusText}`);
+      }
+
+      const data: any = await response.json();
+
+      if (Array.isArray(data) && data.length > 0) {
+        const contribuyente = data[0];
+        return {
+          nombre: contribuyente.nombreComercial || contribuyente.razonSocial,
+          direccion: contribuyente.direccionMatriz || 'Dirección no disponible en SRI (Sin Login)',
+          identificacion: ruc,
+          nombreComercial: contribuyente.nombreComercial,
+          razonSocial: contribuyente.razonSocial,
+          estado: contribuyente.estadoPersona === 'ACTIVO' ? 'Activo' : 'Inactivo',
+          clase: contribuyente.claseContribuyente,
+          obligadoContabilidad: contribuyente.obligadoContabilidad === 'S'
+        };
+      } else {
+        throw new NotFoundException('Contribuyente no encontrado en SRI');
+      }
+    } catch (error) {
+      console.error('Error fetching RUC from SRI:', error);
+      // Fallback a un error controlable, o rethrow
+      throw new BadRequestException(`No se pudo obtener datos del SRI: ${error.message}`);
+    }
+  }
 }
 

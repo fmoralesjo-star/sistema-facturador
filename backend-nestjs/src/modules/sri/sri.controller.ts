@@ -248,5 +248,9 @@ export class SriController {
   async consultarConteoPendientes() {
     return await this.sriService.consultarConteoPendientes();
   }
+  @Get('contribuyente/:ruc')
+  async obtenerContribuyente(@Param('ruc') ruc: string) {
+    return await this.sriService.consultarContribuyente(ruc);
+  }
 }
 
