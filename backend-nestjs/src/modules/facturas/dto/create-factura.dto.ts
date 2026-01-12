@@ -24,6 +24,14 @@ export class CreateFacturaDetalleDto {
   @IsNumber()
   @Min(0)
   precio_unitario: number;
+
+  @IsOptional()
+  @IsString()
+  talla?: string;
+
+  @IsOptional()
+  @IsString()
+  color?: string;
 }
 
 export class CreateFacturaDto {

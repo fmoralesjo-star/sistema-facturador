@@ -40,6 +40,12 @@ export class FacturaDetalle {
   descuento: number;
 
   @Column({ nullable: true })
+  talla: string;
+
+  @Column({ nullable: true })
+  color: string;
+
+  @Column({ nullable: true })
   promocion_id: number;
 }
 

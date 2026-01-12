@@ -1796,6 +1796,8 @@ PANTALÓN (9D)|12|CRUDO PURO|77064558582|25.9|1|30|15|VEX2275|2024-01-15|REBECA 
               <th>Referencia</th>
               <th>SKU</th>
               <th>Nombre</th>
+              <th>Talla</th>
+              <th>Color</th>
               <th>Descripción</th>
               <th>Precio</th>
               <th>Stock</th>
@@ -1825,8 +1827,24 @@ PANTALÓN (9D)|12|CRUDO PURO|77064558582|25.9|1|30|15|VEX2275|2024-01-15|REBECA 
                     {producto.sku || 'N/A'}
                   </span>
                 </td>
-                <td>{producto.nombre}</td>
-                <td>{producto.descripcion || 'N/A'}</td>
+                <td style={{
+                  maxWidth: '120px',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap'
+                }}>
+                  {producto.nombre}
+                </td>
+                <td style={{ fontWeight: 'bold', color: '#1e40af' }}>{producto.talla || '-'}</td>
+                <td style={{ fontWeight: 'bold', color: '#1e40af' }} title={producto.desc_color}>{producto.color || '-'}</td>
+                <td style={{
+                  maxWidth: '150px',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap'
+                }} title={producto.descripcion}>
+                  {producto.descripcion || 'N/A'}
+                </td>
                 <td>${formatearNumero(producto.precio)}</td>
                 <td>
                   <span className={

@@ -269,9 +269,11 @@ function Facturacion({ socket }) {
   }
 
   const [columnWidths, setColumnWidths] = useState({
-    codigo: getInitialColumnWidth('codigoBarras', 200), // Aumentado para 16-20 caracteres
-    descripcion: getInitialColumnWidth('descripcion', 450), // Mucho más espacio para descripción
-    cantidad: getInitialColumnWidth('cantidad', 60),        // Más compacto
+    codigo: getInitialColumnWidth('codigoBarras', 150),
+    descripcion: getInitialColumnWidth('descripcion', 350),
+    talla: getInitialColumnWidth('talla', 80),
+    color: getInitialColumnWidth('color', 100),
+    cantidad: getInitialColumnWidth('cantidad', 60),
     precio: getInitialColumnWidth('precio', 90),
     descuento: getInitialColumnWidth('descuento', 70),
     subtotal: getInitialColumnWidth('subtotal', 90)
@@ -1243,6 +1245,8 @@ Este enlace te permitirá actualizar tu información de contacto.`
       id: nuevoId,
       codigo: '',
       descripcion: '',
+      talla: '',
+      color: '',
       cantidad: 0,
       precio: 0,
       descuento: 0,
@@ -1267,6 +1271,9 @@ Este enlace te permitirá actualizar tu información de contacto.`
         const producto = res.data[0]
         handleItemChange(itemId, 'precio', producto.precio || 0)
         handleItemTextChange(itemId, 'descripcion', producto.nombre || producto.descripcion || '')
+        handleItemTextChange(itemId, 'talla', producto.talla || '')
+        handleItemTextChange(itemId, 'color', producto.color || '')
+        handleItemChange(itemId, 'productoId', producto.id)
       }
     } catch (error) {
       console.error('Error al buscar producto:', error)
@@ -1547,6 +1554,8 @@ Este enlace te permitirá actualizar tu información de contacto.`
           producto_id: item.productoId || null,
           codigo: item.codigo,
           descripcion: item.descripcion,
+          talla: item.talla || '',
+          color: item.color || '',
           cantidad: parseFloat(item.cantidad),
           precio_unitario: parseFloat(item.precio),
           descuento: parseFloat(item.descuento || 0),
@@ -4272,7 +4281,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
                 <div
                   className="grid-header"
                   style={{
-                    gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 50px`
+                    gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.talla}px ${columnWidths.color}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 50px`
                   }}
                 >
                   <div className="grid-header-cell">
@@ -4282,6 +4291,14 @@ Este enlace te permitirá actualizar tu información de contacto.`
                   <div className="grid-header-cell">
                     DESCRIPCIÓN
                     <div className="resizer" onMouseDown={(e) => handleResizeStart(e, 'descripcion')}></div>
+                  </div>
+                  <div className="grid-header-cell">
+                    TALLA
+                    <div className="resizer" onMouseDown={(e) => handleResizeStart(e, 'talla')}></div>
+                  </div>
+                  <div className="grid-header-cell">
+                    COLOR
+                    <div className="resizer" onMouseDown={(e) => handleResizeStart(e, 'color')}></div>
                   </div>
                   <div className="grid-header-cell">
                     CANT.
@@ -4310,7 +4327,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
                         key={item.id}
                         className="grid-row"
                         style={{
-                          gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 50px`
+                          gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.talla}px ${columnWidths.color}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 50px`
                         }}
                       >
                         <div
@@ -4328,6 +4345,24 @@ Este enlace te permitirá actualizar tu información de contacto.`
                           onBlur={(e) => handleItemChange(item.id, 'descripcion', e.target.textContent)}
                         >
                           {item.descripcion || ''}
+                        </div>
+                        <div
+                          className="grid-cell"
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) => handleItemChange(item.id, 'talla', e.target.textContent)}
+                          style={{ fontWeight: 'bold', color: '#1e40af' }}
+                        >
+                          {item.talla || ''}
+                        </div>
+                        <div
+                          className="grid-cell"
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) => handleItemChange(item.id, 'color', e.target.textContent)}
+                          style={{ fontWeight: 'bold', color: '#1e40af' }}
+                        >
+                          {item.color || ''}
                         </div>
                         <div
                           className="grid-cell"

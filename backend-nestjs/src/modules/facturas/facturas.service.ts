@@ -113,6 +113,8 @@ export class FacturasService {
           cantidad: detalle.cantidad,
           precio_unitario: detalle.precio_unitario,
           subtotal: detalle.subtotal,
+          talla: detalle.talla,
+          color: detalle.color,
         });
         await queryRunner.manager.save(facturaDetalle);
 

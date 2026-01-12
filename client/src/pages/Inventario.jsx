@@ -762,6 +762,8 @@ function Inventario({ socket }) {
                 <th style={{ maxWidth: '100px' }}>Código</th>
                 <th>Referencia</th>
                 <th>Producto</th>
+                <th>Talla</th>
+                <th>Color</th>
                 <th>Categoría</th>
                 <th>Stock</th>
                 <th>Mínimo</th>
@@ -774,7 +776,7 @@ function Inventario({ socket }) {
             <tbody>
               {productosFiltrados.length === 0 ? (
                 <tr>
-                  <td colSpan="10" className="sin-datos">
+                  <td colSpan="12" className="sin-datos">
                     No se encontraron productos
                   </td>
                 </tr>
@@ -810,6 +812,8 @@ function Inventario({ socket }) {
                           )}
                         </div>
                       </td>
+                      <td style={{ fontWeight: 'bold', color: '#1e40af' }}>{producto.talla || '-'}</td>
+                      <td style={{ fontWeight: 'bold', color: '#1e40af' }} title={producto.desc_color}>{producto.color || '-'}</td>
                       <td>{producto.categoria || '-'}</td>
                       <td className="stock-cell relative-cell">
                         <span className={`stock-badge ${estado} has-tooltip`}>
