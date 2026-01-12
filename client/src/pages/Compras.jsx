@@ -321,6 +321,16 @@ function Compras({ socket }) {
 
       if (res.data) {
         const contribuyente = res.data;
+
+        // Inferencia de Tipo de Contribuyente según clase/categoria del SRI
+        let tipoInfe = 'OTROS';
+        const clase = (contribuyente.clase || '').toUpperCase();
+
+        if (clase.includes('ESPECIAL')) tipoInfe = 'CONTRIBUYENTE_ESPECIAL';
+        else if (clase.includes('RIMPE') && (clase.includes('POPULAR') || clase.includes('NEGOCIO'))) tipoInfe = 'RIMPE_NEGOCIO_POPULAR';
+        else if (clase.includes('RIMPE')) tipoInfe = 'RIMPE_EMPRENDEDOR';
+        else if (clase.includes('AGENTE')) tipoInfe = 'AGENTE_RETENCION';
+
         const nuevoProv = {
           codigo: ruc,
           nombre: contribuyente.nombre || contribuyente.razonSocial,
@@ -329,6 +339,7 @@ function Compras({ socket }) {
           nit: '',
           origen: 'Local',
           identificacion: ruc,
+          tipo_contribuyente: tipoInfe, // Nuevo campo inferido
           es_nuevo: true // Flag para saber que vino del SRI
         };
         setProveedorSeleccionado(nuevoProv);
@@ -1031,6 +1042,21 @@ function Compras({ socket }) {
                           onChange={(e) => setProveedorSeleccionado({ ...proveedorSeleccionado, numero_registro: e.target.value })}
                           onBlur={guardarProveedor}
                         />
+                      </div>
+                      <div className="form-group" style={{ minWidth: '200px' }}>
+                        <label>Tipo Contribuyente / Régimen</label>
+                        <select
+                          value={proveedorSeleccionado.tipo_contribuyente || 'OTROS'}
+                          onChange={(e) => setProveedorSeleccionado({ ...proveedorSeleccionado, tipo_contribuyente: e.target.value })}
+                          onBlur={guardarProveedor}
+                          style={{ borderColor: '#3b82f6', backgroundColor: '#eff6ff' }}
+                        >
+                          <option value="OTROS">Régimen General / Otros</option>
+                          <option value="CONTRIBUYENTE_ESPECIAL">Contribuyente Especial</option>
+                          <option value="AGENTE_RETENCION">Agente de Retención</option>
+                          <option value="RIMPE_EMPRENDEDOR">Régimen RIMPE - Emprendedor</option>
+                          <option value="RIMPE_NEGOCIO_POPULAR">Régimen RIMPE - Negocio Popular</option>
+                        </select>
                       </div>
                       <div className="form-group">
                         <label>Origen</label>
