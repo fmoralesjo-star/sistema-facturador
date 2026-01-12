@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useAuth } from '../contexts/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import './Compras.css'
 
 import { API_URL } from '../config/api'
@@ -11,8 +11,22 @@ import CajaChicaModal from '../components/CajaChicaModal'
 function Compras({ socket }) {
   const { getToken } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const mode = queryParams.get('mode')
+
   const [proveedores, setProveedores] = useState([])
   const [productos, setProductos] = useState([])
+
+  // Detectar cambio de modo para actualizar título y tipo
+  useEffect(() => {
+    if (mode === 'nc') {
+      setFormData(prev => ({ ...prev, tipo_comprobante: 'Nota de Crédito' }))
+    } else {
+      setFormData(prev => ({ ...prev, tipo_comprobante: 'Credito Fiscal' }))
+    }
+  }, [mode])
+
   const [compras, setCompras] = useState([])
   const [mostrarCompras, setMostrarCompras] = useState(false)
   const [mostrarCajaChica, setMostrarCajaChica] = useState(false)
@@ -549,7 +563,7 @@ function Compras({ socket }) {
         })),
         impuesto: formData.impuesto || calcularIVA(),
         forma_pago: formData.forma_pago, // EXPLICITAMENTE ENVIADO
-        observaciones: `Tipo: ${formData.tipo_compra}, Forma Pago: ${formData.forma_pago}, Origen: ${formData.origen}${formData.aplicar_retencion ? `, Retención: ${formData.numero_comprobante_retencion}` : ''}`
+        observaciones: `Doc: ${formData.tipo_comprobante}, Tipo: ${formData.tipo_compra}, Forma Pago: ${formData.forma_pago}, Origen: ${formData.origen}${formData.aplicar_retencion ? `, Retención: ${formData.numero_comprobante_retencion}` : ''}`
       }
 
       await axios.post(`${API_URL}/compras`, compraData)
@@ -758,7 +772,9 @@ function Compras({ socket }) {
           >
             Inicio
           </button>
-          <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#1e293b', fontWeight: 700 }}>🛒 Compras</h1>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#1e293b', fontWeight: 700 }}>
+            {mode === 'nc' ? '📄 Notas de Crédito Compras' : '🛒 Compras'}
+          </h1>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
           <button
@@ -957,6 +973,7 @@ function Compras({ socket }) {
                       >
                         <option value="Credito Fiscal">Credito Fiscal</option>
                         <option value="Factura">Factura</option>
+                        <option value="Nota de Crédito">Nota de Crédito</option>
                         <option value="Recibo">Recibo</option>
                       </select>
                     </div>

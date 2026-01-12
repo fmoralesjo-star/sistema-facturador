@@ -89,4 +89,37 @@ export class KpisController {
     ) {
         return this.kpisService.obtenerResumenVentas(periodo, fechaInicio, fechaFin, vendedorId, puntoVentaId, productoId);
     }
+
+    @Get('ventas/productos')
+    async getTopProductosVendidos(
+        @Query('periodo') periodo: string = 'mes',
+        @Query('fechaInicio') fechaInicio?: string,
+        @Query('fechaFin') fechaFin?: string,
+        @Query('vendedorId') vendedorId?: number,
+        @Query('puntoVentaId') puntoVentaId?: number,
+        @Query('productoId') productoId?: number
+    ) {
+        // Asegurar que los IDs sean números si vienen como strings
+        const vId = vendedorId ? Number(vendedorId) : undefined;
+        const pvId = puntoVentaId ? Number(puntoVentaId) : undefined;
+        const pId = productoId ? Number(productoId) : undefined;
+
+        return this.kpisService.obtenerTopProductosVendidos(periodo, fechaInicio, fechaFin, vId, pvId, pId);
+    }
+
+    @Get('ventas/clientes')
+    async getTopClientes(
+        @Query('periodo') periodo: string = 'mes',
+        @Query('fechaInicio') fechaInicio?: string,
+        @Query('fechaFin') fechaFin?: string,
+        @Query('vendedorId') vendedorId?: number,
+        @Query('puntoVentaId') puntoVentaId?: number,
+        @Query('productoId') productoId?: number
+    ) {
+        const vId = vendedorId ? Number(vendedorId) : undefined;
+        const pvId = puntoVentaId ? Number(puntoVentaId) : undefined;
+        const pId = productoId ? Number(productoId) : undefined;
+
+        return this.kpisService.obtenerTopClientes(periodo, fechaInicio, fechaFin, vId, pvId, pId);
+    }
 }

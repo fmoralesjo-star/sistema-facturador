@@ -426,6 +426,107 @@ export class KpisService {
         }).sort((a, b) => b.total - a.total);
     }
 
+    async obtenerTopProductosVendidos(periodo: string, fechaInicioStr?: string, fechaFinStr?: string, vendedorId?: number, puntoVentaId?: number, productoId?: number) {
+        let { fechaInicio, fechaFin } = this.obtenerFechasPeriodo(periodo);
+        if (fechaInicioStr && fechaFinStr) {
+            fechaInicio = new Date(fechaInicioStr);
+            fechaFin = new Date(fechaFinStr);
+            fechaFin.setHours(23, 59, 59, 999);
+        }
+
+        const query = this.facturaRepository
+            .createQueryBuilder('factura')
+            .innerJoinAndSelect('factura.detalles', 'detalle')
+            .innerJoin('detalle.producto', 'producto')
+            .select('producto.id', 'producto_id')
+            .addSelect('producto.nombre', 'producto_nombre')
+            .addSelect('SUM(detalle.cantidad)', 'total_cantidad')
+            .addSelect('SUM(detalle.subtotal)', 'total_vendido')
+            .where('factura.fecha BETWEEN :fechaInicio AND :fechaFin', { fechaInicio, fechaFin })
+            .andWhere('factura.estado = :estado', { estado: 'AUTORIZADA' });
+
+        if (vendedorId) {
+            query.andWhere('factura.vendedor_id = :vendedorId', { vendedorId });
+        }
+
+        if (puntoVentaId) {
+            query.andWhere('factura.punto_venta_id = :puntoVentaId', { puntoVentaId });
+        }
+
+        if (productoId) {
+            query.andWhere('detalle.producto_id = :productoId', { productoId });
+        }
+
+        const resultados = await query
+            .groupBy('producto.id')
+            .addGroupBy('producto.nombre')
+            .orderBy('total_vendido', 'DESC')
+            .limit(10)
+            .getRawMany();
+
+        return resultados.map(r => ({
+            id: parseInt(r.producto_id),
+            producto: r.producto_nombre,
+            cantidad: parseFloat(r.total_cantidad),
+            total: parseFloat(parseFloat(r.total_vendido || '0').toFixed(2))
+        }));
+
+    }
+
+    async obtenerTopClientes(periodo: string, fechaInicioStr?: string, fechaFinStr?: string, vendedorId?: number, puntoVentaId?: number, productoId?: number) {
+        let { fechaInicio, fechaFin } = this.obtenerFechasPeriodo(periodo);
+        if (fechaInicioStr && fechaFinStr) {
+            fechaInicio = new Date(fechaInicioStr);
+            fechaFin = new Date(fechaFinStr);
+            fechaFin.setHours(23, 59, 59, 999);
+        }
+
+        const query = this.facturaRepository
+            .createQueryBuilder('factura')
+            .innerJoin('factura.cliente', 'cliente')
+            .select('cliente.id', 'cliente_id')
+            .addSelect('cliente.razon_social', 'cliente_nombre') // Assuming razon_social is the name
+            .addSelect('COUNT(factura.id)', 'cantidad_compras')
+            .addSelect('SUM(factura.total)', 'total_comprado')
+            .where('factura.fecha BETWEEN :fechaInicio AND :fechaFin', { fechaInicio, fechaFin })
+            .andWhere('factura.estado = :estado', { estado: 'AUTORIZADA' });
+
+        if (vendedorId) {
+            query.andWhere('factura.vendedor_id = :vendedorId', { vendedorId });
+        }
+
+        if (puntoVentaId) {
+            query.andWhere('factura.punto_venta_id = :puntoVentaId', { puntoVentaId });
+        }
+
+        if (productoId) {
+            // Need to join details if filtering by product, but careful not to duplicate sums if 1 invoice has multiple same products (though here we count invoices)
+            // Actually, if we filter by product, we only want the total OF THAT PRODUCT bought by the client? Or total sales including that product? 
+            // Usually "Top Clients for Product X" means how much they spent on Product X.
+            // But if we just filter the invoice, it sums the whole invoice total.
+            // Let's stick to "Clients who bought Product X", but sum the specific product amount?
+            // To be consistent with `obtenerTopProductosVendidos`, we should probably filter invoices containing the product.
+            // But if we want *accurate* totals per product for the client, we should sum `detalle.subtotal`.
+            // For now, to keep it simple and consistent with the general filter "Sales Dashboard", let's filter the INVOICES that contain the product.
+            query.innerJoin('factura.detalles', 'detalle')
+                .andWhere('detalle.producto_id = :productoId', { productoId });
+        }
+
+        const resultados = await query
+            .groupBy('cliente.id')
+            .addGroupBy('cliente.razon_social')
+            .orderBy('total_comprado', 'DESC')
+            .limit(10)
+            .getRawMany();
+
+        return resultados.map(r => ({
+            id: parseInt(r.cliente_id),
+            cliente: r.cliente_nombre,
+            cantidadCompras: parseInt(r.cantidad_compras),
+            total: parseFloat(parseFloat(r.total_comprado || '0').toFixed(2))
+        }));
+    }
+
     async obtenerResumenVentas(periodo: string, fechaInicioStr?: string, fechaFinStr?: string, vendedorId?: number, puntoVentaId?: number, productoId?: number) {
         let { fechaInicio, fechaFin } = this.obtenerFechasPeriodo(periodo);
         if (fechaInicioStr && fechaFinStr) {

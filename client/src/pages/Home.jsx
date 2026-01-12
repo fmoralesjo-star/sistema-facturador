@@ -189,7 +189,7 @@ function Home() {
       titulo: 'NC Compras',
       descripcion: 'Notas de crédito de proveedores',
       icono: '📄',
-      ruta: '/compras', // Alias
+      ruta: '/compras?mode=nc', // Alias con query param
       color: '#0e7490',
       gradiente: 'linear-gradient(135deg, #0e7490 0%, #155e75 100%)'
     },
