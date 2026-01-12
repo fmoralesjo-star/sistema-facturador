@@ -287,10 +287,12 @@ export class SriService {
   async consultarContribuyente(ruc: string): Promise<any> {
     try {
       // Endpoint público del SRI para consulta de datos básicos (Catastro)
-      const url = `https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/obtenerPorNumerosRuc?numerosRuc=${ruc}`;
+      const baseUrl = `https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/obtenerPorNumerosRuc`;
 
       const axios = require('axios');
-      const response = await axios.get(url);
+      const response = await axios.get(baseUrl, {
+        params: { ruc: ruc }
+      });
       const data = response.data;
 
       if (Array.isArray(data) && data.length > 0) {
