@@ -2,31 +2,30 @@
 
 Sistema completo de facturación desplegado en Firebase/Google Cloud.
 
-## 📍 URLs del Sistema
-
-**Frontend (Firebase Hosting):**
-```
-https://sistema-faacturador-a510e.web.app
-```
-
-**Backend (Google Cloud Run):**
-```
-https://sistema-facturador-backend-rlydad2k3a-uc.a.run.app
-```
-
-**Endpoints:**
-- Health: `https://sistema-facturador-backend-rlydad2k3a-uc.a.run.app/health`
-- API: `https://sistema-facturador-backend-rlydad2k3a-uc.a.run.app/api`
-
-## 🏗️ Arquitectura
-
-```
-Frontend (Firebase Hosting)
-    ↓
-Backend (Cloud Run)
-    ↓
-Firestore (Firebase)
-```
+## 📍 URLs del Sistema (Render)
+ 
+ **Frontend y Backend (Hybrid Deploy):**
+ ```
+ https://sistema-facturador-ln63.onrender.com
+ ```
+ Alternativa (Backend Direct):
+ ```
+ https://backend-facturador.onrender.com
+ ```
+ 
+ **Endpoints:**
+ - Health: `https://sistema-facturador-ln63.onrender.com/health`
+ - API: `https://sistema-facturador-ln63.onrender.com/api`
+ 
+ ## 🏗️ Arquitectura
+ 
+ ```
+ Frontend (React Vite)
+     ↓
+ Backend (NestJS @ Render)
+     ↓
+ Database (PostgreSQL @ Render)
+ ```
 
 ## 📁 Estructura del Proyecto
 
