@@ -125,7 +125,17 @@ async function bootstrap() {
 
     // Fallback original solo si no hay frontend
     app.getHttpAdapter().get('/', (req: any, res: any) => {
-      res.json({ message: 'Backend Running (Frontend not found)', path: clientPath });
+      let files = [];
+      try {
+        files = fs.readdirSync(__dirname);
+      } catch (e) { files = ['error reading dir']; }
+
+      res.json({
+        message: 'Backend Running (Frontend not found)',
+        path: clientPath,
+        currentDir: __dirname,
+        filesInCurrentDir: files
+      });
     });
   }
 

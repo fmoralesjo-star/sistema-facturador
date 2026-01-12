@@ -12,7 +12,7 @@ npm install
 # 2. Compilar Backend
 echo "🔨 Compilando Backend..."
 rm -rf dist
-npm run build
+npx nest build
 
 # 3. Volver a raíz e ir a Client
 cd ..
