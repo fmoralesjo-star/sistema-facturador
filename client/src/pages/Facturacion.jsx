@@ -4450,36 +4450,39 @@ Este enlace te permitirá actualizar tu información de contacto.`
                       {listaPagos.length > 0 && (
                         <div style={{
                           display: 'flex',
-                          gap: '6px',
-                          flexWrap: 'wrap',
-                          padding: '4px',
-                          maxHeight: '40px',
-                          overflowY: 'auto',
-                          background: 'rgba(255,255,255,0.5)',
-                          borderRadius: '4px'
+                          flexDirection: 'column',
+                          gap: '4px',
+                          padding: '8px',
+                          background: '#ffffff',
+                          borderRadius: '6px',
+                          border: '1px solid #e2e8f0'
                         }}>
-                          {listaPagos.map(pago => (
-                            <div key={pago.id} style={{
-                              backgroundColor: '#f1f5f9',
-                              padding: '2px 8px',
-                              borderRadius: '16px',
-                              fontSize: '11px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '4px',
-                              border: '1px solid #cbd5e1',
-                              height: '24px'
-                            }}>
-                              <span style={{ fontWeight: 'bold', color: '#1e40af' }}>{pago.tipo === 'TARJETA' ? '💳' : pago.tipo === 'EFECTIVO' ? '💵' : pago.tipo === 'CREDITO' ? '🤝' : '🏦'} {pago.tipo}:</span>
-                              <span style={{ fontWeight: 'bold' }}>${pago.monto.toFixed(2)}</span>
-                              <button
-                                onClick={() => setListaPagos(listaPagos.filter(p => p.id !== pago.id))}
-                                style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ))}
+                          <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase' }}>Pagos Aplicados:</span>
+                          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                            {listaPagos.map(pago => (
+                              <div key={pago.id} style={{
+                                backgroundColor: '#f1f5f9',
+                                padding: '4px 10px',
+                                borderRadius: '16px',
+                                fontSize: '11px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                border: '1px solid #cbd5e1',
+                                boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                              }}>
+                                <span style={{ fontWeight: 'bold', color: '#1e40af' }}>{pago.tipo === 'TARJETA' ? '💳' : pago.tipo === 'EFECTIVO' ? '💵' : pago.tipo === 'CREDITO' ? '🤝' : '🏦'} {pago.tipo}:</span>
+                                <span style={{ fontWeight: 'bold' }}>${pago.monto.toFixed(2)}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => setListaPagos(listaPagos.filter(p => p.id !== pago.id))}
+                                  style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', marginLeft: '4px' }}
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>
