@@ -96,19 +96,24 @@ export class UsuariosService {
     // Mapa de permisos hardcoded (para inicializar)
     const permisosMap: Record<string, string[]> = {
       admin: [
-        'facturacion', 'contabilidad', 'clientes', 'productos', 'inventario', 'compras', 'admin', 'auditoría', 'reportes', 'tesoreria', 'bancos'
+        'dashboard', 'facturacion', 'notas_credito', 'proformas', 'clientes', 'productos', 'inventario', 'promociones',
+        'compras', 'proveedores', 'contabilidad', 'tesoreria', 'bancos', 'cartera', 'recursos_humanos',
+        'reportes', 'admin', 'auditoría', 'administracion_ti', 'tienda', 'sri'
       ],
       'gestor de sistema': [
-        'facturacion', 'contabilidad', 'clientes', 'productos', 'inventario', 'compras', 'admin', 'reportes'
+        'dashboard', 'facturacion', 'notas_credito', 'proformas', 'clientes', 'productos', 'inventario', 'promociones',
+        'compras', 'proveedores', 'contabilidad', 'tesoreria', 'bancos', 'reportes', 'admin'
       ],
       gerente: [
-        'facturacion', 'contabilidad', 'clientes', 'productos', 'inventario', 'compras', 'reportes'
+        'dashboard', 'facturacion', 'notas_credito', 'clientes', 'productos', 'inventario', 'compras', 'proveedores',
+        'contabilidad', 'reportes', 'cartera', 'recursos_humanos', 'tesoreria', 'bancos'
       ],
       vendedor: [
-        'facturacion', 'clientes', 'productos'
+        'dashboard', 'facturacion', 'clientes', 'productos', 'promociones', 'proformas'
       ],
       contador: [
-        'contabilidad', 'facturacion', 'reportes', 'tesoreria', 'bancos'
+        'dashboard', 'contabilidad', 'facturacion', 'notas_credito', 'compras', 'proveedores', 'reportes',
+        'tesoreria', 'bancos', 'cartera', 'sri'
       ]
     };
 
@@ -340,5 +345,30 @@ export class UsuariosService {
     } else {
       // Fallback or empty
     }
+  }
+
+  // Gestión de Permisos por Rol (Default)
+  async getRolPermisos(rolId: number) {
+    const permisos = await this.rolPermisoRepository.find({ where: { rol_id: rolId } });
+    return permisos;
+  }
+
+  async updateRolPermisos(rolId: number, modulos: string[]) {
+    // 1. Validar que el rol exista
+    await this.findOneRol(rolId);
+
+    // 2. Eliminar permisos anteriores
+    await this.rolPermisoRepository.delete({ rol_id: rolId });
+
+    // 3. Crear nuevos
+    if (modulos.length > 0) {
+      const nuevos = modulos.map(modulo => this.rolPermisoRepository.create({
+        rol_id: rolId,
+        modulo
+      }));
+      await this.rolPermisoRepository.save(nuevos);
+    }
+
+    return this.getRolPermisos(rolId);
   }
 }

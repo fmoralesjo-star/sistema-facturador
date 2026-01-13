@@ -6,6 +6,7 @@ import { API_URL } from '../config/api'
 import { useAuth } from '../contexts/AuthContext'
 import PuntosVenta from './admin/PuntosVenta'
 import AdminConfiguracion from './admin/AdminConfiguracion'
+import Roles from './admin/Roles'
 import SystemHealthWidget from '../components/SystemHealthWidget'
 
 function Admin({ socket }) {
@@ -88,13 +89,27 @@ function Admin({ socket }) {
   const [filtroTipoDoc, setFiltroTipoDoc] = useState('')
 
   const modulos = [
+    { id: 'dashboard', nombre: 'Dashboard' },
     { id: 'facturacion', nombre: 'Facturación' },
-    { id: 'contabilidad', nombre: 'Contabilidad' },
+    { id: 'notas_credito', nombre: 'Notas de Crédito' },
+    { id: 'proformas', nombre: 'Proformas' },
     { id: 'clientes', nombre: 'Clientes' },
     { id: 'productos', nombre: 'Productos' },
+    { id: 'inventario', nombre: 'Inventario' },
+    { id: 'promociones', nombre: 'Promociones' },
     { id: 'compras', nombre: 'Compras' },
-    { id: 'admin', nombre: 'Administración' },
-    { id: 'auditoría', nombre: 'Auditoría / Bitácora' }
+    { id: 'proveedores', nombre: 'Proveedores' },
+    { id: 'contabilidad', nombre: 'Contabilidad' },
+    { id: 'tesoreria', nombre: 'Tesorería' },
+    { id: 'bancos', nombre: 'Bancos' },
+    { id: 'cartera', nombre: 'Cartera (Cuentas por Cobrar/Pagar)' },
+    { id: 'recursos_humanos', nombre: 'Recursos Humanos' },
+    { id: 'reportes', nombre: 'Reportes' },
+    { id: 'admin', nombre: 'Administración General' },
+    { id: 'auditoría', nombre: 'Auditoría / Bitácora' },
+    { id: 'administracion_ti', nombre: 'Administración TI' },
+    { id: 'tienda', nombre: 'Tienda Online' },
+    { id: 'sri', nombre: 'Configuración SRI' }
   ]
 
   useEffect(() => {
@@ -1031,6 +1046,15 @@ function Admin({ socket }) {
           >
             <span>👥</span> Gestión de Usuarios
           </button>
+          <button
+            className={`admin-menu-item ${tabActiva === 'roles' ? 'active' : ''}`}
+            onClick={() => {
+              setTabActiva('roles')
+              setMostrarInfoEmpresa(false)
+            }}
+          >
+            <span>🛡️</span> Roles y Permisos
+          </button>
           <div style={{ margin: '15px 0 5px 0', fontSize: '11px', color: '#9ca3af', fontWeight: 'bold', paddingLeft: '10px', letterSpacing: '0.5px' }}>PARÁMETROS SRI</div>
           <button
             className={`admin-menu-item ${tabActiva === 'sri' ? 'active' : ''}`}
@@ -1799,6 +1823,10 @@ function Admin({ socket }) {
           </div>
         )}
 
+        {tabActiva === 'roles' && (
+          <Roles />
+        )}
+
         {/* Pestaña de Auditoría */}
         {tabActiva === 'auditoría' && (
           <div className="configuracion-section">
@@ -1918,19 +1946,21 @@ function Admin({ socket }) {
                     <label>Rol</label>
                     <select
                       value={formDataUsuario.rol_id || ''}
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         const rolId = e.target.value ? parseInt(e.target.value) : null
                         setFormDataUsuario({ ...formDataUsuario, rol_id: rolId })
-                        // Si se selecciona un rol, aplicar permisos automáticamente
+                        // Si se selecciona un rol, aplicar permisos automáticamente DESDE BASE DE DATOS
                         if (rolId) {
-                          const rolSeleccionado = roles.find(r => r.id === rolId)
-                          if (rolSeleccionado) {
-                            const permisosPorRol = getPermisosPorRol(rolSeleccionado.nombre)
+                          try {
+                            const res = await axios.get(`${API_URL}/usuarios/roles/${rolId}/permisos`)
+                            // Convertir a mapa {modulo: true}
                             const nuevosPermisos = {}
-                            permisosPorRol.forEach(modulo => {
-                              nuevosPermisos[modulo] = true
+                            res.data.forEach(p => {
+                              nuevosPermisos[p.modulo] = true
                             })
                             setPermisosUsuario(nuevosPermisos)
+                          } catch (error) {
+                            console.error('Error fetching role permissions:', error)
                           }
                         }
                       }}

@@ -68,6 +68,19 @@ export class UsuariosController {
     return this.usuariosService.updatePermisos(id, body.permisos);
   }
 
+  @Get('roles/:id/permisos')
+  getRolPermisos(@Param('id', ParseIntPipe) id: number) {
+    return this.usuariosService.getRolPermisos(id);
+  }
+
+  @Put('roles/:id/permisos')
+  updateRolPermisos(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: { modulos: string[] },
+  ) {
+    return this.usuariosService.updateRolPermisos(id, body.modulos);
+  }
+
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
   remove(@Param('id', ParseIntPipe) id: number) {
