@@ -23,7 +23,7 @@ export class PuntoVenta {
     @Column({ nullable: true })
     establecimiento_id: number;
 
-    @Column({ length: 100 })
+    @Column({ length: 100, nullable: true })
     nombre: string;
 
     @Column({ length: 10, unique: true })
