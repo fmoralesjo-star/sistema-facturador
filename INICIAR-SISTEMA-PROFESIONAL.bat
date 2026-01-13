@@ -27,9 +27,9 @@ if not exist "client\node_modules" (
 
 echo.
 echo ⚡ Iniciando servicios...
-start "BACKEND" /D "backend-nestjs" cmd /c "npm run start:dev"
-start "FRONTEND" /D "client" cmd /c "npm run dev"
-start "MONITOR" cmd /c "MONITOR-SISTEMA.bat"
+start "BACKEND" /D "backend-nestjs" cmd /k "npm run start:dev"
+start "FRONTEND" /D "client" cmd /k "npm run dev"
+start "MONITOR" cmd /k "MONITOR-SISTEMA.bat"
 
 echo.
 echo ✅ ¡Sistema iniciado!
