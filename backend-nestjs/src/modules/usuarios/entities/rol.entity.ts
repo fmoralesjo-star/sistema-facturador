@@ -8,6 +8,8 @@ import {
 } from 'typeorm';
 import { Usuario } from './usuario.entity';
 
+import { RolPermiso } from './rol-permiso.entity';
+
 @Entity('roles')
 export class Rol {
   @PrimaryGeneratedColumn()
@@ -21,6 +23,9 @@ export class Rol {
 
   @OneToMany(() => Usuario, (usuario) => usuario.rol)
   usuarios: Usuario[];
+
+  @OneToMany(() => RolPermiso, (permiso) => permiso.rol)
+  permisos: RolPermiso[];
 
   @CreateDateColumn()
   created_at: Date;

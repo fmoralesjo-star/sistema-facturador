@@ -244,6 +244,8 @@ function Home() {
 
   // Estado para la categoría activa
   const [activeCategory, setActiveCategory] = useState('Ventas')
+  // Estado para colapsar/expandir el dashboard de ventas
+  const [ventasDashboardExpanded, setVentasDashboardExpanded] = useState(false)
 
   const [modoEdicion, setModoEdicion] = useState(false)
   const [moduloArrastrando, setModuloArrastrando] = useState(null)

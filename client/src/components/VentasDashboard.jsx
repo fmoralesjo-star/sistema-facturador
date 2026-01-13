@@ -33,7 +33,7 @@ const VentasDashboard = () => {
     const [topClientes, setTopClientes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [periodo, setPeriodo] = useState('mes'); // mes, semana, dia, año
-    const [isExpanded, setIsExpanded] = useState(true);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const toggleExpand = () => setIsExpanded(!isExpanded);
 
@@ -219,7 +219,7 @@ const VentasDashboard = () => {
                 onClick={toggleExpand}
             >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <h3 style={{ margin: 0, color: '#334155' }}>📊 Dashboard de Ventas</h3>
+                    <h3 style={{ margin: 0, color: '#334155' }}>📊 Dashboard de Ventas (Clic para desplegar)</h3>
                 </div>
                 <div style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>

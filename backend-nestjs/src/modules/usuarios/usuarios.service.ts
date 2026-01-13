@@ -4,23 +4,10 @@ import { Repository } from 'typeorm';
 import { Usuario } from './entities/usuario.entity';
 import { Rol } from './entities/rol.entity';
 import { UsuarioPermiso } from './entities/usuario-permiso.entity';
+import { RolPermiso } from './entities/rol-permiso.entity';
 import { EventsGateway } from '../../gateways/events.gateway';
 import { AuditService } from '../audit/audit.service';
-
-// Importar bcrypt de forma opcional
-let bcrypt: any;
-try {
-  bcrypt = require('bcrypt');
-} catch (e) {
-  console.warn('⚠️  bcrypt no está instalado. Ejecuta: npm install bcrypt @types/bcrypt');
-  // Función temporal para hash sin bcrypt (NO SEGURO - solo para desarrollo)
-  bcrypt = {
-    hash: async (password: string, rounds: number) => {
-      console.warn('⚠️  Usando hash temporal inseguro. Instala bcrypt para producción.');
-      return password; // NO usar en producción
-    }
-  };
-}
+import * as bcrypt from 'bcrypt';
 
 import { IsString, IsOptional, IsInt, IsEmail, IsBoolean } from 'class-validator';
 
@@ -90,10 +77,57 @@ export class UsuariosService {
     private rolRepository: Repository<Rol>,
     @InjectRepository(UsuarioPermiso)
     private permisoRepository: Repository<UsuarioPermiso>,
+    @InjectRepository(RolPermiso)
+    private rolPermisoRepository: Repository<RolPermiso>,
     @Inject(forwardRef(() => EventsGateway))
     private eventsGateway: EventsGateway,
     private readonly auditService: AuditService,
   ) { }
+
+  async onModuleInit() {
+    await this.seedRolPermisos();
+  }
+
+  // Seeding inicial de permisos por rol
+  async seedRolPermisos() {
+    // console.log('🔄 Verificando permisos de roles...');
+    const roles = await this.rolRepository.find();
+
+    // Mapa de permisos hardcoded (para inicializar)
+    const permisosMap: Record<string, string[]> = {
+      admin: [
+        'facturacion', 'contabilidad', 'clientes', 'productos', 'inventario', 'compras', 'admin', 'auditoría', 'reportes', 'tesoreria', 'bancos'
+      ],
+      'gestor de sistema': [
+        'facturacion', 'contabilidad', 'clientes', 'productos', 'inventario', 'compras', 'admin', 'reportes'
+      ],
+      gerente: [
+        'facturacion', 'contabilidad', 'clientes', 'productos', 'inventario', 'compras', 'reportes'
+      ],
+      vendedor: [
+        'facturacion', 'clientes', 'productos'
+      ],
+      contador: [
+        'contabilidad', 'facturacion', 'reportes', 'tesoreria', 'bancos'
+      ]
+    };
+
+    for (const rol of roles) {
+      const permisosExistentes = await this.rolPermisoRepository.count({ where: { rol_id: rol.id } });
+
+      if (permisosExistentes === 0) {
+        const modulos = permisosMap[rol.nombre.toLowerCase()] || [];
+        if (modulos.length > 0) {
+          console.log(`✨ Inicializando permisos para rol: ${rol.nombre}`);
+          const entidades = modulos.map(modulo => this.rolPermisoRepository.create({
+            rol_id: rol.id,
+            modulo
+          }));
+          await this.rolPermisoRepository.save(entidades);
+        }
+      }
+    }
+  }
 
   async findAll() {
     try {
@@ -101,7 +135,7 @@ export class UsuariosService {
         relations: ['rol'],
         order: { nombre_completo: 'ASC' },
       });
-      console.log(`✅ Usuarios encontrados: ${usuarios.length}`);
+      // console.log(`✅ Usuarios encontrados: ${usuarios.length}`);
       return usuarios;
     } catch (error) {
       console.error('❌ Error al obtener usuarios:', error);
@@ -212,10 +246,9 @@ export class UsuariosService {
       accion: 'UPDATE_USER',
       modulo: 'USUARIOS',
       entidad_id: saved.id,
-      valor_anterior: usuario, // Note: usuario object acts as old reference? No, it's mutated by assign. Ideally capture before.
-      // Getting old/new accurately requires cloning. For now logging mutated object as 'new'.
+      valor_anterior: usuario,
       valor_nuevo: saved,
-      usuario_nombre: 'Admin', // Placeholder
+      usuario_nombre: 'Admin',
       ip_address: '127.0.0.1'
     });
 
@@ -261,12 +294,8 @@ export class UsuariosService {
   }
 
   async updatePermisos(usuarioId: number, permisos: PermisoDto[]) {
-    const usuario = await this.findOne(usuarioId);
-
-    // Eliminar permisos existentes
     await this.permisoRepository.delete({ usuario_id: usuarioId });
 
-    // Crear nuevos permisos
     const nuevosPermisos = permisos.map((permiso) =>
       this.permisoRepository.create({
         usuario_id: usuarioId,
@@ -299,61 +328,17 @@ export class UsuariosService {
   }
 
   async aplicarPermisosPorRol(usuarioId: number, rolId: number) {
-    const rol = await this.findOneRol(rolId);
-    const permisosPorRol = this.getPermisosPorRol(rol.nombre);
+    const rolPermisos = await this.rolPermisoRepository.find({ where: { rol_id: rolId } });
 
-    const permisos = permisosPorRol.map((modulo) => ({
-      modulo,
-      tiene_acceso: true,
-    }));
-
-    await this.updatePermisos(usuarioId, permisos);
-  }
-
-  private getPermisosPorRol(nombreRol: string): string[] {
-    const permisosPorRol: Record<string, string[]> = {
-      admin: [
-        'facturacion',
-        'contabilidad',
-        'clientes',
-        'productos',
-        'inventario',
-        'compras',
-        'admin',
-        'reportes',
-      ],
-      'gestor de sistema': [
-        'facturacion',
-        'contabilidad',
-        'clientes',
-        'productos',
-        'inventario',
-        'compras',
-        'admin',
-        'reportes',
-      ],
-      gerente: [
-        'facturacion',
-        'contabilidad',
-        'clientes',
-        'productos',
-        'inventario',
-        'compras',
-        'reportes',
-      ],
-      vendedor: [
-        'facturacion',
-        'clientes',
-        'productos',
-      ],
-      contador: [
-        'contabilidad',
-        'facturacion',
-        'reportes',
-      ],
-    };
-
-    return permisosPorRol[nombreRol.toLowerCase()] || [];
+    // Si encontramos permisos en la BD, los usamos
+    if (rolPermisos.length > 0) {
+      const permisos = rolPermisos.map((p) => ({
+        modulo: p.modulo,
+        tiene_acceso: true,
+      }));
+      await this.updatePermisos(usuarioId, permisos);
+    } else {
+      // Fallback or empty
+    }
   }
 }
-

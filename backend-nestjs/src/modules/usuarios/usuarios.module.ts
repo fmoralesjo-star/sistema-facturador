@@ -5,6 +5,7 @@ import { UsuariosController } from './usuarios.controller';
 import { Usuario } from './entities/usuario.entity';
 import { Rol } from './entities/rol.entity';
 import { UsuarioPermiso } from './entities/usuario-permiso.entity';
+import { RolPermiso } from './entities/rol-permiso.entity';
 import { AppModule } from '../../app.module';
 import { InsertarRolesService } from './scripts/insertar-roles.service';
 import { CrearUsuariosPruebaService } from './scripts/crear-usuarios-prueba.service';
@@ -12,7 +13,7 @@ import { AuditModule } from '../audit/audit.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Usuario, Rol, UsuarioPermiso]),
+    TypeOrmModule.forFeature([Usuario, Rol, UsuarioPermiso, RolPermiso]),
     forwardRef(() => AppModule),
     AuditModule,
   ],
