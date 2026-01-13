@@ -13,15 +13,12 @@ function Facturacion({ socket }) {
   const { currentUser } = useAuth()
 
   // Debug: Verificar que el componente se está renderizando
+  // Debug: Verificar que el componente se está renderizando
+  /* 
   useEffect(() => {
     console.log('✅ Componente Facturacion montado correctamente')
-    console.log('Socket disponible:', !!socket)
-    console.log('Current user:', currentUser)
-    console.log('URL actual:', window.location.href)
   }, [socket, currentUser])
-
-  // Log antes del return
-  console.log('🔍 Facturacion: Iniciando renderizado del JSX')
+  */
   // Función helper para obtener fecha en formato ISO (yyyy-MM-dd) para inputs type="date"
   const getFechaISO = (fecha) => {
     if (!fecha) return new Date().toISOString().split('T')[0]

@@ -197,9 +197,9 @@ export class FacturasService implements OnModuleInit {
         );
       }
 
-      // 3. Contabilidad: Se delega al SRI Processor (cuando se AUTORICE)
-      // Anteriormente se creaba aquí, pero se cambió a requerimiento: "Al autorizar una factura en el SRI"
-      // El asiento se generará en SriProcessor.processNextJob
+      // 3. Contabilidad: 
+      // El asiento contable se genera automáticamente en el módulo SRI (SriProcessor)
+      // una vez que la factura es AUTORIZADA por el SRI.
 
       // Generar clave de acceso
       const claveAcceso = this.sriService.generarClaveAcceso(facturaGuardada);

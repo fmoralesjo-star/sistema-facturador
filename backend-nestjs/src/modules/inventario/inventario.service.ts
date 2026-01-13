@@ -108,11 +108,8 @@ export class InventarioService {
       await this.productoRepository.update({ id: dto.producto_id }, { stock: nuevoStock });
     }
 
-    // Generar asiento contable para ajustes manuales (no facturas ni compras)
-    // NOTA: Si estamos en una transacción externa (queryRunner), NO deberíamos crear transacciones anidadas implícitas
-    // o deberíamos pasar el queryRunner al servicio contable si soportara.
-    // Por ahora, mantenemos la lógica pero advertimos que esto podría quedar fuera de la Tx principal si ContabilidadService no usa el runner.
-    // TODO: Refactorizar ContabilidadService para aceptar QueryRunner
+    // Generar asiento contable para ajustes manuales
+    // Se utiliza el queryRunner para mantener la integridad transaccional con Contabilidad
     if (dto.tipo === 'AJUSTE' || (!dto.factura_id && !dto.compra_id)) {
       try {
         await this.contabilidadService.crearAsientoAjusteInventario({
@@ -121,9 +118,13 @@ export class InventarioService {
           tipo: dto.tipo,
           motivo: dto.motivo || 'Ajuste manual de inventario',
           valorUnitario: Number(producto.precio) || 0,
+          queryRunner: queryRunner, // Pass the queryRunner!
         });
       } catch (error) {
         console.error('Error al crear asiento contable para ajuste de inventario:', error);
+        // We do not throw to avoid rolling back the inventory change if accounting fails (unless strict requirement)
+        // given the user wants "robustness", silent fail on secondary system is often preferred vs blocking primary ops
+        // unless accounting is mandatory.
       }
     }
 
