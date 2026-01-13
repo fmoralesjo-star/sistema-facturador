@@ -4,6 +4,7 @@ import {
   BadRequestException,
   Inject,
   forwardRef,
+  OnModuleInit,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, In } from 'typeorm';
@@ -18,7 +19,7 @@ import { EmpresaService } from '../empresa/empresa.service';
 import { EventsGateway } from '../../gateways/events.gateway';
 
 @Injectable()
-export class FacturasService {
+export class FacturasService implements OnModuleInit {
   constructor(
     @InjectRepository(Factura)
     private facturaRepository: Repository<Factura>,
@@ -34,6 +35,68 @@ export class FacturasService {
     @Inject(forwardRef(() => EventsGateway))
     private eventsGateway: EventsGateway,
   ) { }
+
+  async onModuleInit() {
+    // Crear Trigger de Stock automáticamente al iniciar el módulo
+    try {
+      const queryRunner = this.dataSource.createQueryRunner();
+      await queryRunner.connect();
+
+      // 1. Crear Función
+      await queryRunner.query(`
+          CREATE OR REPLACE FUNCTION public.actualizar_stock_venta()
+          RETURNS trigger
+          LANGUAGE plpgsql
+          AS $function$
+          DECLARE
+              v_punto_venta_id integer;
+          BEGIN
+              -- Obtenemos el punto de venta de la factura cabecera
+              SELECT punto_venta_id INTO v_punto_venta_id
+              FROM facturas
+              WHERE id = NEW.factura_id;
+
+              -- Si hay punto de venta, actualizar stock específico
+              IF v_punto_venta_id IS NOT NULL THEN
+                  UPDATE productos_puntos_venta
+                  SET stock = stock - NEW.cantidad,
+                      updated_at = NOW()
+                  WHERE producto_id = NEW.producto_id 
+                    AND punto_venta_id = v_punto_venta_id;
+                  
+                  IF NOT FOUND THEN
+                     INSERT INTO productos_puntos_venta (producto_id, punto_venta_id, stock, created_at, updated_at)
+                     VALUES (NEW.producto_id, v_punto_venta_id, -NEW.cantidad, NOW(), NOW());
+                  END IF;
+              END IF;
+
+              -- 2. Restar del Stock Global (Tabla productos)
+              UPDATE productos
+              SET stock = stock - NEW.cantidad,
+                  updated_at = NOW()
+              WHERE id = NEW.producto_id;
+
+              RETURN NEW;
+          END;
+          $function$;
+        `);
+
+      // 2. Crear Trigger
+      await queryRunner.query(`
+          DROP TRIGGER IF EXISTS trigger_actualizar_stock_venta ON factura_detalles;
+          CREATE TRIGGER trigger_actualizar_stock_venta
+          AFTER INSERT ON factura_detalles
+          FOR EACH ROW
+          EXECUTE FUNCTION actualizar_stock_venta();
+        `);
+
+      await queryRunner.release();
+      console.log('✅ Trigger de Stock "actualizar_stock_venta" verificado/creado correctamente');
+    } catch (error) {
+      console.error('❌ Error creando trigger de stock:', error);
+      // No lanzamos error para no detener el arranque, pero logueamos fuerte
+    }
+  }
 
   async create(createFacturaDto: CreateFacturaDto) {
     // Validar stock antes de crear la factura
@@ -116,9 +179,10 @@ export class FacturasService {
           talla: detalle.talla,
           color: detalle.color,
         });
+        // Nota: Al hacer save(), se dispara el Trigger 'trigger_actualizar_stock_venta' en la DB
         await queryRunner.manager.save(facturaDetalle);
 
-        // Registrar movimiento de inventario (SALIDA)
+        // Registrar movimiento de inventario (SALIDA - LOG ONLY)
         await this.inventarioService.registrarMovimiento(
           {
             producto_id: detalle.producto_id,
@@ -131,60 +195,11 @@ export class FacturasService {
           },
           queryRunner,
         );
-
-        // Actualizar stock del punto de venta si existe
-        if (createFacturaDto.punto_venta_id) {
-          await this.inventarioService.actualizarStockPuntoVenta(
-            detalle.producto_id,
-            createFacturaDto.punto_venta_id,
-            detalle.cantidad,
-            'SALIDA',
-            queryRunner,
-          );
-        }
-
-        // Actualizar stock global del producto
-        await queryRunner.manager.decrement(
-          Producto,
-          { id: detalle.producto_id },
-          'stock',
-          detalle.cantidad,
-        );
       }
 
       // 3. Contabilidad: Se delega al SRI Processor (cuando se AUTORICE)
       // Anteriormente se creaba aquí, pero se cambió a requerimiento: "Al autorizar una factura en el SRI"
       // El asiento se generará en SriProcessor.processNextJob
-
-      /*
-      // Crear asientos contables (solo si la empresa está obligada a llevar contabilidad)
-      let asientoContable = null;
-      if (empresaId) {
-        const empresa = await this.empresaService.findOne(empresaId);
-        if (empresa.obligado_contabilidad) {
-          asientoContable = await this.contabilidadService.crearAsientosFactura(
-            facturaGuardada,
-            queryRunner,
-          );
-
-          // Actualizar factura con información del asiento contable
-          facturaGuardada.asiento_contable_creado = true;
-          facturaGuardada.numero_asiento_contable = asientoContable.numero_asiento;
-          await queryRunner.manager.save(Factura, facturaGuardada);
-        }
-      } else {
-        // Si no hay empresa configurada, crear asiento de todas formas
-        asientoContable = await this.contabilidadService.crearAsientosFactura(
-          facturaGuardada,
-          queryRunner,
-        );
-
-        facturaGuardada.asiento_contable_creado = true;
-        facturaGuardada.numero_asiento_contable = asientoContable.numero_asiento;
-        await queryRunner.manager.save(Factura, facturaGuardada);
-      }
-      */
-
 
       // Generar clave de acceso
       const claveAcceso = this.sriService.generarClaveAcceso(facturaGuardada);
