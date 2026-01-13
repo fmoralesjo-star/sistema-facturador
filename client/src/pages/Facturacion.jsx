@@ -4431,8 +4431,33 @@ Este enlace te permitirá actualizar tu información de contacto.`
 
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <div style={{
+                        fontSize: '18px',
+                        fontWeight: '900',
+                        color: (totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones) > 0.01 ? '#dc2626' : '#059669',
+                        backgroundColor: (totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones) > 0.01 ? '#fef2f2' : '#f0fdf4',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '2px solid',
+                        borderColor: (totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones) > 0.01 ? '#fecaca' : '#bbf7d0',
+                        textAlign: 'center',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                        marginBottom: '4px'
+                      }}>
+                        Saldo Restante: ${(totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones).toFixed(2)}
+                      </div>
+
                       {listaPagos.length > 0 && (
-                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                        <div style={{
+                          display: 'flex',
+                          gap: '6px',
+                          flexWrap: 'wrap',
+                          padding: '4px',
+                          maxHeight: '40px',
+                          overflowY: 'auto',
+                          background: 'rgba(255,255,255,0.5)',
+                          borderRadius: '4px'
+                        }}>
                           {listaPagos.map(pago => (
                             <div key={pago.id} style={{
                               backgroundColor: '#f1f5f9',
@@ -4442,7 +4467,8 @@ Este enlace te permitirá actualizar tu información de contacto.`
                               display: 'flex',
                               alignItems: 'center',
                               gap: '4px',
-                              border: '1px solid #cbd5e1'
+                              border: '1px solid #cbd5e1',
+                              height: '24px'
                             }}>
                               <span style={{ fontWeight: 'bold', color: '#1e40af' }}>{pago.tipo === 'TARJETA' ? '💳' : pago.tipo === 'EFECTIVO' ? '💵' : pago.tipo === 'CREDITO' ? '🤝' : '🏦'} {pago.tipo}:</span>
                               <span style={{ fontWeight: 'bold' }}>${pago.monto.toFixed(2)}</span>
@@ -4456,21 +4482,6 @@ Este enlace te permitirá actualizar tu información de contacto.`
                           ))}
                         </div>
                       )}
-                      <div style={{
-                        fontSize: '18px',
-                        fontWeight: '900',
-                        color: (totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones) > 0.01 ? '#dc2626' : '#059669',
-                        backgroundColor: (totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones) > 0.01 ? '#fef2f2' : '#f0fdf4',
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: '2px solid',
-                        borderColor: (totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones) > 0.01 ? '#fecaca' : '#bbf7d0',
-                        textAlign: 'center',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                        marginTop: '5px'
-                      }}>
-                        Saldo Restante: ${(totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones).toFixed(2)}
-                      </div>
                     </div>
 
                     <div style={{ width: '200px' }}>
