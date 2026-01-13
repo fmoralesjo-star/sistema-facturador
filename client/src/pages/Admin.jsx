@@ -349,16 +349,18 @@ function Admin({ socket }) {
       const data = response.data
 
       if (data) {
+        setErrorConexion(false) // Limpiar error si la consulta fue exitosa
         setFormDataEmpresa(prev => ({
           ...prev,
           razon_social: data.razonSocial || prev.razon_social,
           nombre_comercial: data.nombreComercial || prev.nombre_comercial,
-          direccion_matriz: data.direccionMatriz || prev.direccion_matriz,
-          direccion_establecimiento: data.direccionEstablecimiento || prev.direccion_establecimiento,
-          obligado_contabilidad: data.obligadoContabilidad === 'SI',
+          // El backend puede devolver 'direccion' o 'direccionMatriz'
+          direccion_matriz: data.direccion || data.direccionMatriz || prev.direccion_matriz,
+          direccion_establecimiento: data.direccionEstablecimiento || data.direccion || prev.direccion_establecimiento,
+          obligado_contabilidad: data.obligadoContabilidad === true || data.obligadoContabilidad === 'SI',
           contribuyente_especial: data.contribuyenteEspecial || prev.contribuyente_especial
         }))
-        alert('✅ Datos consultados correctamente del SRI')
+        alert('✅ Datos consultados correctamente del SRI.\n\nNota: El SRI no proporciona Teléfono ni Email por motivos de privacidad, deberá ingresarlos manualmente.')
       }
     } catch (error) {
       console.error('Error al consultar SRI:', error)
