@@ -1155,6 +1155,11 @@ Este enlace te permitirá actualizar tu información de contacto.`
         setMontoPago(saldoPendiente > 0 ? saldoPendiente.toString() : '')
         setMostrarModalPago(true)
         break
+      case 'CREDITO':
+        setTipoPagoActual('CREDITO')
+        setMontoPago(saldoPendiente > 0 ? saldoPendiente.toString() : '')
+        setMostrarModalPago(true)
+        break
       case 'RETENCIONES':
         // Mantener lógica anterior para retenciones ya que es un descuento al total, no un "pago"
         setMostrarModalRetencion(true)
@@ -4406,25 +4411,18 @@ Este enlace te permitirá actualizar tu información de contacto.`
                 {/* Parte Izquierda: Info y Toggle de Pagos */}
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '4px' }}>
-                    <button
-                      onClick={() => setMostrarSeccionPago(!mostrarSeccionPago)}
-                      style={{
-                        padding: '4px 12px',
-                        fontSize: '11px',
-                        fontWeight: 'bold',
-                        background: mostrarSeccionPago ? '#64748b' : '#3b82f6',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-                      }}
-                    >
-                      {mostrarSeccionPago ? '✕ CERRAR MÉTODOS PAGO' : '💰 AÑADIR MÉTODOS DE PAGO'}
-                    </button>
                     <div style={{ backgroundColor: '#fff3cd', border: '1px solid #ffc107', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', fontWeight: 'bold', color: '#856404', flex: 1 }}>
                       SON: {totales.totalLetras}
                     </div>
+                  </div>
+
+                  {/* Botones de Pago SIEMPRE VISIBLES */}
+                  <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '4px', background: '#f8fafc', padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+                    <button type="button" onClick={() => seleccionarTipoPago('EFECTIVO')} style={{ flex: 1, padding: '4px', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#6366f1', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>💵 EFECTIVO</button>
+                    <button type="button" onClick={() => seleccionarTipoPago('TARJETAS')} style={{ flex: 1, padding: '4px', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#6366f1', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>💳 TARJETA</button>
+                    <button type="button" onClick={() => seleccionarTipoPago('TRANSFERENCIA')} style={{ flex: 1, padding: '4px', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#6366f1', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>🏦 TRANSF.</button>
+                    <button type="button" onClick={() => seleccionarTipoPago('CREDITO')} style={{ flex: 1, padding: '4px', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#d97706', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>🤝 CRÉDITO</button>
+                    <button type="button" onClick={() => { seleccionarTipoPago('RETENCIONES'); setMostrarModalRetencion(true); }} style={{ flex: 1, padding: '4px', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#6366f1', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>📋 RETEN.</button>
                   </div>
 
                   {listaPagos.length > 0 && (
@@ -4440,7 +4438,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
                           gap: '4px',
                           border: '1px solid #cbd5e1'
                         }}>
-                          <span style={{ fontWeight: 'bold', color: '#1e40af' }}>{pago.tipo === 'TARJETA' ? '💳' : pago.tipo === 'EFECTIVO' ? '💵' : '🏦'} {pago.tipo}:</span>
+                          <span style={{ fontWeight: 'bold', color: '#1e40af' }}>{pago.tipo === 'TARJETA' ? '💳' : pago.tipo === 'EFECTIVO' ? '💵' : pago.tipo === 'CREDITO' ? '🤝' : '🏦'} {pago.tipo}:</span>
                           <span style={{ fontWeight: 'bold' }}>${pago.monto.toFixed(2)}</span>
                           <button
                             onClick={() => setListaPagos(listaPagos.filter(p => p.id !== pago.id))}
@@ -4486,15 +4484,6 @@ Este enlace te permitirá actualizar tu información de contacto.`
                     </div>
                   </div>
 
-                  {/* Botones de Pago (Solo si está expandido) */}
-                  {mostrarSeccionPago && (
-                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '4px', background: '#f8fafc', padding: '4px', borderRadius: '4px', border: '1px dashed #cbd5e1' }}>
-                      <button type="button" onClick={() => seleccionarTipoPago('EFECTIVO')} style={{ flex: 1, padding: '4px', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#6366f1', color: 'white', cursor: 'pointer' }}>💵 Efectivo</button>
-                      <button type="button" onClick={() => seleccionarTipoPago('TARJETAS')} style={{ flex: 1, padding: '4px', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#6366f1', color: 'white', cursor: 'pointer' }}>💳 Tarjeta</button>
-                      <button type="button" onClick={() => seleccionarTipoPago('TRANSFERENCIA')} style={{ flex: 1, padding: '4px', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#6366f1', color: 'white', cursor: 'pointer' }}>🏦 Transf.</button>
-                      <button type="button" onClick={() => { seleccionarTipoPago('RETENCIONES'); setMostrarModalRetencion(true); }} style={{ flex: 1, padding: '4px', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#6366f1', color: 'white', cursor: 'pointer' }}>📋 Reten.</button>
-                    </div>
-                  )}
 
                   <button
                     type="button"
