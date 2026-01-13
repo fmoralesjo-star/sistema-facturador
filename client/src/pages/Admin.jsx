@@ -334,6 +334,38 @@ function Admin({ socket }) {
     }
   }
 
+  // Consultar SRI para autocompletar datos de empresa
+  const consultarSRI = async () => {
+    if (!formDataEmpresa.ruc) {
+      alert('Por favor ingrese un RUC válido')
+      return
+    }
+
+    try {
+      const token = await getToken()
+      const headers = token ? { Authorization: `Bearer ${token}` } : {}
+
+      const response = await axios.get(`${API_URL}/sri/contribuyente/${formDataEmpresa.ruc}`, { headers })
+      const data = response.data
+
+      if (data) {
+        setFormDataEmpresa(prev => ({
+          ...prev,
+          razon_social: data.razonSocial || prev.razon_social,
+          nombre_comercial: data.nombreComercial || prev.nombre_comercial,
+          direccion_matriz: data.direccionMatriz || prev.direccion_matriz,
+          direccion_establecimiento: data.direccionEstablecimiento || prev.direccion_establecimiento,
+          obligado_contabilidad: data.obligadoContabilidad === 'SI',
+          contribuyente_especial: data.contribuyenteEspecial || prev.contribuyente_especial
+        }))
+        alert('✅ Datos consultados correctamente del SRI')
+      }
+    } catch (error) {
+      console.error('Error al consultar SRI:', error)
+      alert('❌ No se pudo obtener información del SRI. Verifique el RUC o intente manualmente.')
+    }
+  }
+
   // Guardar información de empresa
   const guardarEmpresa = async () => {
     setGuardandoEmpresa(true)
@@ -1062,8 +1094,9 @@ function Admin({ socket }) {
                     className="btn-editar-empresa"
                     onClick={() => setEditandoEmpresa(true)}
                     disabled={cargandoEmpresa}
+                    style={{ backgroundColor: '#f97316' }}
                   >
-                    <span>📝</span> Editar
+                    <span>📝</span> Editar / Importar SRI
                   </button>
                 </div>
               ) : (
@@ -1111,18 +1144,46 @@ function Admin({ socket }) {
 
             <div className="empresa-info-content" style={{ border: '1px solid #e5e7eb', padding: '20px', minHeight: '300px' }}>
               {console.log('INTENTANDO RENDERIZAR CAMPOS. Editando:', editandoEmpresa, 'Data:', formDataEmpresa)}
+              {!editandoEmpresa && (
+                <div style={{ background: '#fff7ed', color: '#c2410c', padding: '10px', borderRadius: '6px', marginBottom: '15px', border: '1px solid #fdba74', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ fontSize: '20px' }}>👈</span>
+                  <strong>Para importar datos del SRI, haga clic en el botón naranja "Editar / Importar SRI" arriba a la derecha.</strong>
+                </div>
+              )}
               <div className="empresa-info-grid">
                 <div className="empresa-field">
                   <label>RUC *</label>
                   {editandoEmpresa ? (
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={formDataEmpresa.ruc || ''}
-                      onChange={(e) => setFormDataEmpresa({ ...formDataEmpresa, ruc: e.target.value })}
-                      placeholder="Ingrese el RUC"
-                      style={{ border: '1px solid #ccc', padding: '8px', display: 'block', width: '100%' }}
-                    />
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={formDataEmpresa.ruc || ''}
+                        onChange={(e) => setFormDataEmpresa({ ...formDataEmpresa, ruc: e.target.value })}
+                        placeholder="Ingrese el RUC"
+                        style={{ border: '1px solid #ccc', padding: '8px', display: 'block', width: '100%', flex: 1 }}
+                      />
+                      <button
+                        type="button"
+                        onClick={consultarSRI}
+                        style={{
+                          backgroundColor: '#3b82f6',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          padding: '0 15px',
+                          cursor: 'pointer',
+                          fontWeight: 'bold',
+                          whiteSpace: 'nowrap',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '5px'
+                        }}
+                        title="Consultar datos en SRI"
+                      >
+                        <span>🔍</span> Consultar SRI
+                      </button>
+                    </div>
                   ) : (
                     <div className="empresa-value">{empresa?.ruc || 'No especificado'}</div>
                   )}

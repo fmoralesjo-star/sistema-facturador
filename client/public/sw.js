@@ -1,8 +1,8 @@
-// EMERGENCY RESET SERVICE WORKER v4.0.0
+// EMERGENCY RESET SERVICE WORKER v4.0.1
 // Este SW reemplaza al defectuoso y devuelve el control a la red inmediatamente.
 // Eliminamos cualquier lógica de fetch para evitar errores "Failed to construct Request".
 
-const CACHE_NAME = 'sistema-facturador-v4-RESET';
+const CACHE_NAME = 'sistema-facturador-v4-RESET-1';
 
 self.addEventListener('install', (event) => {
   console.log('[SW Reset] Instalando nuevo SW seguro v4...');

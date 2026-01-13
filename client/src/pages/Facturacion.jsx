@@ -112,6 +112,7 @@ function Facturacion({ socket }) {
             cantidad: item.cantidad || 0,
             precio: item.precio || 0,
             descuento: item.descuento || 0,
+            stock: item.stock || 0,
             subtotal: item.subtotal || 0
           }))
         }
@@ -281,7 +282,7 @@ function Facturacion({ socket }) {
     cantidad: getInitialColumnWidth('cantidad', 60),
     precio: getInitialColumnWidth('precio', 90),
     descuento: getInitialColumnWidth('descuento', 70),
-    stock: getInitialColumnWidth('stock', 80),
+    stock: getInitialColumnWidth('stock', 100),
     subtotal: getInitialColumnWidth('subtotal', 90)
   })
 
@@ -4231,7 +4232,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
                 <div
                   className="grid-header"
                   style={{
-                    gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.talla}px ${columnWidths.color}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 50px`
+                    gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.talla}px ${columnWidths.color}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.stock}px ${columnWidths.subtotal}px 50px`
                   }}
                 >
                   <div className="grid-header-cell">
@@ -4262,6 +4263,10 @@ Este enlace te permitirá actualizar tu información de contacto.`
                     DESC %
                     <div className="resizer" onMouseDown={(e) => handleResizeStart(e, 'descuento')}></div>
                   </div>
+                  <div className="grid-header-cell" style={{ backgroundColor: '#fef08a', color: '#854d0e' }}>
+                    STOCK
+                    <div className="resizer" onMouseDown={(e) => handleResizeStart(e, 'stock')}></div>
+                  </div>
                   <div className="grid-header-cell">
                     SUBTOTAL
                     <div className="resizer" onMouseDown={(e) => handleResizeStart(e, 'subtotal')}></div>
@@ -4279,7 +4284,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
                           key={item.id}
                           className="grid-row"
                           style={{
-                            gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.talla}px ${columnWidths.color}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 50px`
+                            gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.talla}px ${columnWidths.color}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.stock}px ${columnWidths.subtotal}px 50px`
                           }}
                         >
                           <div
@@ -4340,6 +4345,17 @@ Este enlace te permitirá actualizar tu información de contacto.`
                           >
                             {item.descuento || 0}
                           </div>
+                          <div
+                            className="grid-cell"
+                            style={{
+                              textAlign: 'center',
+                              fontWeight: 'bold',
+                              color: ((item.stock || 0) - (item.cantidad || 0)) < 0 ? '#dc2626' : '#059669',
+                              backgroundColor: '#f8fafc'
+                            }}
+                          >
+                            {item.stock !== undefined ? ((item.stock || 0) - (item.cantidad || 0)) : '0'}
+                          </div>
                           <div className="grid-cell grid-cell-readonly">
                             {item.subtotal ? item.subtotal.toFixed(2) : '0.00'}
                           </div>
@@ -4365,7 +4381,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
                           key={`empty-${index}`}
                           className="grid-row"
                           style={{
-                            gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.talla}px ${columnWidths.color}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.subtotal}px 50px`
+                            gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.talla}px ${columnWidths.color}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.stock}px ${columnWidths.subtotal}px 50px`
                           }}
                         >
                           <div className="grid-cell"></div>
@@ -4375,6 +4391,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
                           <div className="grid-cell"></div>
                           <div className="grid-cell"></div>
                           <div className="grid-cell"></div>
+                          <div className="grid-cell" style={{ textAlign: 'center', color: '#9ca3af', backgroundColor: '#f8fafc' }}>0</div>
                           <div className="grid-cell grid-cell-readonly"></div>
                           <div className="grid-cell grid-cell-button"></div>
                         </div>
@@ -5767,7 +5784,9 @@ Este enlace te permitirá actualizar tu información de contacto.`
                         minWidth: `${columnWidths.stock}px`,
                         maxWidth: `${columnWidths.stock}px`,
                         position: 'relative',
-                        userSelect: 'none'
+                        userSelect: 'none',
+                        backgroundColor: '#fef08a',
+                        color: '#854d0e'
                       }}
                     >
                       STOCK
