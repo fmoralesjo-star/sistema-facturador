@@ -259,6 +259,65 @@ export class InventarioService {
     return productosConUbicaciones;
   }
 
+  async buscarInventario(busqueda: string) {
+    if (!busqueda) return [];
+
+    const queryBuilder = this.productoRepository.createQueryBuilder('producto');
+
+    // Búsqueda flexible (LIKE)
+    queryBuilder.where(
+      '(LOWER(producto.nombre) LIKE LOWER(:busqueda) OR ' +
+      'LOWER(producto.codigo) LIKE LOWER(:busqueda) OR ' +
+      'LOWER(producto.sku) LIKE LOWER(:busqueda) OR ' +
+      'LOWER(producto.cod_barras) LIKE LOWER(:busqueda) OR ' +
+      'LOWER(producto.referencia) LIKE LOWER(:busqueda) OR ' +
+      'LOWER(producto.descripcion) LIKE LOWER(:busqueda))',
+      { busqueda: `%${busqueda}%` }
+    );
+
+    // Búsqueda exacta (para códigos de barras escaneados)
+    // Esto es opcional, pero ayuda a priorizar coincidencias exactas si ordenáramos
+    // Por ahora el LIKE cubre ambos casos.
+
+    const productos = await queryBuilder.orderBy('producto.nombre', 'ASC').take(20).getMany();
+
+    // Enriquecer con datos de Desglose por Punto de Venta
+    const resultados = await Promise.all(
+      productos.map(async (producto) => {
+        const stocksPuntosVenta = await this.productoPuntoVentaRepository.find({
+          where: { producto_id: producto.id },
+          relations: ['puntoVenta'], // Asegurarse que la relación en entity se llame 'puntoVenta'
+        });
+
+        const desglose = stocksPuntosVenta.map((ppv) => ({
+          punto_venta_id: ppv.punto_venta_id,
+          nombre: ppv.puntoVenta ? ppv.puntoVenta.nombre : 'Desconocido',
+          codigo: ppv.puntoVenta ? ppv.puntoVenta.codigo : '???',
+          stock: ppv.stock,
+        }));
+
+        // Calcular stock total real sumando todos los puntos
+        const stockTotalReal = desglose.reduce((sum, item) => sum + item.stock, 0);
+
+        return {
+          id: producto.id,
+          codigo: producto.codigo,
+          nombre: producto.nombre,
+          descripcion: producto.descripcion,
+          precio: producto.precio,
+          talla: producto.talla,
+          color: producto.color,
+          // Stock global (puede diferir de la suma si no se ha sincronizado correctamente, 
+          // pero mostramos la suma de desglose que es lo físico real distribuido)
+          stock_total: stockTotalReal,
+          desglose_stock: desglose
+        };
+      })
+    );
+
+    return resultados;
+  }
+
   async obtenerMovimientos() {
     const movimientos = await this.movimientoRepository.find({
       relations: ['producto', 'factura'],

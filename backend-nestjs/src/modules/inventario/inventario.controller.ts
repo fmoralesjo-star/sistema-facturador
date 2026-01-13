@@ -10,6 +10,11 @@ export class InventarioController {
     return this.inventarioService.obtenerInventario();
   }
 
+  @Get('buscar')
+  async buscarInventario(@Query('q') query: string) {
+    return this.inventarioService.buscarInventario(query);
+  }
+
   @Get('movimientos')
   async getMovimientos() {
     return this.inventarioService.obtenerMovimientos();

@@ -250,6 +250,13 @@ function Facturacion({ socket }) {
   const [linkPago, setLinkPago] = useState('')
   const [mostrarLinkPago, setMostrarLinkPago] = useState(false)
   const [generandoLinkPago, setGenerandoLinkPago] = useState(false)
+
+  // Estado para Búsqueda de Stock (Modal)
+  const [stockSearchTerm, setStockSearchTerm] = useState('')
+  const [stockSearchResults, setStockSearchResults] = useState([])
+  const [showStockModal, setShowStockModal] = useState(false)
+  const [loadingStockSearch, setLoadingStockSearch] = useState(false)
+
   const inputNombreRef = useRef(null)
   const inputRucRef = useRef(null)
   const [clienteOffsetY, setClienteOffsetY] = useState(0)
@@ -583,7 +590,34 @@ function Facturacion({ socket }) {
   // Verificar si es Nota de Crédito
   const esNotaCredito = facturaData.tipoComprobante === '04'
 
-  // Función calcular definida después de convertirNumeroALetras
+
+
+  // Función para buscar stock
+  const handleStockSearch = async (e) => {
+    if (e.key === 'Enter') {
+      if (!stockSearchTerm.trim()) return
+
+      try {
+        setLoadingStockSearch(true)
+        const response = await axios.get(`${API_URL}/inventario/buscar?q=${encodeURIComponent(stockSearchTerm)}`)
+
+        if (response.data && response.data.length > 0) {
+          setStockSearchResults(response.data)
+          setShowStockModal(true)
+        } else {
+          alert('❌ No se encontraron productos con ese criterio.')
+          setStockSearchResults([])
+        }
+      } catch (error) {
+        console.error('Error buscando stock:', error)
+        alert('Error al buscar stock. Intente nuevamente.')
+      } finally {
+        setLoadingStockSearch(false)
+      }
+    }
+  }
+
+  // Función calcular definida después (continuación del código original)
   const calcular = () => {
     if (!items || items.length === 0) {
       setTotales(prev => {
@@ -4194,8 +4228,9 @@ Este enlace te permitirá actualizar tu información de contacto.`
                     <label style={{ fontSize: '9px', fontWeight: 'bold', color: '#64748b', whiteSpace: 'nowrap' }}>🔍 STOCK:</label>
                     <input
                       type="text"
-                      value={facturaData.claveAcceso || ''}
-                      onChange={(e) => handleFacturaDataChange('claveAcceso', e.target.value)}
+                      value={stockSearchTerm}
+                      onChange={(e) => setStockSearchTerm(e.target.value)}
+                      onKeyDown={handleStockSearch}
                       style={{ width: '120px', padding: '1px 5px', fontSize: '11px', border: '1px solid #cbd5e1', borderRadius: '4px', height: '20px' }}
                       placeholder="Buscar..."
                     />
@@ -6447,6 +6482,127 @@ Este enlace te permitirá actualizar tu información de contacto.`
                 }}
               >
                 Agregar Pago
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Búsqueda de Stock */}
+      {showStockModal && (
+        <div className="modal-overlay" style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000,
+          display: 'flex', justifyContent: 'center', alignItems: 'center'
+        }} onClick={() => setShowStockModal(false)}>
+          <div className="modal-content" style={{
+            backgroundColor: 'white', padding: '20px', borderRadius: '8px',
+            width: '80%', maxWidth: '800px', maxHeight: '80vh', overflowY: 'auto',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+          }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid #e2e8f0', paddingBottom: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontSize: '24px' }}>📦</span>
+                <h2 style={{ margin: 0, color: '#1e293b', fontSize: '1.25rem' }}>Resultados de Búsqueda de Stock</h2>
+              </div>
+              <button
+                onClick={() => setShowStockModal(false)}
+                style={{ fontSize: '24px', border: 'none', background: 'none', cursor: 'pointer', color: '#64748b' }}
+              >
+                ×
+              </button>
+            </div>
+
+            {loadingStockSearch ? (
+              <div style={{ textAlign: 'center', padding: '40px' }}>Cargando resultados...</div>
+            ) : stockSearchResults.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
+                <p>No se encontraron productos que coincidan con "<strong>{stockSearchTerm}</strong>".</p>
+              </div>
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#f8fafc', textAlign: 'left', color: '#475569' }}>
+                    <th style={{ padding: '12px', borderBottom: '2px solid #e2e8f0', fontWeight: '600' }}>Producto</th>
+                    <th style={{ padding: '12px', borderBottom: '2px solid #e2e8f0', fontWeight: '600' }}>Detalles</th>
+                    <th style={{ padding: '12px', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textAlign: 'center' }}>Stock Global</th>
+                    <th style={{ padding: '12px', borderBottom: '2px solid #e2e8f0', fontWeight: '600' }}>Ubicación Física</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stockSearchResults.map((prod) => (
+                    <tr key={prod.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '12px', verticalAlign: 'top' }}>
+                        <div style={{ fontWeight: 'bold', color: '#0f172a', fontSize: '14px' }}>{prod.nombre}</div>
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                          <span style={{ backgroundColor: '#e2e8f0', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', color: '#475569' }}>
+                            {prod.codigo}
+                          </span>
+                        </div>
+                      </td>
+                      <td style={{ padding: '12px', verticalAlign: 'top', color: '#334155' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                          {prod.talla && <div><strong>Talla:</strong> {prod.talla}</div>}
+                          {prod.color && <div><strong>Color:</strong> {prod.color}</div>}
+                          {prod.descripcion && <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>{prod.descripcion}</div>}
+                          <div style={{ marginTop: '4px', fontWeight: '600', color: '#059669' }}>${parseFloat(prod.precio).toFixed(2)}</div>
+                        </div>
+                      </td>
+                      <td style={{ padding: '12px', verticalAlign: 'top', textAlign: 'center' }}>
+                        <div style={{
+                          display: 'inline-block',
+                          padding: '4px 12px',
+                          borderRadius: '999px',
+                          fontWeight: 'bold',
+                          backgroundColor: prod.stock_total > 0 ? '#dcfce7' : '#fee2e2',
+                          color: prod.stock_total > 0 ? '#166534' : '#991b1b'
+                        }}>
+                          {prod.stock_total}
+                        </div>
+                      </td>
+                      <td style={{ padding: '12px' }}>
+                        {prod.desglose_stock && prod.desglose_stock.length > 0 ? (
+                          <div style={{ display: 'grid', gap: '8px' }}>
+                            {prod.desglose_stock.map((d, i) => (
+                              <div key={i} style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                padding: '6px 10px',
+                                backgroundColor: '#f8fafc',
+                                borderRadius: '6px',
+                                border: '1px solid #e2e8f0'
+                              }}>
+                                <span style={{ fontWeight: '500', color: '#334155' }}>{d.nombre}</span>
+                                <span style={{ fontWeight: 'bold', color: d.stock > 0 ? '#0f172a' : '#94a3b8' }}>
+                                  {d.stock} unid.
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>Sin desglose</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+
+            <div style={{ marginTop: '20px', textAlign: 'right', paddingTop: '15px', borderTop: '1px solid #e2e8f0' }}>
+              <button
+                onClick={() => setShowStockModal(false)}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '6px',
+                  backgroundColor: '#334155',
+                  color: 'white',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: '600'
+                }}
+              >
+                Cerrar
               </button>
             </div>
           </div>
