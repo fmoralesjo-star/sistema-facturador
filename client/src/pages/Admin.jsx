@@ -1150,6 +1150,7 @@ function Admin({ socket }) {
                   <strong>Para importar datos del SRI, haga clic en el botón naranja "Editar / Importar SRI" arriba a la derecha.</strong>
                 </div>
               )}
+              {/* Grid de información de la empresa */}
               <div className="empresa-info-grid">
                 <div className="empresa-field">
                   <label>RUC *</label>
