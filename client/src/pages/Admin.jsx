@@ -342,14 +342,39 @@ function Admin({ socket }) {
     }
 
     try {
-      const token = await getToken()
-      const headers = token ? { Authorization: `Bearer ${token}` } : {}
+      setErrorConexion(false)
 
-      const response = await axios.get(`${API_URL}/sri/contribuyente/${formDataEmpresa.ruc}`, { headers })
-      const data = response.data
+      let data = null
+
+      try {
+        // 1. Intentar vía Backend (Render)
+        const token = await getToken()
+        const headers = token ? { Authorization: `Bearer ${token}` } : {}
+        const response = await axios.get(`${API_URL}/sri/contribuyente/${formDataEmpresa.ruc}`, { headers })
+        data = response.data
+      } catch (backendError) {
+        console.warn('⚠️ Falló consulta SRI vía Backend, intentando Proxy Client-Side...', backendError)
+
+        // 2. Fallback: Intentar vía Client-Side Proxy (corsproxy.io)
+        const sriUrl = `https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/obtenerPorNumerosRuc?ruc=${formDataEmpresa.ruc}`
+        // Usamos corsproxy.io que es gratuito y suele funcionar bien para JSON
+        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(sriUrl)}`
+
+        const response = await axios.get(proxyUrl)
+        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+          const contribuyente = response.data[0]
+          data = {
+            razonSocial: contribuyente.razonSocial,
+            nombreComercial: contribuyente.nombreComercial,
+            direccionMatriz: contribuyente.direccionMatriz,
+            direccionEstablecimiento: contribuyente.direccionEstablecimiento,
+            obligadoContabilidad: contribuyente.obligadoContabilidad === 'S',
+            contribuyenteEspecial: contribuyente.contribuyenteEspecial
+          }
+        }
+      }
 
       if (data) {
-        setErrorConexion(false) // Limpiar error si la consulta fue exitosa
         setFormDataEmpresa(prev => ({
           ...prev,
           razon_social: data.razonSocial || prev.razon_social,
@@ -361,6 +386,8 @@ function Admin({ socket }) {
           contribuyente_especial: data.contribuyenteEspecial || prev.contribuyente_especial
         }))
         alert('✅ Datos consultados correctamente del SRI.\n\nNota: El SRI no proporciona Teléfono ni Email por motivos de privacidad, deberá ingresarlos manualmente.')
+      } else {
+        throw new Error('No se encontraron datos (Backend y Proxy fallaron)')
       }
     } catch (error) {
       console.error('Error al consultar SRI:', error)
