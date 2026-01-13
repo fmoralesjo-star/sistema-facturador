@@ -4461,7 +4461,19 @@ Este enlace te permitirá actualizar tu información de contacto.`
                           ))}
                         </div>
                       )}
-                      <div style={{ fontSize: '12px', fontWeight: 'bold', color: (totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones) > 0.01 ? '#ef4444' : '#10b981' }}>
+                      <div style={{
+                        fontSize: '18px',
+                        fontWeight: '900',
+                        color: (totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones) > 0.01 ? '#dc2626' : '#059669',
+                        backgroundColor: (totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones) > 0.01 ? '#fef2f2' : '#f0fdf4',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '2px solid',
+                        borderColor: (totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones) > 0.01 ? '#fecaca' : '#bbf7d0',
+                        textAlign: 'center',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                        marginTop: '5px'
+                      }}>
                         Saldo Restante: ${(totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones).toFixed(2)}
                       </div>
                     </div>
@@ -6051,9 +6063,21 @@ Este enlace te permitirá actualizar tu información de contacto.`
           <h3
             className="titulo-seccion-sri"
             onClick={() => setContabilidadExpandida(!contabilidadExpandida)}
-            style={{ cursor: 'pointer', userSelect: 'none' }}
+            style={{
+              cursor: 'pointer',
+              userSelect: 'none',
+              fontSize: '10px',
+              color: '#94a3b8',
+              fontWeight: '500',
+              marginTop: '10px',
+              marginBottom: '5px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              opacity: 0.7
+            }}
           >
-            {contabilidadExpandida ? '▼' : '▶'} DATOS DE CONTABILIDAD
+            {contabilidadExpandida ? '▼' : '▶'} DATOS DE CONTABILIDAD (OPCIONAL)
           </h3>
           {contabilidadExpandida && (
             <div className="grid-datos grid-4-col">
