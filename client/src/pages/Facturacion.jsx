@@ -7,7 +7,49 @@ import './Facturacion.css'
 import BuscarFacturasModal from '../components/BuscarFacturasModal'
 import CajaChicaModal from '../components/CajaChicaModal'
 
+// Función helper fuera del componente para evitar problemas de ciclo de vida/TDZ
+const cleanText = (text) => {
+  if (text === null || text === undefined) return ''
+  const str = String(text)
+
+  // 1. Eliminar la frase exacta completa primero
+  const fraseCompleta = 'CONTRIBUYENTE RÉGIMEN RIMPE - EMPRENDEDOR / AGENTE DE RETENCIÓN RES. No. 00001'
+  if (str.includes(fraseCompleta)) {
+    return str.replace(fraseCompleta, '').trim()
+  }
+
+  // 2. Lista de textos a eliminar individualmente
+  const unwanted = [
+    'CONTRIBUYENTE RÉGIMEN RIMPE - EMPRENDEDOR / AGENTE DE RETENCIÓN RES. No. 00001',
+    'CONTRIBUYENTE RÉGIMEN RIMPE',
+    'CONTRIBUYENTE REGIMEN RIMPE',
+    'RÉGIMEN RIMPE',
+    'REGIMEN RIMPE',
+    'RIMPE - EMPRENDEDOR',
+    'AGENTE DE RETENCIÓN RES',
+    'AGENTE DE RETENCION RES',
+    'RES. No. 00001',
+    'RIMPE',
+    'CONTRIBUYENTE'
+  ]
+
+  let clean = str
+  unwanted.forEach(u => {
+    // Escapar caracteres especiales para regex
+    const escaped = u.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    clean = clean.replace(new RegExp(escaped, 'gi'), '')
+  })
+
+  // Limpiar guiones sobrantes, slashes o espacios dobles resultantes
+  clean = clean.replace(/^[-\/\s]+/, '').replace(/[-\/\s]+$/, '')
+  clean = clean.replace(/\s{2,}/g, ' ')
+
+  return clean.trim()
+}
+
 function Facturacion({ socket }) {
+  // ... resto del componente
+
   // DEPLOY TRIGGER: 2026-01-12 12:05
   const navigate = useNavigate()
   const { currentUser } = useAuth()
@@ -360,45 +402,7 @@ function Facturacion({ socket }) {
     cargarConfiguracion()
   }, [])
 
-  // Función para limpiar texto prohibido
-  const cleanText = (text) => {
-    if (!text) return ''
-    const str = String(text)
 
-    // 1. Eliminar la frase exacta completa primero
-    const fraseCompleta = 'CONTRIBUYENTE RÉGIMEN RIMPE - EMPRENDEDOR / AGENTE DE RETENCIÓN RES. No. 00001'
-    if (str.includes(fraseCompleta)) {
-      return str.replace(fraseCompleta, '').trim()
-    }
-
-    // 2. Lista de textos a eliminar individualmente
-    const unwanted = [
-      'CONTRIBUYENTE RÉGIMEN RIMPE - EMPRENDEDOR / AGENTE DE RETENCIÓN RES. No. 00001',
-      'CONTRIBUYENTE RÉGIMEN RIMPE',
-      'CONTRIBUYENTE REGIMEN RIMPE',
-      'RÉGIMEN RIMPE',
-      'REGIMEN RIMPE',
-      'RIMPE - EMPRENDEDOR',
-      'AGENTE DE RETENCIÓN RES',
-      'AGENTE DE RETENCION RES',
-      'RES. No. 00001',
-      'RIMPE',
-      'CONTRIBUYENTE'
-    ]
-
-    let clean = str
-    unwanted.forEach(u => {
-      // Escapar caracteres especiales para regex
-      const escaped = u.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      clean = clean.replace(new RegExp(escaped, 'gi'), '')
-    })
-
-    // Limpiar guiones sobrantes, slashes o espacios dobles resultantes
-    clean = clean.replace(/^[-\/\s]+/, '').replace(/[-\/\s]+$/, '')
-    clean = clean.replace(/\s{2,}/g, ' ')
-
-    return clean.trim()
-  }
 
   // ELIMINAR COMPLETAMENTE el footer-banner que contiene el texto del régimen - VERSIÓN ULTRA AGRESIVA
   useEffect(() => {
@@ -2180,7 +2184,21 @@ Este enlace te permitirá actualizar tu información de contacto.`
 
             {/* Botones de Acción */}
             <div className="no-print" style={{ display: 'flex', gap: '4px', borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '8px' }}>
-              <button onClick={handleNuevaFactura} style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}>➕ NUEVA</button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  try {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleNuevaFactura();
+                  } catch (error) {
+                    console.error('Error al clickear nueva factura:', error);
+                  }
+                }}
+                style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}
+              >
+                ➕ NUEVA
+              </button>
               <button
                 onClick={() => setEsProforma(!esProforma)}
                 style={{ padding: '4px 8px', background: esProforma ? '#dc2626' : 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}
