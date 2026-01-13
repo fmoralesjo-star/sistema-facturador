@@ -6000,51 +6000,66 @@ Este enlace te permitirá actualizar tu información de contacto.`
                       </td>
                     </tr>
                   ))}
-                  {/* Filas vacías para mantener estructura de 9 renglones */}
-                  {Array.from({ length: Math.max(0, 9 - (items ? items.length : 0)) }).map((_, index) => (
+                  {/* Filas vacías para mantener estructura de 4 renglones siempre */}
+                  {Array.from({ length: Math.max(0, 4 - (items ? items.length : 0)) }).map((_, index) => (
                     <tr key={`empty-${index}`} className="empty-row" style={{ height: '32px' }}>
                       <td style={{
                         width: `${columnWidths.codigo}px`,
                         minWidth: `${columnWidths.codigo}px`,
                         maxWidth: `${columnWidths.codigo}px`,
                         border: '1px solid #e5e7eb',
-                        backgroundColor: '#f9fafb'
-                      }}></td>
+                        backgroundColor: '#f9fafb',
+                        color: '#9ca3af',
+                        fontSize: '11px',
+                        padding: '0 8px'
+                      }}>...</td>
                       <td style={{
                         width: `${columnWidths.descripcion}px`,
                         minWidth: `${columnWidths.descripcion}px`,
                         maxWidth: `${columnWidths.descripcion}px`,
                         border: '1px solid #e5e7eb',
-                        backgroundColor: '#f9fafb'
-                      }}></td>
+                        backgroundColor: '#f9fafb',
+                        color: '#9ca3af',
+                        fontSize: '11px',
+                        padding: '0 8px'
+                      }}>-</td>
                       <td style={{
                         width: `${columnWidths.cantidad}px`,
                         minWidth: `${columnWidths.cantidad}px`,
                         maxWidth: `${columnWidths.cantidad}px`,
                         border: '1px solid #e5e7eb',
-                        backgroundColor: '#f9fafb'
-                      }}></td>
+                        backgroundColor: '#f9fafb',
+                        textAlign: 'center',
+                        color: '#9ca3af'
+                      }}>0</td>
                       <td style={{
                         width: `${columnWidths.descuento}px`,
                         minWidth: `${columnWidths.descuento}px`,
                         maxWidth: `${columnWidths.descuento}px`,
                         border: '1px solid #e5e7eb',
-                        backgroundColor: '#f9fafb'
-                      }}></td>
+                        backgroundColor: '#f9fafb',
+                        textAlign: 'center',
+                        color: '#9ca3af'
+                      }}>0</td>
                       <td style={{
                         width: `${columnWidths.precio}px`,
                         minWidth: `${columnWidths.precio}px`,
                         maxWidth: `${columnWidths.precio}px`,
                         border: '1px solid #e5e7eb',
-                        backgroundColor: '#f9fafb'
-                      }}></td>
+                        backgroundColor: '#f9fafb',
+                        textAlign: 'center',
+                        color: '#9ca3af'
+                      }}>0.00</td>
                       <td style={{
                         width: `${columnWidths.subtotal}px`,
                         minWidth: `${columnWidths.subtotal}px`,
                         maxWidth: `${columnWidths.subtotal}px`,
                         border: '1px solid #e5e7eb',
-                        backgroundColor: '#f9fafb'
-                      }}></td>
+                        backgroundColor: '#f9fafb',
+                        textAlign: 'right',
+                        paddingRight: '8px',
+                        color: '#9ca3af'
+                      }}>$0.00</td>
                       <td style={{
                         width: '30px',
                         minWidth: '30px',
