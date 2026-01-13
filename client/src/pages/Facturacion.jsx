@@ -4430,61 +4430,56 @@ Este enlace te permitirá actualizar tu información de contacto.`
                   </div>
 
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}>
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      {/* Lista de Pagos Arriba para Visibilidad Inmediata */}
+                      {listaPagos.length > 0 && (
+                        <div style={{
+                          display: 'flex',
+                          gap: '6px',
+                          flexWrap: 'wrap',
+                          padding: '2px 0'
+                        }}>
+                          {listaPagos.map(pago => (
+                            <div key={pago.id} style={{
+                              backgroundColor: '#eff6ff',
+                              padding: '3px 10px',
+                              borderRadius: '4px',
+                              fontSize: '11px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              border: '1px solid #bfdbfe',
+                              boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+                            }}>
+                              <span style={{ fontWeight: 'bold', color: '#1e40af' }}>{pago.tipo === 'TARJETA' ? '💳' : pago.tipo === 'EFECTIVO' ? '💵' : pago.tipo === 'CREDITO' ? '🤝' : '🏦'} {pago.tipo}:</span>
+                              <span style={{ fontWeight: 'bold', color: '#1e40af' }}>${pago.monto.toFixed(2)}</span>
+                              <button
+                                type="button"
+                                onClick={() => setListaPagos(listaPagos.filter(p => p.id !== pago.id))}
+                                style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', marginLeft: '2px', padding: '0 2px' }}
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Saldo Restante como Pie de la Sección */}
                       <div style={{
                         fontSize: '18px',
                         fontWeight: '900',
                         color: (totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones) > 0.01 ? '#dc2626' : '#059669',
                         backgroundColor: (totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones) > 0.01 ? '#fef2f2' : '#f0fdf4',
-                        padding: '12px',
+                        padding: '10px',
                         borderRadius: '8px',
                         border: '2px solid',
                         borderColor: (totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones) > 0.01 ? '#fecaca' : '#bbf7d0',
                         textAlign: 'center',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                        marginBottom: '4px'
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
                       }}>
                         Saldo Restante: ${(totales.total - listaPagos.reduce((acc, b) => acc + b.monto, 0) - totales.retenciones).toFixed(2)}
                       </div>
-
-                      {listaPagos.length > 0 && (
-                        <div style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: '4px',
-                          padding: '8px',
-                          background: '#ffffff',
-                          borderRadius: '6px',
-                          border: '1px solid #e2e8f0'
-                        }}>
-                          <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase' }}>Pagos Aplicados:</span>
-                          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                            {listaPagos.map(pago => (
-                              <div key={pago.id} style={{
-                                backgroundColor: '#f1f5f9',
-                                padding: '4px 10px',
-                                borderRadius: '16px',
-                                fontSize: '11px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '6px',
-                                border: '1px solid #cbd5e1',
-                                boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
-                              }}>
-                                <span style={{ fontWeight: 'bold', color: '#1e40af' }}>{pago.tipo === 'TARJETA' ? '💳' : pago.tipo === 'EFECTIVO' ? '💵' : pago.tipo === 'CREDITO' ? '🤝' : '🏦'} {pago.tipo}:</span>
-                                <span style={{ fontWeight: 'bold' }}>${pago.monto.toFixed(2)}</span>
-                                <button
-                                  type="button"
-                                  onClick={() => setListaPagos(listaPagos.filter(p => p.id !== pago.id))}
-                                  style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', marginLeft: '4px' }}
-                                >
-                                  ×
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
                     </div>
 
                     <div style={{ width: '200px' }}>
