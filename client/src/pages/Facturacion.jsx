@@ -1418,6 +1418,11 @@ Este enlace te permitirá actualizar tu información de contacto.`
     setClienteId(null)
     setMostrarFormularioNuevoCliente(false)
 
+    // Limpiar estado de búsqueda de stock
+    setStockSearchTerm('')
+    setStockSearchResults([])
+    setShowStockModal(false)
+
     // Cerrar el modal
     setMostrarConfirmarNuevaFactura(false)
   }
