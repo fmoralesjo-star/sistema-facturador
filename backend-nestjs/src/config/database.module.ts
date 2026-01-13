@@ -18,6 +18,7 @@ import { Asistencia } from '../modules/recursos-humanos/entities/asistencia.enti
 import { Rol } from '../modules/usuarios/entities/rol.entity';
 import { Usuario } from '../modules/usuarios/entities/usuario.entity';
 import { UsuarioPermiso } from '../modules/usuarios/entities/usuario-permiso.entity';
+import { RolPermiso } from '../modules/usuarios/entities/rol-permiso.entity';
 import { PuntoVenta } from '../modules/puntos-venta/entities/punto-venta.entity';
 import { ProductoPuntoVenta } from '../modules/inventario/entities/producto-punto-venta.entity';
 import { Transferencia } from '../modules/inventario/entities/transferencia.entity';
@@ -75,6 +76,7 @@ import { NotaCredito, NotaCreditoDetalle } from '../modules/notas-credito/entiti
               Rol,
               Usuario,
               UsuarioPermiso,
+              RolPermiso,
               PuntoVenta,
               ProductoPuntoVenta,
               Transferencia,
@@ -145,6 +147,7 @@ import { NotaCredito, NotaCreditoDetalle } from '../modules/notas-credito/entiti
             Rol,
             Usuario,
             UsuarioPermiso,
+            RolPermiso,
             PuntoVenta,
             ProductoPuntoVenta,
             Transferencia,
