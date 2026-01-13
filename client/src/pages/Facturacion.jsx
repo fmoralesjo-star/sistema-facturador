@@ -4419,11 +4419,6 @@ Este enlace te permitirá actualizar tu información de contacto.`
               }}>
                 {/* Parte Izquierda: Info y Toggle de Pagos */}
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '4px' }}>
-                    <div style={{ backgroundColor: '#fff3cd', border: '1px solid #ffc107', borderRadius: '4px', padding: '4px 10px', fontSize: '11px', fontWeight: 'bold', color: '#856404', flex: 1 }}>
-                      SON: {totales.totalLetras}
-                    </div>
-                  </div>
 
                   {/* Botones de Pago SIEMPRE VISIBLES */}
                   <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '4px', background: '#f8fafc', padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
