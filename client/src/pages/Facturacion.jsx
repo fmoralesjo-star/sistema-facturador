@@ -281,6 +281,7 @@ function Facturacion({ socket }) {
     cantidad: getInitialColumnWidth('cantidad', 60),
     precio: getInitialColumnWidth('precio', 90),
     descuento: getInitialColumnWidth('descuento', 70),
+    stock: getInitialColumnWidth('stock', 80),
     subtotal: getInitialColumnWidth('subtotal', 90)
   })
 
@@ -812,6 +813,7 @@ function Facturacion({ socket }) {
         localStorage.setItem('cantidadWidth', columnWidths.cantidad.toString())
         localStorage.setItem('precioWidth', columnWidths.precio.toString())
         localStorage.setItem('descuentoWidth', columnWidths.descuento.toString())
+        localStorage.setItem('stockWidth', columnWidths.stock.toString())
         localStorage.setItem('subtotalWidth', columnWidths.subtotal.toString())
 
         if (columnWidths.codigo > 200) {
@@ -1290,6 +1292,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
         handleItemTextChange(itemId, 'descripcion', producto.nombre || producto.descripcion || '')
         handleItemTextChange(itemId, 'talla', producto.talla || '')
         handleItemTextChange(itemId, 'color', producto.color || '')
+        handleItemChange(itemId, 'stock', producto.stock || 0)
         handleItemChange(itemId, 'productoId', producto.id)
       }
     } catch (error) {
@@ -5760,6 +5763,45 @@ Este enlace te permitirá actualizar tu información de contacto.`
                     </th>
                     <th
                       style={{
+                        width: `${columnWidths.stock}px`,
+                        minWidth: `${columnWidths.stock}px`,
+                        maxWidth: `${columnWidths.stock}px`,
+                        position: 'relative',
+                        userSelect: 'none'
+                      }}
+                    >
+                      STOCK
+                      <div
+                        className="column-resizer"
+                        onMouseDown={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          const headerCell = e.target.closest('th')
+                          if (headerCell) {
+                            const headerRect = headerCell.getBoundingClientRect()
+                            resizeStartX.current = e.clientX
+                            resizeStartWidth.current = headerRect.width
+                            setResizingColumn('stock')
+                            setIsResizing(true)
+                          }
+                        }}
+                        style={{
+                          position: 'absolute',
+                          right: '0px',
+                          top: 0,
+                          bottom: 0,
+                          width: '6px',
+                          cursor: 'col-resize',
+                          backgroundColor: '#2563eb',
+                          opacity: 0.2,
+                          zIndex: 30,
+                          userSelect: 'none',
+                          touchAction: 'none'
+                        }}
+                      />
+                    </th>
+                    <th
+                      style={{
                         width: `${columnWidths.subtotal}px`,
                         minWidth: `${columnWidths.subtotal}px`,
                         maxWidth: `${columnWidths.subtotal}px`,
@@ -5956,6 +5998,20 @@ Este enlace te permitirá actualizar tu información de contacto.`
                         {item.precio && item.precio !== 0 ? (esNotaCredito ? -Math.abs(item.precio) : item.precio) : ''}
                       </td>
                       <td
+                        className="celda-editable"
+                        style={{
+                          textAlign: 'center',
+                          width: `${columnWidths.stock}px`,
+                          minWidth: `${columnWidths.stock}px`,
+                          maxWidth: `${columnWidths.stock}px`,
+                          color: ((item.stock || 0) - (item.cantidad || 0)) < 0 ? '#dc2626' : '#059669',
+                          fontWeight: 'bold',
+                          backgroundColor: '#f8fafc'
+                        }}
+                      >
+                        {item.stock !== undefined ? ((item.stock || 0) - (item.cantidad || 0)) : ''}
+                      </td>
+                      <td
                         className="row-total celda-editable input-codigo-barras"
                         style={{
                           textAlign: 'right',
@@ -6050,6 +6106,15 @@ Este enlace te permitirá actualizar tu información de contacto.`
                         textAlign: 'center',
                         color: '#9ca3af'
                       }}>0.00</td>
+                      <td style={{
+                        width: `${columnWidths.stock}px`,
+                        minWidth: `${columnWidths.stock}px`,
+                        maxWidth: `${columnWidths.stock}px`,
+                        border: '1px solid #e5e7eb',
+                        backgroundColor: '#f9fafb',
+                        textAlign: 'center',
+                        color: '#9ca3af'
+                      }}>0</td>
                       <td style={{
                         width: `${columnWidths.subtotal}px`,
                         minWidth: `${columnWidths.subtotal}px`,
