@@ -86,6 +86,7 @@ export class UsuariosService {
 
   async onModuleInit() {
     await this.seedRolPermisos();
+    await this.seedUsuarios();
   }
 
   // Seeding inicial de permisos por rol
@@ -153,6 +154,40 @@ export class UsuariosService {
           await this.rolPermisoRepository.save(entidades);
         }
       }
+    }
+  }
+
+  async seedUsuarios() {
+    const usuariosCount = await this.usuarioRepository.count();
+    if (usuariosCount === 0) {
+      console.log('✨ No hay usuarios. Creando usuario admin por defecto...');
+
+      // Intentar buscar rol admin
+      let rolAdmin = await this.rolRepository.findOne({ where: { nombre: 'admin' } });
+
+      // Fallback
+      if (!rolAdmin) {
+        rolAdmin = this.rolRepository.create({
+          nombre: 'admin',
+          descripcion: 'Administrador total del sistema'
+        });
+        await this.rolRepository.save(rolAdmin);
+      }
+
+      const hashedPassword = await bcrypt.hash('admin123', 10);
+
+      const adminUser = this.usuarioRepository.create({
+        nombre_usuario: 'admin',
+        nombre_completo: 'Administrador Sistema',
+        password: hashedPassword,
+        email: 'admin@sistema.com',
+        activo: 1,
+        rol: rolAdmin,
+        rol_id: rolAdmin.id
+      });
+
+      await this.usuarioRepository.save(adminUser);
+      console.log('✅ Usuario admin creado por defecto: (User: admin / Pass: admin123)');
     }
   }
 
