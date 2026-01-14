@@ -91,7 +91,6 @@ export class UsuariosService {
   // Seeding inicial de permisos por rol
   async seedRolPermisos() {
     // console.log('🔄 Verificando permisos de roles...');
-    const roles = await this.rolRepository.find();
 
     // Mapa de permisos hardcoded (para inicializar)
     const permisosMap: Record<string, string[]> = {
@@ -117,11 +116,34 @@ export class UsuariosService {
       ]
     };
 
-    for (const rol of roles) {
+    // Asegurar que los roles existan
+    for (const nombreRol of Object.keys(permisosMap)) {
+      // Normalizar nombre para búsqueda (aunque la búsqueda exacta es preferible si los nombres son consistentes)
+      let rol = await this.rolRepository.findOne({ where: { nombre: nombreRol } });
+
+      if (!rol) {
+        // Mapear nombres a descripciones amigables
+        const descripciones: Record<string, string> = {
+          'admin': 'Administrador total del sistema',
+          'gestor de sistema': 'Gestor técnico y operativo',
+          'gerente': 'Gerente general con acceso a reportes y supervisión',
+          'vendedor': 'Personal de ventas y facturación',
+          'contador': 'Encargado de contabilidad y finanzas'
+        };
+
+        console.log(`✨ Creando rol faltante: ${nombreRol}`);
+        rol = this.rolRepository.create({
+          nombre: nombreRol,
+          descripcion: descripciones[nombreRol] || `Rol de ${nombreRol}`
+        });
+        await this.rolRepository.save(rol);
+      }
+
+      // Verificar y crear permisos
       const permisosExistentes = await this.rolPermisoRepository.count({ where: { rol_id: rol.id } });
 
       if (permisosExistentes === 0) {
-        const modulos = permisosMap[rol.nombre.toLowerCase()] || [];
+        const modulos = permisosMap[nombreRol] || [];
         if (modulos.length > 0) {
           console.log(`✨ Inicializando permisos para rol: ${rol.nombre}`);
           const entidades = modulos.map(modulo => this.rolPermisoRepository.create({
