@@ -29,16 +29,6 @@ const StoreLayout = () => {
             const res = await axios.get(`${API_URL}/tienda-config`);
             if (res.data) {
                 setStoreConfig(res.data);
-                if (res.data.colorPrimario) {
-                    document.documentElement.style.setProperty('--store-primary', res.data.colorPrimario);
-                    // Generate darker variant
-                    // Helper to darken hex
-                    // For now simple fallback or same
-                    document.documentElement.style.setProperty('--store-primary-dark', res.data.colorPrimario);
-                }
-                if (res.data.colorSecundario) {
-                    document.documentElement.style.setProperty('--store-secondary', res.data.colorSecundario);
-                }
             }
         } catch (error) {
             console.error("Error loading store config", error);
@@ -72,27 +62,51 @@ const StoreLayout = () => {
         }));
     };
 
-    const cartTotal = cart.reduce((sum, item) => sum + (Number(item.precio_venta || item.precio) * item.quantity), 0);
+    const cartTotal = cart.reduce((sum, item) => sum + (Number(item.precio_venta || item.precio || 0) * item.quantity), 0);
     const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
     return (
         <div className="store-layout">
-            {/* Store Navbar */}
+            {/* Banda Shop Navbar */}
             <nav className="store-navbar">
-                <div className="store-container nav-content">
-                    <Link to="/store" className="store-brand">
-                        URBAN <span className="highlight">STYLE</span>
-                    </Link>
-
-                    <div className="store-search-bar">
-                        <input type="text" placeholder="Buscar productos..." className="store-search-input" />
+                <div className="nav-content">
+                    {/* Left: Nav Links */}
+                    <div className="nav-links-left">
+                        <Link to="/store?cat=mujer" className="nav-link">Mujer</Link>
+                        <Link to="/store?cat=hombre" className="nav-link">Hombre</Link>
+                        <Link to="/store?cat=marcas" className="nav-link">Marcas</Link>
+                        <Link to="/store?cat=sale" className="nav-link sale">Sale</Link>
+                        <Link to="/store?cat=new" className="nav-link">New Arrivals</Link>
                     </div>
 
-                    <div className="store-nav-links">
-                        <button className="cart-indicator-btn" onClick={() => setIsCartOpen(!isCartOpen)}>
-                            🛒 <span className="cart-count-badge">{cartCount}</span>
+                    {/* Center: Brand */}
+                    <Link to="/store" className="store-brand">
+                        banda.shop
+                    </Link>
+
+                    {/* Right: Actions */}
+                    <div className="nav-actions">
+                        <div className="search-wrapper">
+                            <input
+                                type="text"
+                                placeholder="¿Qué estás buscando?"
+                                className="search-input"
+                            />
+                            <span className="search-icon">🔍</span>
+                        </div>
+
+                        <button className="icon-btn">
+                            👤
                         </button>
-                        <Link to="/login" className="login-link">Admin</Link>
+
+                        <button className="icon-btn">
+                            ♡
+                        </button>
+
+                        <button className="icon-btn" onClick={() => setIsCartOpen(!isCartOpen)}>
+                            👜
+                            {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+                        </button>
                     </div>
                 </div>
             </nav>
@@ -105,40 +119,37 @@ const StoreLayout = () => {
             {/* Cart Sidebar */}
             <div className={`cart-sidebar ${isCartOpen ? 'open' : ''}`}>
                 <div className="cart-header">
-                    <h3>Tu Carrito ({cartCount})</h3>
+                    <h3>Tu Bolsa ({cartCount})</h3>
                     <button onClick={() => setIsCartOpen(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>✕</button>
                 </div>
 
                 <div className="cart-items">
                     {cart.length === 0 ? (
                         <div style={{ textAlign: 'center', padding: '2rem', color: '#888' }}>
-                            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🛒</div>
-                            <p>Tu carrito está vacío</p>
-                            <button onClick={() => setIsCartOpen(false)} style={{ marginTop: '1rem', color: 'var(--store-primary)', border: 'none', background: 'none', textDecoration: 'underline', cursor: 'pointer' }}>Seguir comprando</button>
+                            <p>Tu bolsa está vacía</p>
+                            <button onClick={() => setIsCartOpen(false)} style={{ marginTop: '1rem', color: 'black', textDecoration: 'underline', border: 'none', background: 'none', cursor: 'pointer' }}>Ver Novedades</button>
                         </div>
                     ) : (
                         cart.map(item => (
                             <div key={item.id} className="cart-item">
-                                <div style={{ width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
+                                <div style={{ width: '80px', height: '100px', background: '#f5f5f5' }}>
                                     {item.imagen_url ? (
                                         <img src={item.imagen_url} alt={item.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                    ) : (
-                                        <div style={{ width: '100%', height: '100%', background: '#eee' }}></div>
-                                    )}
+                                    ) : null}
                                 </div>
                                 <div className="cart-item-info">
-                                    <h4>{item.nombre}</h4>
-                                    <p style={{ color: 'var(--store-primary)', fontWeight: 'bold' }}>${Number(item.precio_venta || item.precio).toFixed(2)}</p>
-                                    <div className="qty-controls">
-                                        <button onClick={() => updateQuantity(item.id, -1)}>-</button>
-                                        <span>{item.quantity}</span>
-                                        <button onClick={() => updateQuantity(item.id, 1)}>+</button>
+                                    <h4 style={{ fontSize: '0.9rem', margin: '0 0 5px 0' }}>{item.nombre}</h4>
+                                    <p style={{ fontWeight: 'bold' }}>${Number(item.precio_venta || item.precio).toFixed(2)}</p>
+                                    <div className="qty-controls" style={{ marginTop: '10px', display: 'flex', gap: '10px', border: '1px solid #eee', width: 'fit-content' }}>
+                                        <button onClick={() => updateQuantity(item.id, -1)} style={{ border: 'none', background: 'none', padding: '5px 10px', cursor: 'pointer' }}>-</button>
+                                        <span style={{ padding: '5px 0' }}>{item.quantity}</span>
+                                        <button onClick={() => updateQuantity(item.id, 1)} style={{ border: 'none', background: 'none', padding: '5px 10px', cursor: 'pointer' }}>+</button>
                                     </div>
                                 </div>
                                 <button
                                     className="remove-btn"
                                     onClick={() => removeFromCart(item.id)}
-                                    style={{ color: '#ff4444' }}
+                                    style={{ color: '#999', border: 'none', background: 'none', height: 'fit-content', cursor: 'pointer' }}
                                 >✕</button>
                             </div>
                         ))
@@ -148,15 +159,14 @@ const StoreLayout = () => {
                 {cart.length > 0 && (
                     <div className="cart-footer">
                         <div className="cart-total">
-                            <span>Subtotal:</span>
+                            <span>Total Estimado</span>
                             <span>${cartTotal.toFixed(2)}</span>
                         </div>
-                        <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '1rem' }}>Envío e impuestos calculados al finalizar.</p>
                         <button
                             className="checkout-btn"
                             onClick={() => navigate('/store/checkout', { state: { cart, total: cartTotal } })}
                         >
-                            Finalizar Compra
+                            INICIAR COMPRA
                         </button>
                     </div>
                 )}

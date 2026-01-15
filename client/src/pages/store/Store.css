@@ -1,445 +1,486 @@
-/* Nexus Gear Theme - Fashion Minimalist */
+/* Banda Shop Style - Minimalist Ecommerce */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 :root {
-    --nexus-bg: #ffffff;
-    --nexus-bg-alt: #f9fafb;
-    --nexus-card: #ffffff;
-    --nexus-primary: #111827;
-    /* Luxury Black */
-    --nexus-secondary: #9ca3af;
-    --nexus-accent: #be123c;
-    /* Rose Red */
-    --nexus-text: #0f172a;
-    --nexus-text-muted: #6b7280;
-    --nexus-border: #e5e7eb;
+    --store-bg: #ffffff;
+    --store-text: #000000;
+    --store-text-light: #555555;
+    --store-border: #e6e6e6;
+    --store-primary: #000000;
+    --store-accent: #d32f2f;
+    /* Sale Red */
+    --store-gray-bg: #f5f5f5;
+    --header-height: 80px;
 }
 
 body {
-    background-color: var(--nexus-bg);
+    background-color: var(--store-bg);
+    color: var(--store-text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
 .store-layout {
-    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
-    background-color: var(--nexus-bg);
     min-height: 100vh;
-    color: var(--nexus-text);
+    display: flex;
+    flex-direction: column;
 }
 
-.store-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-}
-
-/* Navbar Light Minimalist */
+/* --- HEADER --- */
 .store-navbar {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--nexus-border);
+    height: var(--header-height);
+    background: white;
+    border-bottom: 1px solid var(--store-border);
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
 }
 
 .nav-content {
-    height: 70px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.store-brand {
-    font-size: 1.5rem;
-    font-weight: 800;
-    text-decoration: none;
-    color: var(--nexus-primary);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.store-brand span.highlight {
-    color: var(--nexus-text);
-    /* Keep it monochrome for luxury */
-}
-
-.cart-indicator-btn {
-    color: var(--nexus-primary);
-    background: transparent;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
+/* Left Nav Links */
+.nav-links-left {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.cart-indicator-btn:hover {
-    background: var(--nexus-bg-alt);
-}
-
-/* Hero Section "Fashion" */
-.nexus-hero {
-    background: linear-gradient(135deg, #000000 0%, #374151 100%);
-    border-radius: 4px;
-    /* Sharper corners for fashion */
-    margin-top: 20px;
-    padding: 3rem;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    border: none;
-    min-height: 400px;
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
-}
-
-/* Abstract Fashion shapes (Circle) */
-.nexus-hero::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
-    border-radius: 50%;
-    pointer-events: none;
-}
-
-.nexus-hero-content {
-    flex: 1;
-    z-index: 2;
-    padding-right: 2rem;
-}
-
-.nexus-hero h1 {
-    font-size: 3.5rem;
-    font-weight: 900;
-    line-height: 1.1;
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-    color: white;
-    /* Always white on dark hero bg */
-    letter-spacing: -1px;
-}
-
-.nexus-hero p.hero-subtitle {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 1.2rem;
-    margin-bottom: 2.5rem;
-    font-weight: 300;
-}
-
-.nexus-btn-primary {
-    background: white;
-    color: black;
-    font-weight: 700;
-    padding: 15px 40px;
-    border-radius: 0;
-    /* Square buttons for fashion */
-    border: none;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    transition: all 0.3s;
-    font-size: 0.9rem;
-}
-
-.nexus-btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    background: #f3f4f6;
-}
-
-.nexus-hero-image {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2;
-}
-
-.nexus-hero-image img {
-    max-width: 400px;
-    filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.5));
-}
-
-/* Category Icons Row */
-.nexus-categories {
-    display: flex;
-    justify-content: center;
-    gap: 3rem;
-    margin: 4rem 0;
-    flex-wrap: wrap;
-}
-
-.nexus-cat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    cursor: pointer;
-    opacity: 1;
-    transition: all 0.3s;
-}
-
-.nexus-cat-item:hover {
-    transform: translateY(-5px);
-}
-
-.cat-icon-box {
-    width: 80px;
-    height: 80px;
-    background: var(--nexus-bg-alt);
-    border-radius: 50%;
-    /* Circle icons */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    color: var(--nexus-primary);
-    transition: all 0.3s;
-}
-
-.nexus-cat-item.active .cat-icon-box {
-    background: var(--nexus-primary);
-    color: white;
-}
-
-.cat-label {
-    font-size: 0.9rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--nexus-primary);
-}
-
-/* Section Headers */
-.nexus-section {
-    margin-bottom: 5rem;
-}
-
-.nexus-section-header {
-    display: flex;
-    justify-content: center;
-    /* Center aligned headers */
-    text-align: center;
-    margin-bottom: 3rem;
-    border-bottom: none;
-}
-
-.nexus-section-header h2 {
-    font-size: 2rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 0.5rem;
-    color: var(--nexus-primary);
-    position: relative;
-    display: inline-block;
-}
-
-.nexus-section-header h2::after {
-    content: '';
-    display: block;
-    width: 50px;
-    height: 2px;
-    background: var(--nexus-primary);
-    margin: 10px auto 0;
-}
-
-/* Light Grid */
-.nexus-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 2rem;
 }
 
-.nexus-card {
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
+.nav-link {
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--store-text);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
 }
 
-.nexus-card-img {
-    height: 350px;
-    /* Taller images for clothing */
-    background: #f3f4f6;
+.nav-link:hover {
+    color: var(--store-text-light);
+}
+
+.nav-link.sale {
+    color: var(--store-accent);
+}
+
+/* Logo */
+.store-brand {
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: black;
+    letter-spacing: -1px;
+}
+
+/* Right Actions */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.search-wrapper {
+    position: relative;
+    width: 250px;
+}
+
+.search-input {
+    width: 100%;
+    background: var(--store-gray-bg);
+    border: none;
+    padding: 10px 15px;
+    padding-right: 30px;
+    font-size: 0.9rem;
+    color: var(--store-text);
+    outline: none;
+}
+
+.search-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--store-text);
+    position: relative;
+    padding: 5px;
+}
+
+.cart-count {
+    position: absolute;
+    top: -2px;
+    right: -5px;
+    background: black;
+    color: white;
+    font-size: 0.7rem;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    overflow: hidden;
+    font-weight: bold;
 }
 
-.nexus-card-img img {
+/* --- MAIN LAYOUT --- */
+.store-main-container {
+    max-width: 1400px;
+    margin: 0 auto;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    /* Cover for fashion */
-    transition: transform 0.5s;
+    padding: 2rem;
+    display: flex;
+    gap: 3rem;
 }
 
-.nexus-card:hover .nexus-card-img img {
-    transform: scale(1.05);
+/* --- SIDEBAR FILTERS --- */
+.store-sidebar {
+    width: 250px;
+    flex-shrink: 0;
 }
 
-.nexus-badge {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: var(--nexus-primary);
-    color: white;
-    font-size: 0.7rem;
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--store-border);
+}
+
+.filter-group {
+    border-bottom: 1px solid #efefef;
+}
+
+.filter-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    cursor: pointer;
+    font-size: 0.9rem;
     font-weight: 600;
-    padding: 5px 12px;
     text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
-.nexus-card-info {
-    padding: 1.5rem 0;
+.filter-content {
+    padding-bottom: 15px;
+    /* display: none; Managed by React state usually, or CSS if simple */
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: #444;
+    cursor: pointer;
+}
+
+.checkbox-item input {
+    accent-color: black;
+}
+
+/* --- PRODUCT GRID --- */
+.store-content {
     flex: 1;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.product-count {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.sort-select {
+    padding: 8px 15px;
+    border: 1px solid var(--store-border);
+    background: white;
+    font-size: 0.9rem;
+    min-width: 150px;
+    cursor: pointer;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px 20px;
+}
+
+/* --- PRODUCT CARD --- */
+.product-card {
     display: flex;
     flex-direction: column;
-    text-align: center;
+    position: relative;
+    /* group hover handled in JS or parent class */
 }
 
-.nexus-title {
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--nexus-primary);
-    margin-bottom: 0.5rem;
-}
-
-.nexus-price-row {
+.card-image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background: #f9f9f9;
+    overflow: hidden;
     margin-bottom: 1rem;
 }
 
-.current-price {
-    font-size: 1.1rem;
-    color: var(--nexus-text-muted);
-    font-weight: 400;
-}
-
-.nexus-btn-add {
+.card-image-wrapper img {
     width: 100%;
-    padding: 12px;
-    background: var(--nexus-primary);
-    border: none;
-    color: white;
-    border-radius: 0;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-    opacity: 0;
-    transform: translateY(10px);
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
 }
 
-.nexus-card:hover .nexus-btn-add {
-    opacity: 1;
+.product-card:hover .card-image-wrapper img {
+    transform: scale(1.05);
+}
+
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--store-accent);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 4px 8px;
+    z-index: 2;
+}
+
+.wishlist-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #777;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.wishlist-btn:hover {
+    color: black;
+}
+
+/* Size overlay or bottom bar */
+.size-selector {
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover .size-selector {
     transform: translateY(0);
 }
 
-/* Loader */
-.store-loader {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 80vh;
-}
-
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid #e5e7eb;
-    border-top-color: var(--nexus-primary);
-    border-radius: 50%;
-    animation: spin 1s infinite linear;
-}
-
-/* Mobile Bottom Nav */
-.mobile-bottom-nav {
-    display: none;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+.size-btn {
+    border: 1px solid #ddd;
     background: white;
-    border-top: 1px solid var(--nexus-border);
-    padding: 10px 0;
-    z-index: 9999;
-    padding-bottom: env(safe-area-inset-bottom);
+    font-size: 0.75rem;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
-@media (max-width: 768px) {
-    .nexus-hero {
-        flex-direction: column;
-        text-align: center;
-        padding: 3rem 1rem;
-        min-height: auto;
+.size-btn:hover {
+    border-color: black;
+}
+
+/* Card Info */
+.card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.product-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: black;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.product-brand {
+    font-size: 0.8rem;
+    color: #666;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.price-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.price-current {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.price-original {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.btn-add-cart {
+    margin-top: 10px;
+    width: 100%;
+    background: black;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.btn-add-cart:hover {
+    background: #333;
+}
+
+/* --- CART SIDEBAR (Keep existing but style it) --- */
+.cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: white;
+    z-index: 2000;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.cart-sidebar.open {
+    right: 0;
+}
+
+.cart-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--store-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.cart-item {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+}
+
+.cart-footer {
+    padding: 20px;
+    border-top: 1px solid var(--store-border);
+    background: #f9f9f9;
+}
+
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.checkout-btn {
+    width: 100%;
+    background: black;
+    color: white;
+    padding: 15px;
+    border: none;
+    text-transform: uppercase;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.cart-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1500;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .nav-links-left {
+        display: none;
     }
 
-    .nexus-hero-content {
-        padding-right: 0;
-        margin-bottom: 2rem;
+    .store-sidebar {
+        display: none;
+        /* Hide sidebar on mobile for now */
     }
 
-    .nexus-hero h1 {
-        font-size: 2.5rem;
+    .store-main-container {
+        padding: 1rem;
+        gap: 0;
     }
 
-    .nexus-categories {
-        gap: 1.5rem;
-        margin: 3rem 0;
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
     }
 
-    .cat-icon-box {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5rem;
+    .card-image-wrapper {
+        aspect-ratio: 2/3;
     }
 
-    .mobile-bottom-nav {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-    }
-
-    .store-container {
-        padding-bottom: 80px;
-    }
-
-    .nav-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        color: var(--nexus-text-muted);
-        font-size: 0.7rem;
-        gap: 4px;
-        text-decoration: none;
-    }
-
-    .nav-item.active {
-        color: var(--nexus-primary);
-    }
-
-    .nav-item span {
-        font-size: 1.4rem;
-    }
-
-    /* Make Add Button always visible on mobile */
-    .nexus-btn-add {
-        opacity: 1;
-        transform: translateY(0);
-        margin-top: 0.5rem;
+    .size-selector {
+        display: none;
     }
 }
