@@ -1491,3 +1491,169 @@ input[type="number"].no-spinner {
     height: auto !important;
   }
 }
+/* =========================================================================
+   ESTILOS DE FOOTER Y ACCIONES (NUEVO - REEMPLAZA INLINE STYLES)
+   ========================================================================= */
+
+.section-footer-pagos {
+  border-top: 2px solid #e2e8f0;
+  padding: 8px 0;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-actions-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.footer-left-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pagos-y-saldo-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.lista-pagos-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lista-pagos-items {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 2px 0;
+}
+
+.pago-badge {
+    background-color: #eff6ff;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #bfdbfe;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.btn-eliminar-pago {
+    border: none;
+    background: transparent;
+    color: #ef4444;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    margin-left: 2px;
+    padding: 0 2px;
+}
+
+.guardar-btn-container {
+  width: 200px;
+}
+
+.btn-guardar-imprimir {
+    height: 100%;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8px;
+    font-size: 14px;
+    line-height: 1.2;
+    font-weight: 900;
+    color: #ffffff;
+    background-color: #10b981;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    transition: all 0.2s;
+}
+
+.resumen-totales-container {
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.resumen-card {
+    background-color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+/* =========================================================================
+   MEDIA QUERY PARA MOVIL (< 1024px) - SOBRESCRIBE TODO
+   ========================================================================= */
+
+@media (max-width: 1024px) {
+  .footer-actions-container {
+      flex-direction: column-reverse; /* Totales arriba o abajo segun preferencia, aqui abajo */
+      gap: 16px;
+  }
+
+  .resumen-totales-container {
+      width: 100% !important;
+      position: relative !important;
+      /* Mover totales arriba de los botones de pago para visibilidad inmediata del monto */
+      order: -1; 
+  }
+  
+  .resumen-card {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+  }
+
+  .pagos-y-saldo-wrapper {
+      flex-direction: column;
+      gap: 12px;
+  }
+
+  .guardar-btn-container {
+      width: 100% !important;
+      margin-top: 8px;
+  }
+  
+  .btn-guardar-imprimir {
+      padding: 16px; /* Boton mas grande para dedo */
+      font-size: 16px;
+  }
+
+  .lista-pagos-items {
+      flex-direction: column; /* Pagos en lista vertical */
+  }
+  
+  .pago-badge {
+      padding: 8px;
+      justify-content: space-between;
+  }
+
+  /* FORZAR VISIBILIDAD DE HAMBURGUESA */
+  .hamburger-btn {
+      display: block !important;
+      color: white !important;
+      font-size: 28px !important;
+      padding: 10px !important;
+      z-index: 9999;
+  }
+}
+

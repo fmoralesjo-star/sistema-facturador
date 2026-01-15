@@ -4495,22 +4495,10 @@ Este enlace te permitirá actualizar tu información de contacto.`
 
             {/* Sección Inferior: Totales y Pagos */}
             {/* Sección Inferior: Totales y Pagos */}
-            <div style={{
-              borderTop: '2px solid #e2e8f0',
-              padding: '8px 0',
-              flexShrink: 0,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px'
-            }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                gap: '12px'
-              }}>
+            <div className="section-footer-pagos">
+              <div className="footer-actions-container">
                 {/* Parte Izquierda: Info y Toggle de Pagos */}
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <div className="footer-left-panel">
 
                   {/* Botones de Pago SIEMPRE VISIBLES */}
                   <div className="payment-methods-container">
@@ -4521,34 +4509,19 @@ Este enlace te permitirá actualizar tu información de contacto.`
                     <button type="button" onClick={() => { seleccionarTipoPago('RETENCIONES'); setMostrarModalRetencion(true); }} className="payment-method-btn btn-indigo">📋 RETEN.</button>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}>
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div className="pagos-y-saldo-wrapper">
+                    <div className="lista-pagos-container">
                       {/* Lista de Pagos Arriba para Visibilidad Inmediata */}
                       {listaPagos.length > 0 && (
-                        <div style={{
-                          display: 'flex',
-                          gap: '6px',
-                          flexWrap: 'wrap',
-                          padding: '2px 0'
-                        }}>
+                        <div className="lista-pagos-items">
                           {listaPagos.map(pago => (
-                            <div key={pago.id} style={{
-                              backgroundColor: '#eff6ff',
-                              padding: '3px 10px',
-                              borderRadius: '4px',
-                              fontSize: '11px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '6px',
-                              border: '1px solid #bfdbfe',
-                              boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
-                            }}>
+                            <div key={pago.id} className="pago-badge">
                               <span style={{ fontWeight: 'bold', color: '#1e40af' }}>{pago.tipo === 'TARJETA' ? '💳' : pago.tipo === 'EFECTIVO' ? '💵' : pago.tipo === 'CREDITO' ? '🤝' : '🏦'} {pago.tipo}:</span>
                               <span style={{ fontWeight: 'bold', color: '#1e40af' }}>${pago.monto.toFixed(2)}</span>
                               <button
                                 type="button"
                                 onClick={() => setListaPagos(listaPagos.filter(p => p.id !== pago.id))}
-                                style={{ border: 'none', background: 'transparent', color: '#ef4444', cursor: 'pointer', fontWeight: 'bold', fontSize: '14px', marginLeft: '2px', padding: '0 2px' }}
+                                className="btn-eliminar-pago"
                               >
                                 ×
                               </button>
@@ -4574,30 +4547,11 @@ Este enlace te permitirá actualizar tu información de contacto.`
                       </div>
                     </div>
 
-                    <div style={{ width: '200px' }}>
+                    <div className="guardar-btn-container">
                       <button
                         type="button"
                         onClick={() => handleGuardarFactura(true)}
-                        style={{
-                          height: '100%',
-                          minHeight: '50px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          textAlign: 'center',
-                          padding: '8px',
-                          fontSize: '14px',
-                          lineHeight: '1.2',
-                          fontWeight: '900',
-                          color: '#ffffff',
-                          backgroundColor: '#10b981',
-                          border: 'none',
-                          borderRadius: '6px',
-                          cursor: 'pointer',
-                          width: '100%',
-                          boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)',
-                          transition: 'all 0.2s'
-                        }}
+                        className="btn-guardar-imprimir"
                       >
                         💾 GUARDAR E IMPRIMIR
                       </button>
@@ -4606,14 +4560,8 @@ Este enlace te permitirá actualizar tu información de contacto.`
                 </div>
 
                 {/* Parte Derecha: Resumen de Totales (SIEMPRE VISIBLE) */}
-                <div style={{ width: '280px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <div style={{
-                    backgroundColor: 'white',
-                    padding: '6px 12px',
-                    borderRadius: '8px',
-                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
-                    border: '1px solid #e2e8f0'
-                  }}>
+                <div className="resumen-totales-container">
+                  <div className="resumen-card">
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1px', fontSize: '12px' }}>
                       <span style={{ color: '#64748b' }}>Subtotal:</span>
                       <span style={{ fontWeight: 'bold' }}>${totales.subtotal.toFixed(2)}</span>
