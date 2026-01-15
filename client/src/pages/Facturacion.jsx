@@ -4451,7 +4451,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
                       return (
                         <div
                           key={`empty-${index}`}
-                          className="grid-row"
+                          className="grid-row empty-row"
                           style={{
                             gridTemplateColumns: `${columnWidths.codigo}px minmax(${columnWidths.descripcion}px, 1fr) ${columnWidths.talla}px ${columnWidths.color}px ${columnWidths.cantidad}px ${columnWidths.precio}px ${columnWidths.descuento}px ${columnWidths.stock}px ${columnWidths.subtotal}px 50px`
                           }}

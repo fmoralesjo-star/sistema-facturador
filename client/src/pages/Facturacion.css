@@ -1015,447 +1015,450 @@ input[type="number"].no-spinner {
   opacity: 1 !important;
   cursor: col-resize;
   box-shadow: 0 0 10px rgba(37, 99, 235, 0.8) !important;
-}/* =========================================
+}
+
+/* =========================================
    ESTILOS DE BOTONES DE PAGO REFACTORIZADOS
    ========================================= */
 .payment-methods-container {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-    margin-bottom: 4px;
-    background: #f8fafc;
-    padding: 6px;
-    border-radius: 6px;
-    border: 1px solid #cbd5e1;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+  background: #f8fafc;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
 }
 
 .payment-method-btn {
-    flex: 1;
-    padding: 4px;
-    font-size: 10px;
-    font-weight: bold;
-    border-radius: 4px;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    color: white;
-    transition: opacity 0.2s, transform 0.1s;
+  flex: 1;
+  padding: 4px;
+  font-size: 10px;
+  font-weight: bold;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: white;
+  transition: opacity 0.2s, transform 0.1s;
 }
 
 .payment-method-btn:active {
-    transform: scale(0.98);
+  transform: scale(0.98);
 }
 
 .btn-indigo {
-    background-color: #6366f1;
+  background-color: #6366f1;
 }
 
 .btn-amber {
-    background-color: #d97706;
+  background-color: #d97706;
 }
 
 /* =========================================
    OPTIMIZACIONES MÃ“VILES (MOBILE-FIRST)
    ========================================= */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
 
-    /* --- TransformaciÃ³n de Tabla de Productos a Tarjetas --- */
+  /* --- Transformación de Tabla de Productos a Tarjetas --- */
 
-    /* Ocultar encabezados de tabla */
-    .grid-header {
-        display: none !important;
-    }
+  /* Ocultar encabezados de tabla */
+  .grid-header {
+    display: none !important;
+  }
 
-    /* Filas como Tarjetas Independientes */
-    .grid-row {
-        display: flex !important;
-        flex-direction: column !important;
-        height: auto !important;
-        min-height: auto !important;
-        border: 1px solid #e2e8f0;
-        margin-bottom: 16px;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        padding: 16px;
-        background: white;
-        gap: 8px;
-        position: relative;
-    }
+  /* Ocultar filas vacías en móvil */
+  .grid-row.empty-row {
+    display: none !important;
+  }
 
-    /* Celdas individuales */
-    .grid-cell {
-        width: 100% !important;
-        border-right: none !important;
-        border-bottom: 1px solid #f1f5f9;
-        padding: 8px 0 !important;
-        height: auto !important;
-        min-height: 24px;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        font-size: 14px !important;
-    }
+  /* Filas como Tarjetas Independientes */
+  .grid-row {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: auto !important;
+    grid-template-columns: 1fr !important;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 16px;
+    background: white;
+    gap: 8px;
+    position: relative;
+  }
 
-    .grid-cell:last-child {
-        border-bottom: none !important;
-        justify-content: flex-end;
-        padding-top: 12px !important;
-    }
+  /* Celdas individuales */
+  .grid-cell {
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 8px 0 !important;
+    height: auto !important;
+    min-height: 24px;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    font-size: 14px !important;
+  }
 
-    /* Etiquetas pseudo-elementos para cada columna */
-    /* Nota: Depende del orden fijo de columnas definido en JSX */
+  .grid-cell:last-child {
+    border-bottom: none !important;
+    justify-content: flex-end;
+    padding-top: 12px !important;
+  }
 
-    /* 1. CÃ³digo */
-    .grid-cell:nth-child(1)::before {
-        content: "CÃ“DIGO";
-        font-weight: 700;
-        color: #64748b;
-        font-size: 0.75rem;
-        letter-spacing: 0.05em;
-    }
+  /* Etiquetas pseudo-elementos para cada columna */
+  .grid-cell:nth-child(1)::before {
+    content: "CÓDIGO";
+    font-weight: 700;
+    color: #64748b;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
 
-    /* 2. DescripciÃ³n */
-    .grid-cell:nth-child(2) {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 4px;
-        padding-bottom: 12px !important;
-        border-bottom: 2px solid #e2e8f0 !important;
-    }
+  .grid-cell:nth-child(2) {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px;
+    padding-bottom: 12px !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+  }
 
-    .grid-cell:nth-child(2)::before {
-        content: "DESCRIPCIÃ“N";
-        font-weight: 700;
-        color: #64748b;
-        font-size: 0.75rem;
-        letter-spacing: 0.05em;
-    }
+  .grid-cell:nth-child(2)::before {
+    content: "DESCRIPCIÓN";
+    font-weight: 700;
+    color: #64748b;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
 
-    /* 3. Talla */
-    .grid-cell:nth-child(3)::before {
-        content: "TALLA";
-        font-weight: 700;
-        color: #64748b;
-        font-size: 0.75rem;
-    }
+  .grid-cell:nth-child(3)::before {
+    content: "TALLA";
+    font-weight: 700;
+    color: #64748b;
+    font-size: 0.75rem;
+  }
 
-    /* 4. Color */
-    .grid-cell:nth-child(4)::before {
-        content: "COLOR";
-        font-weight: 700;
-        color: #64748b;
-        font-size: 0.75rem;
-    }
+  .grid-cell:nth-child(4)::before {
+    content: "COLOR";
+    font-weight: 700;
+    color: #64748b;
+    font-size: 0.75rem;
+  }
 
-    /* 5. Cantidad */
-    .grid-cell:nth-child(5) {
-        background-color: #f8fafc;
-        padding: 8px !important;
-        border-radius: 6px;
-        margin: 4px 0;
-    }
+  .grid-cell:nth-child(5) {
+    background-color: #f8fafc;
+    padding: 8px !important;
+    border-radius: 6px;
+    margin: 4px 0;
+  }
 
-    .grid-cell:nth-child(5)::before {
-        content: "CANTIDAD";
-        font-weight: 800;
-        color: #0f172a;
-        font-size: 0.8rem;
-    }
+  .grid-cell:nth-child(5)::before {
+    content: "CANTIDAD";
+    font-weight: 800;
+    color: #0f172a;
+    font-size: 0.8rem;
+  }
 
-    /* 6. Precio */
-    .grid-cell:nth-child(6)::before {
-        content: "PRECIO UNIT.";
-        font-weight: 700;
-        color: #64748b;
-        font-size: 0.75rem;
-    }
+  .grid-cell:nth-child(6)::before {
+    content: "PRECIO UNIT.";
+    font-weight: 700;
+    color: #64748b;
+    font-size: 0.75rem;
+  }
 
-    /* 7. Descuento */
-    .grid-cell:nth-child(7)::before {
-        content: "DESC %";
-        font-weight: 700;
-        color: #64748b;
-        font-size: 0.75rem;
-    }
+  .grid-cell:nth-child(7)::before {
+    content: "DESC %";
+    font-weight: 700;
+    color: #64748b;
+    font-size: 0.75rem;
+  }
 
-    /* 8. Stock */
-    .grid-cell:nth-child(8)::before {
-        content: "STOCK DISP.";
-        font-weight: 700;
-        color: #64748b;
-        font-size: 0.75rem;
-    }
+  .grid-cell:nth-child(8)::before {
+    content: "STOCK DISP.";
+    font-weight: 700;
+    color: #64748b;
+    font-size: 0.75rem;
+  }
 
-    /* 9. Subtotal */
-    .grid-cell:nth-child(9) {
-        background-color: #eff6ff;
-        color: #1e40af;
-        border-radius: 6px;
-        padding: 10px !important;
-        margin-top: 4px;
-    }
+  .grid-cell:nth-child(9) {
+    background-color: #eff6ff;
+    color: #1e40af;
+    border-radius: 6px;
+    padding: 10px !important;
+    margin-top: 4px;
+  }
 
-    .grid-cell:nth-child(9)::before {
-        content: "SUBTOTAL";
-        font-weight: 800;
-        color: #1e3a8a;
-        font-size: 0.8rem;
-    }
+  .grid-cell:nth-child(9)::before {
+    content: "SUBTOTAL";
+    font-weight: 800;
+    color: #1e3a8a;
+    font-size: 0.8rem;
+  }
 
-    /* BotÃ³n Eliminar */
-    .grid-delete-btn {
-        width: 100%;
-        padding: 12px;
-        background-color: #fee2e2;
-        color: #dc2626;
-        border-radius: 8px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-weight: bold;
-    }
+  /* Botón Eliminar */
+  .grid-delete-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #fee2e2;
+    color: #dc2626;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+  }
 
-    .grid-delete-btn:hover {
-        background-color: #fca5a5;
-        color: #991b1b;
-    }
+  .grid-delete-btn:hover {
+    background-color: #fca5a5;
+    color: #991b1b;
+  }
 
-    .grid-delete-btn::after {
-        content: " ELIMINAR ITEM";
-        margin-left: 8px;
-        font-size: 12px;
-    }
+  .grid-delete-btn::after {
+    content: " ELIMINAR ITEM";
+    margin-left: 8px;
+    font-size: 12px;
+  }
 
-    /* --- Mejoras de Botones de Pago en MÃ³vil --- */
-    .payment-methods-container {
-        flex-direction: column;
-        gap: 8px;
-        padding: 12px;
-        background: white;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    }
+  /* --- Mejoras de Botones de Pago en Móvil --- */
+  .payment-methods-container {
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  }
 
-    .payment-method-btn {
-        padding: 14px !important;
-        font-size: 14px !important;
-        flex: none !important;
-        width: 100%;
-        border-radius: 8px;
-        justify-content: flex-start;
-        padding-left: 20px !important;
-    }
+  .payment-method-btn {
+    padding: 14px !important;
+    font-size: 14px !important;
+    flex: none !important;
+    width: 100%;
+    border-radius: 8px;
+    justify-content: flex-start;
+    padding-left: 20px !important;
+  }
 
-    /* Panel de Totales Sticky Footer Mejorado */
-    .totales-container {
-        position: sticky !important;
-        bottom: 0 !important;
-        background: white !important;
-        z-index: 1000 !important;
-        border-top: 1px solid #cbd5e1 !important;
-        box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-        border-radius: 20px 20px 0 0 !important;
-        margin-top: 20px !important;
-        padding: 20px !important;
-        padding-bottom: 24px !important;
-        /* Safety padding for bottom nav bars */
-    }
+  /* Panel de Totales Sticky Footer Mejorado */
+  .totales-container {
+    position: sticky !important;
+    bottom: 0 !important;
+    background: white !important;
+    z-index: 1000 !important;
+    border-top: 1px solid #cbd5e1 !important;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 20px 20px 0 0 !important;
+    margin-top: 20px !important;
+    padding: 20px !important;
+    padding-bottom: 24px !important;
+  }
 
-    /* Ajustar tamaÃ±o de fuente de montos grandes */
-    .monto-total {
-        font-size: 32px !important;
-    }
+  .monto-total {
+    font-size: 32px !important;
+  }
+
+  /* Mobile Header Overrides inside the same media query */
+  .factura-header {
+    padding: 10px;
+    margin: 5px;
+    flex-wrap: wrap;
+    height: auto !important;
+    overflow: visible;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-left-group {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .hamburger-btn {
+    display: block;
+    padding: 8px;
+  }
+
+  .header-title {
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+    font-size: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 8px;
+  }
+
+  .toolbar-actions {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    padding: 0;
+    margin-top: 10px;
+    border-left: none;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .toolbar-actions.open {
+    display: flex;
+  }
+
+  .toolbar-btn {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 14px;
+    justify-content: flex-start;
+    margin-bottom: 1px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: left;
+  }
+
+  .toolbar-btn:last-child {
+    border-bottom: none;
+  }
+
+  .toolbar-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Fix Grid Container Scroll on Mobile */
+  .grid-container {
+    height: auto !important;
+    min-height: auto !important;
+    border: none !important;
+  }
+
+  .grid-body {
+    height: auto !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+    background: transparent !important;
+  }
 }
+
 /* =========================================
-   ESTILOS DE HEADER RESPONSIVO (NUEVO)
+   ESTILOS DE HEADER RESPONSIVO (BASE)
    ========================================= */
 
 .factura-header {
-    color: white;
-    padding: 12px 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    min-height: 45px;
-    box-sizing: border-box;
-    margin: 10px;
-    border-radius: 8px;
-    overflow: visible;
-    flex-wrap: wrap;
-    transition: background-color 0.3s ease;
+  color: white;
+  padding: 12px 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  min-height: 45px;
+  box-sizing: border-box;
+  margin: 10px;
+  border-radius: 8px;
+  overflow: visible;
+  flex-wrap: wrap;
+  transition: background-color 0.3s ease;
 }
 
 .bg-purple {
-    background-color: #9333ea;
+  background-color: #9333ea;
 }
 
 .bg-red {
-    background-color: #dc2626;
+  background-color: #dc2626;
 }
 
 .bg-blue {
-    background-color: #2563eb;
+  background-color: #2563eb;
 }
 
 .header-left-group {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    z-index: 10;
-    flex: 1;
-    /* Allow taking space */
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 10;
+  flex: 1;
 }
 
 .hamburger-btn {
-    display: none;
-    /* Hidden by default */
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 0 8px;
-    line-height: 1;
+  display: none;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 8px;
+  line-height: 1;
 }
 
 .btn-inicio {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-size: 11px;
-    cursor: pointer;
-    font-weight: bold;
-    display: flex !important;
-    align-items: center;
-    gap: 5px;
-    transition: all 0.2s;
-    white-space: nowrap;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  font-weight: bold;
+  display: flex !important;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .btn-inicio:hover {
-    background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.4);
 }
 
 .toolbar-actions {
-    display: flex;
-    gap: 4px;
-    border-left: 1px solid rgba(255, 255, 255, 0.3);
-    padding-left: 8px;
-    align-items: center;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 4px;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  padding-left: 8px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .toolbar-btn {
-    padding: 4px 8px;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-    font-weight: bold;
-    font-size: 9px;
-    cursor: pointer;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    transition: background 0.2s;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 9px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
 }
 
 .toolbar-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .btn-active-red {
-    background: #dc2626 !important;
-    border-color: #ef4444 !important;
+  background: #dc2626 !important;
+  border-color: #ef4444 !important;
 }
 
 .header-title {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    text-align: right;
-    font-weight: 900;
-    font-size: 16px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-align: right;
+  font-weight: 900;
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
-
-/* Mobile Header Adjustments */
-@media (max-width: 768px) {
-    .factura-header {
-        padding: 10px;
-        margin: 5px;
-        flex-wrap: wrap;
-        height: auto !important;
-        overflow: visible;
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .header-left-group {
-        width: 100%;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .hamburger-btn {
-        display: block;
-        padding: 8px;
-    }
-
-    /* Inicio button stays visible next to hamburger */
-
-    .header-title {
-        width: 100%;
-        justify-content: center;
-        margin-top: 8px;
-        font-size: 14px;
-        border-top: 1px solid rgba(255, 255, 255, 0.2);
-        padding-top: 8px;
-    }
-
-    .toolbar-actions {
-        display: none;
-        width: 100%;
-        flex-direction: column;
-        padding: 0;
-        margin-top: 10px;
-        border-left: none;
-        background: rgba(0, 0, 0, 0.1);
-        border-radius: 6px;
-        overflow: hidden;
-    }
-
-    .toolbar-actions.open {
-        display: flex;
-    }
-
-    .toolbar-btn {
-        width: 100%;
-        padding: 12px 16px;
-        font-size: 14px;
-        justify-content: flex-start;
-        margin-bottom: 1px;
-        background: transparent;
-        border: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        text-align: left;
-    }
-
-    .toolbar-btn:last-child {
-        border-bottom: none;
-    }
-
-    .toolbar-btn:hover {
-        background: rgba(255, 255, 255, 0.1);
-    }
-}
-@media (max-width: 768px) { .grid-container { height: auto !important; min-height: auto !important; border: none !important; } .grid-body { height: auto !important; max-height: none !important; overflow-y: visible !important; background: transparent !important; } }
