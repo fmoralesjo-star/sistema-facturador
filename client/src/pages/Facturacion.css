@@ -24,6 +24,19 @@ body {
   overflow: hidden !important;
 }
 
+@media (max-width: 1024px) {
+  .factura-container {
+    height: auto !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .factura-body-linear {
+    overflow: visible !important;
+  }
+}
+
 /* Encabezado con Datos del Emisor, Datos de la Factura y Datos del Cliente */
 .header-datos {
   display: grid;
@@ -1461,4 +1474,20 @@ input[type="number"].no-spinner {
   font-size: 16px;
   letter-spacing: 1px;
   text-transform: uppercase;
+
+  /* Force visibility of data sections on mobile */
+  .datos-factura,
+  .datos-emisor,
+  .datos-cliente {
+    display: block !important;
+    visibility: visible !important;
+    margin-bottom: 8px;
+  }
+
+  .header-datos {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    height: auto !important;
+  }
 }
