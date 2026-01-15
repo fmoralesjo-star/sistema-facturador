@@ -166,6 +166,7 @@ function Facturacion({ socket }) {
 
   const [facturaData, setFacturaData] = useState(() => getInitialFacturaData())
   const [items, setItems] = useState(() => getInitialItems())
+  const [menuOpen, setMenuOpen] = useState(false) // Mobile menu state
 
   const [totales, setTotales] = useState({
     subtotal: 0,
@@ -304,6 +305,11 @@ function Facturacion({ socket }) {
   const clienteSectionRef = useRef(null)
   const [mostrarRegistrarCliente, setMostrarRegistrarCliente] = useState(false)
   const timeoutBusquedaRef = useRef(null)
+
+  // Estados para secciones colapsables (Mobile First)
+  const [clienteCollapsed, setClienteCollapsed] = useState(false) // Por defecto visible en escritorio, pero lo manejaremos responsivo
+  const [emisorCollapsed, setEmisorCollapsed] = useState(true) // Por defecto colapsado
+
 
   // Estado para los anchos de las columnas
   const getInitialColumnWidth = (columnName, defaultWidth) => {
@@ -2137,53 +2143,29 @@ Este enlace te permitirá actualizar tu información de contacto.`
         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
       }}>
         {/* Banner Visual de Modo */}
-        <div style={{
-          backgroundColor: esProforma ? '#9333ea' : esNotaCredito ? '#dc2626' : '#2563eb', // Morado, Rojo, Azul
-          color: 'white',
-          padding: '12px 20px',
-          textAlign: 'right',
-          fontWeight: '900',
-          fontSize: '16px',
-          letterSpacing: '1px',
-          textTransform: 'uppercase',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-          display: 'flex',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          gap: '10px',
-          position: 'relative',
-          height: '45px', // Altura fija para mayor orden
-          boxSizing: 'border-box'
-        }}>
-          <div style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', display: 'flex', gap: '8px', alignItems: 'center', zIndex: 10 }}>
+        <div className={`factura-header ${esProforma ? 'bg-purple' : esNotaCredito ? 'bg-red' : 'bg-blue'}`}>
+
+          <div className="header-left-group">
+            {/* Hamburger for Mobile */}
+            <button
+              className="hamburger-btn"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              ☰
+            </button>
+
             {/* Botón Inicio */}
             <button
               type="button"
               onClick={() => navigate('/')}
-              className="no-print"
+              className="btn-inicio no-print"
               title="Ir al Inicio"
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                color: 'white',
-                border: '1px solid rgba(255, 255, 255, 0.4)',
-                borderRadius: '6px',
-                padding: '4px 10px',
-                fontSize: '11px',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-                transition: 'all 0.2s',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.4)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
             >
               🏠 INICIO
             </button>
 
             {/* Botones de Acción */}
-            <div className="no-print" style={{ display: 'flex', gap: '4px', borderLeft: '1px solid rgba(255,255,255,0.3)', paddingLeft: '8px' }}>
+            <div className={`toolbar-actions no-print ${menuOpen ? 'open' : ''}`}>
               <button
                 type="button"
                 onClick={(e) => {
@@ -2191,17 +2173,18 @@ Este enlace te permitirá actualizar tu información de contacto.`
                     e.preventDefault();
                     e.stopPropagation();
                     handleNuevaFactura();
+                    setMenuOpen(false);
                   } catch (error) {
                     console.error('Error al clickear nueva factura:', error);
                   }
                 }}
-                style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}
+                className="toolbar-btn"
               >
                 ➕ NUEVA
               </button>
               <button
-                onClick={() => setEsProforma(!esProforma)}
-                style={{ padding: '4px 8px', background: esProforma ? '#dc2626' : 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}
+                onClick={() => { setEsProforma(!esProforma); setMenuOpen(false); }}
+                className={`toolbar-btn ${esProforma ? 'btn-active-red' : ''}`}
               >
                 {esProforma ? "✖ CANCELAR" : "📝 COTIZAR"}
               </button>
@@ -2212,19 +2195,20 @@ Este enlace te permitirá actualizar tu información de contacto.`
                   if (nuevoTipo === '04' && facturaData.clienteRucCedula) {
                     buscarFacturasCliente();
                   }
+                  setMenuOpen(false);
                 }}
-                style={{ padding: '4px 8px', background: facturaData.tipoComprobante === '04' ? '#dc2626' : 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}
+                className={`toolbar-btn ${facturaData.tipoComprobante === '04' ? 'btn-active-red' : ''}`}
               >
                 {facturaData.tipoComprobante === '04' ? "✖ CANCELAR NC" : "📑 NOTA CRÉDITO"}
               </button>
-              <button onClick={handleCierreCaja} style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}>💰 CIERRE</button>
-              <button onClick={() => setMostrarBuscarFacturasModal(true)} style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}>🔍 BUSCAR</button>
-              <button onClick={() => setMostrarCajaChicaModal(true)} style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}>💸 GASTOS</button>
-              <button onClick={handleCambiarPuntoVenta} style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '4px', fontWeight: 'bold', fontSize: '9px', cursor: 'pointer' }}>🔄 PV</button>
+              <button onClick={() => { handleCierreCaja(); setMenuOpen(false); }} className="toolbar-btn">💰 CIERRE</button>
+              <button onClick={() => { setMostrarBuscarFacturasModal(true); setMenuOpen(false); }} className="toolbar-btn">🔍 BUSCAR</button>
+              <button onClick={() => { setMostrarCajaChicaModal(true); setMenuOpen(false); }} className="toolbar-btn">💸 GASTOS</button>
+              <button onClick={() => { handleCambiarPuntoVenta(); setMenuOpen(false); }} className="toolbar-btn">🔄 PV</button>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <div className="header-title">
             {esProforma ? (
               <>📝 COTIZACIÓN</>
             ) : esNotaCredito ? (
@@ -3700,7 +3684,7 @@ Este enlace te permitirá actualizar tu información de contacto.`
               className={`datos-cliente ${mostrarRegistrarCliente ? 'modo-registro' : ''}`}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <h3 className="titulo-datos" style={{ margin: 0, flex: 1 }}>Datos del Cliente</h3>
+                <h3 className="titulo-datos" onClick={() => setClienteCollapsed(!clienteCollapsed)} style={{ margin: 0, flex: 1, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', userSelect: 'none' }}>Datos del Cliente <span style={{ fontSize: '10px' }}>{clienteCollapsed ? '▼' : '▲'}</span></h3>
                 <button
                   type="button"
                   onClick={() => {
@@ -3787,11 +3771,18 @@ Este enlace te permitirá actualizar tu información de contacto.`
                   ⚠️ Registre al cliente
                 </div>
               )}
-              <div className="datos-grid">
+              {clienteCollapsed && (
+                <div onClick={() => setClienteCollapsed(false)} style={{ fontSize: '13px', padding: '8px 4px', color: '#1e293b', cursor: 'pointer', background: '#f8fafc', borderRadius: '4px' }}>
+                  <div style={{ fontWeight: 'bold', color: '#0f172a', marginBottom: '2px' }}>{facturaData.clienteNombre || 'CONSUMIDOR FINAL'}</div>
+                  <div style={{ fontSize: '11px', color: '#64748b' }}>{facturaData.clienteRucCedula || '9999999999999'}</div>
+                </div>
+              )}
+              <div className="datos-grid" style={{ display: clienteCollapsed ? 'none' : 'grid' }}>
                 <div className="dato-item">
                   <label>RUC/Cédula:</label>
                   <input
                     type="text"
+                    inputMode="numeric"
                     value={facturaData.clienteRucCedula || ''}
                     onChange={(e) => handleFacturaDataChange('clienteRucCedula', e.target.value)}
                     onKeyDown={(e) => {
@@ -3842,7 +3833,8 @@ Este enlace te permitirá actualizar tu información de contacto.`
                 <div className="dato-item">
                   <label>Teléfono:</label>
                   <input
-                    type="text"
+                    type="tel"
+                    inputMode="tel"
                     value={facturaData.clienteTelefono || ''}
                     onChange={(e) => {
                       const soloNumeros = e.target.value.replace(/\D/g, '')
@@ -4181,8 +4173,13 @@ Este enlace te permitirá actualizar tu información de contacto.`
 
             {/* Datos del Emisor */}
             <div className="datos-emisor">
-              <h3 className="titulo-datos">Datos del Emisor</h3>
-              <div className="datos-grid">
+              <h3 className="titulo-datos" onClick={() => setEmisorCollapsed(!emisorCollapsed)} style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', userSelect: 'none' }}>Datos del Emisor <span style={{ fontSize: '10px' }}>{emisorCollapsed ? '▼' : '▲'}</span></h3>
+              {emisorCollapsed && (
+                <div onClick={() => setEmisorCollapsed(false)} style={{ fontSize: '11px', padding: '4px', color: '#64748b', cursor: 'pointer' }}>
+                  {cleanText(facturaData.emisorNombreComercial) || cleanText(facturaData.emisorRazonSocial) || 'EMISOR'}
+                </div>
+              )}
+              <div className="datos-grid" style={{ display: emisorCollapsed ? 'none' : 'grid' }}>
                 <div className="dato-item">
                   <label>RUC:</label>
                   <span>{cleanText(facturaData.emisorRuc) || '-'}</span>
@@ -4246,8 +4243,28 @@ Este enlace te permitirá actualizar tu información de contacto.`
                 <div className="no-print" style={{ display: 'flex', gap: '8px', flex: 1, alignItems: 'center', justifyContent: 'flex-end' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <label style={{ fontSize: '9px', fontWeight: 'bold', color: '#64748b', whiteSpace: 'nowrap' }}>🔍 STOCK:</label>
+                    <button
+                      type="button"
+                      onClick={() => alert('📷 Funcionalidad de Escáner en desarrollo')}
+                      style={{
+                        padding: '0px 6px',
+                        background: 'transparent',
+                        color: '#64748b',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        marginRight: '4px',
+                        height: '20px',
+                        display: 'flex',
+                        alignItems: 'center'
+                      }}
+                      title="Escanear Código de Barras"
+                    >
+                      📷
+                    </button>
                     <input
-                      type="text"
+                      type="search"
                       value={stockSearchTerm}
                       onChange={(e) => setStockSearchTerm(e.target.value)}
                       onKeyDown={handleStockSearch}
@@ -4496,12 +4513,12 @@ Este enlace te permitirá actualizar tu información de contacto.`
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
 
                   {/* Botones de Pago SIEMPRE VISIBLES */}
-                  <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '4px', background: '#f8fafc', padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
-                    <button type="button" onClick={() => seleccionarTipoPago('EFECTIVO')} style={{ flex: 1, padding: '4px', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#6366f1', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>💵 EFECTIVO</button>
-                    <button type="button" onClick={() => seleccionarTipoPago('TARJETAS')} style={{ flex: 1, padding: '4px', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#6366f1', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>💳 TARJETA</button>
-                    <button type="button" onClick={() => seleccionarTipoPago('TRANSFERENCIA')} style={{ flex: 1, padding: '4px', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#6366f1', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>🏦 TRANSF.</button>
-                    <button type="button" onClick={() => seleccionarTipoPago('CREDITO')} style={{ flex: 1, padding: '4px', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#d97706', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>🤝 CRÉDITO</button>
-                    <button type="button" onClick={() => { seleccionarTipoPago('RETENCIONES'); setMostrarModalRetencion(true); }} style={{ flex: 1, padding: '4px', fontSize: '10px', fontWeight: 'bold', borderRadius: '4px', border: 'none', backgroundColor: '#6366f1', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>📋 RETEN.</button>
+                  <div className="payment-methods-container">
+                    <button type="button" onClick={() => seleccionarTipoPago('EFECTIVO')} className="payment-method-btn btn-indigo">💵 EFECTIVO</button>
+                    <button type="button" onClick={() => seleccionarTipoPago('TARJETAS')} className="payment-method-btn btn-indigo">💳 TARJETA</button>
+                    <button type="button" onClick={() => seleccionarTipoPago('TRANSFERENCIA')} className="payment-method-btn btn-indigo">🏦 TRANSF.</button>
+                    <button type="button" onClick={() => seleccionarTipoPago('CREDITO')} className="payment-method-btn btn-amber">🤝 CRÉDITO</button>
+                    <button type="button" onClick={() => { seleccionarTipoPago('RETENCIONES'); setMostrarModalRetencion(true); }} className="payment-method-btn btn-indigo">📋 RETEN.</button>
                   </div>
 
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}>
