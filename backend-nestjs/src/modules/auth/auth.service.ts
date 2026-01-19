@@ -34,7 +34,8 @@ export class AuthService {
             username: user.nombre_usuario,
             sub: user.id,
             role: user.rol?.nombre,
-            rol_id: user.rol_id
+            rol_id: user.rol_id,
+            empresa_id: user.empresa_id // IMPORTANT: Tenant Context
         };
 
         return {

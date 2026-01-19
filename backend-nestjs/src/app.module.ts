@@ -1,8 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BullModule } from '@nestjs/bullmq';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ClsModule } from 'nestjs-cls';
+import { TenantMiddleware } from './common/middleware/tenant.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './config/database.module';
@@ -30,6 +32,12 @@ import { CommonModule } from './modules/common/common.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { MediaModule } from './modules/media/media.module';
 import { TiendaConfigModule } from './modules/tienda-config/tienda-config.module';
+
+import { ClsPluginTransactional } from '@nestjs-cls/transactional';
+import { TransactionalAdapterTypeOrm } from '@nestjs-cls/transactional-adapter-typeorm';
+import { DataSource } from 'typeorm';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { TenancyInterceptor } from './common/interceptors/tenancy.interceptor';
 
 @Module({
   imports: [
@@ -70,10 +78,36 @@ import { TiendaConfigModule } from './modules/tienda-config/tienda-config.module
 
     // Scheduler
     ScheduleModule.forRoot(),
+
+    // Context Storage & Transactional TypeORM
+    ClsModule.forRoot({
+      global: true,
+      middleware: { mount: true },
+      plugins: [
+        new ClsPluginTransactional({
+          imports: [TypeOrmModule],
+          adapter: new TransactionalAdapterTypeOrm({
+            dataSourceToken: DataSource,
+          }),
+        }),
+      ],
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService, EventsGateway],
+  providers: [
+    AppService,
+    EventsGateway,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TenancyInterceptor,
+    },
+  ],
   exports: [EventsGateway],
 })
-export class AppModule { }
-
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(TenantMiddleware)
+      .forRoutes('*');
+  }
+}

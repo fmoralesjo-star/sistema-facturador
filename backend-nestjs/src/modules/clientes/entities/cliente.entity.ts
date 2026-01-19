@@ -13,6 +13,10 @@ export class Cliente {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: true })
+  empresa_id: number; // Multi-tenancy
+
+
   @Column({ length: 255 })
   nombre: string;
 

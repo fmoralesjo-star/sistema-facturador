@@ -15,6 +15,10 @@ export class Producto {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: true })
+  empresa_id: number; // Multi-tenancy
+
+
   @Column({ length: 50, nullable: true })
   num_movimiento: string; // Número de movimiento
 

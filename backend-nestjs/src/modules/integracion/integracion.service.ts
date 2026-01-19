@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Factura } from '../facturas/entities/factura.entity';
@@ -8,6 +8,8 @@ import { AsientoContable } from '../contabilidad/entities/asiento-contable.entit
 import { Promocion } from '../promociones/entities/promocion.entity';
 import { Transferencia } from '../transferencias/entities/transferencia.entity';
 import { Empleado } from '../recursos-humanos/entities/empleado.entity';
+import { ConfigService } from '@nestjs/config';
+import axios from 'axios';
 
 /**
  * Servicio centralizado para integración entre módulos
@@ -30,7 +32,8 @@ export class IntegracionService {
     private transferenciaRepository: Repository<Transferencia>,
     @InjectRepository(Empleado)
     private empleadoRepository: Repository<Empleado>,
-  ) {}
+    private configService: ConfigService,
+  ) { }
 
   /**
    * Obtiene estadísticas consolidadas de todos los módulos
@@ -199,6 +202,28 @@ export class IntegracionService {
       movimientos,
       asientoContable,
     };
+  }
+
+  /**
+   * Envía un evento a n8n
+   * @param evento Nombre del evento (ej: 'factura.creada')
+   * @param payload Datos a enviar
+   */
+  async enviarEventoN8n(evento: string, payload: any) {
+    const webhookUrl = this.configService.get<string>('N8N_WEBHOOK_URL');
+    if (!webhookUrl) {
+      return;
+    }
+
+    try {
+      await axios.post(webhookUrl, {
+        evento,
+        timestamp: new Date().toISOString(),
+        data: payload,
+      });
+    } catch (error) {
+      console.error(`Error enviando evento a n8n: ${error.message}`);
+    }
   }
 }
 

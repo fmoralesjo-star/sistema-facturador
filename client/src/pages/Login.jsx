@@ -174,11 +174,11 @@ function Login() {
           <div className="form-group">
             <label>Email *</label>
             <input
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="usuario@ejemplo.com"
+              placeholder="usuario@ejemplo.com o superuser"
             />
           </div>
 

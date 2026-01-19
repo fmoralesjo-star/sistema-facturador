@@ -7,11 +7,12 @@ import { useAuth } from '../contexts/AuthContext'
 import PuntosVenta from './admin/PuntosVenta'
 import AdminConfiguracion from './admin/AdminConfiguracion'
 import Roles from './admin/Roles'
+import Empresas from './admin/Empresas' // Importado
 import SystemHealthWidget from '../components/SystemHealthWidget'
 
 function Admin({ socket }) {
   const navigate = useNavigate()
-  const { getToken } = useAuth()
+  const { getToken, currentUser } = useAuth()
   const [estadisticas, setEstadisticas] = useState(null)
   const [actividad, setActividad] = useState([])
   const [configuracion, setConfiguracion] = useState({})
@@ -90,6 +91,7 @@ function Admin({ socket }) {
 
   const modulos = [
     { id: 'dashboard', nombre: 'Dashboard' },
+    { id: 'empresas', nombre: 'Gestión de Empresas (Tenants)' }, // Nuevo módulo
     { id: 'facturacion', nombre: 'Facturación' },
     { id: 'notas_credito', nombre: 'Notas de Crédito' },
     { id: 'proformas', nombre: 'Proformas' },
@@ -1036,6 +1038,17 @@ function Admin({ socket }) {
           >
             <span>🏢</span> Puntos de Venta y Bodegas
           </button>
+
+          {/* Solo mostrar Gestión de Empresas si es Superusuario */}
+          {currentUser && (currentUser.is_superuser || currentUser.username === 'superuser' || currentUser.nombre_usuario === 'superuser') && (
+            <>
+              <div style={{ margin: '15px 0 5px 0', fontSize: '11px', color: '#9ca3af', fontWeight: 'bold', paddingLeft: '10px', letterSpacing: '0.5px' }}>MULTI-TENANCY</div>
+              <button className={`admin-menu-item ${tabActiva === 'empresas' ? 'active' : ''}`} onClick={() => setTabActiva('empresas')}>
+                <span>🌍</span> Gestión de Empresas
+              </button>
+            </>
+          )}
+
           <div style={{ margin: '15px 0 5px 0', fontSize: '11px', color: '#9ca3af', fontWeight: 'bold', paddingLeft: '10px', letterSpacing: '0.5px' }}>USUARIOS Y SEGURIDAD</div>
           <button
             className={`admin-menu-item ${tabActiva === 'usuarios' ? 'active' : ''}`}
@@ -1399,7 +1412,9 @@ function Admin({ socket }) {
                       {logotipoPreview ? (
                         <img src={logotipoPreview} alt="Logotipo de la empresa" style={{ maxWidth: '200px' }} />
                       ) : (
-                        <div className="logo-placeholder">No hay logotipo cargado</div>
+                        <div style={{ padding: '20px', border: '1px dashed #ccc', borderRadius: '4px', textAlign: 'center', color: '#888' }}>
+                          No hay logotipo cargado
+                        </div>
                       )}
                     </div>
                   )}
@@ -1409,6 +1424,12 @@ function Admin({ socket }) {
           </div>
         )}
 
+        {/* Tab Empresas */}
+        {tabActiva === 'empresas' && (
+          <div className="admin-content">
+            <Empresas />
+          </div>
+        )}
 
 
         {tabActiva === 'dashboard' && (
@@ -2495,6 +2516,12 @@ function Admin({ socket }) {
                 <p>Tabla de documentos aqu (simplificada por ahora)</p>
               </div>
             )}
+          </div>
+        )}
+
+        {tabActiva === 'empresas' && (
+          <div className="admin-content">
+            <Empresas />
           </div>
         )}
 

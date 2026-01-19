@@ -25,6 +25,8 @@ import { SriRetencionV3 } from './entities/sri-retencion.entity';
 import { TaxEngineService } from './services/tax-engine.service';
 import { ContabilidadModule } from '../contabilidad/contabilidad.module';
 import { SriComprobanteRecibido } from './entities/sri-comprobante-recibido.entity';
+import { IntegracionModule } from '../integracion/integracion.module';
+import { SriScheduler } from './sri.scheduler';
 
 
 @Module({
@@ -47,6 +49,7 @@ import { SriComprobanteRecibido } from './entities/sri-comprobante-recibido.enti
     ]),
     EmpresaModule,
     ContabilidadModule,
+    IntegracionModule, // Added for n8n service
   ],
   controllers: [SriController, ParametrosSriController],
   providers: [
@@ -61,6 +64,7 @@ import { SriComprobanteRecibido } from './entities/sri-comprobante-recibido.enti
     TaxEngineService,
     XsdValidationService,
     CircuitBreakerService,
+    SriScheduler, // Registered Scheduler
   ],
   exports: [SriService, FirmaElectronicaService, XmlGeneratorService, RideService, TaxEngineService, XsdValidationService, CircuitBreakerService],
 })

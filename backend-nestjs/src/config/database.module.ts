@@ -104,7 +104,7 @@ import { NotaCredito, NotaCreditoDetalle } from '../modules/notas-credito/entiti
               NotaCredito,
               NotaCreditoDetalle,
             ],
-            synchronize: true, // FORZADO: Asegurar creación de tablas en Render (v3)
+            synchronize: false, // FORZADO: Asegurar creación de tablas en Render (v3)
             logging: true,
             ssl: { rejectUnauthorized: false }, // Requerido por Render
             extra: {
@@ -175,7 +175,7 @@ import { NotaCredito, NotaCreditoDetalle } from '../modules/notas-credito/entiti
             NotaCredito,
             NotaCreditoDetalle,
           ],
-          synchronize: true, // Reactivated for dev
+          synchronize: false, // Reactivated for dev
           logging: true,
           ssl: false,
         };

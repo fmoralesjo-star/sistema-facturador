@@ -16,6 +16,10 @@ export class Usuario {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: true })
+  empresa_id: number; // Multi-tenancy
+
+
   @Column({ length: 100, unique: true })
   nombre_usuario: string;
 
