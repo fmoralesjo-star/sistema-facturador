@@ -27,6 +27,7 @@ import { ContabilidadModule } from '../contabilidad/contabilidad.module';
 import { SriComprobanteRecibido } from './entities/sri-comprobante-recibido.entity';
 import { IntegracionModule } from '../integracion/integracion.module';
 import { SriScheduler } from './sri.scheduler';
+import { Empresa } from '../empresa/entities/empresa.entity';
 
 
 @Module({
@@ -45,7 +46,8 @@ import { SriScheduler } from './sri.scheduler';
       SriRetencionV3,
       SriRetencionV3,
       Configuracion, // Necessary for CircuitBreaker
-      SriComprobanteRecibido
+      SriComprobanteRecibido,
+      Empresa, // Added for SriScheduler
     ]),
     EmpresaModule,
     ContabilidadModule,
